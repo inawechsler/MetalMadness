@@ -1,0 +1,15 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class NormalState : MonoBehaviour, IState
+{
+    [SerializeField] private float normalDrift = 0.85f;
+
+    public void UpdateState(TopDownController controller)
+    {
+        // Aquí se asegura de que el factor de drift vuelva al valor normal
+        controller.SetDriftFactor(normalDrift);
+        Debug.Log(controller.gameObject.name + " ha cambiado al estado Normal.");
+    }
+}
