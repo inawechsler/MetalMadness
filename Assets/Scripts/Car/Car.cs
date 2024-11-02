@@ -129,12 +129,6 @@ public class Car : MonoBehaviour
                 elapsedCollisionTime = 0f;
             }
         }
-        if (collision.gameObject.CompareTag("Upgrade"))
-        {
-            var upgradeToApply = collision.gameObject.GetComponent<IUpgrade>();
-
-            upgrades.AddUpgrade(upgradeToApply);
-        }
     }
     
 }

@@ -17,6 +17,7 @@ TagManager:
   - Upgrade
   - ShopCanvas
   - EventSystem
+  - SelectedImage
   layers:
   - Default
   - TransparentFX

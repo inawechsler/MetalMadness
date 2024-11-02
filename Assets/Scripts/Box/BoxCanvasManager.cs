@@ -8,15 +8,17 @@ using System.Linq;
 public class BoxCanvasManager : MonoBehaviour, IBoxObserver
 {
     private GameObject boxCanvas;
-    [SerializeField] Button purchaseButton;
-
-    [SerializeField] Button antiSlipperyState;
+    [SerializeField] Button purchaseButton, antiSlipperyState, antiSlowState;
    
     private List<IUpgrade> upgradeList = new List<IUpgrade>();
 
     private Dictionary<string, IUpgrade> upgradeDictionary = new Dictionary<string, IUpgrade>();
 
     IUpgrade currentUpgrade;
+
+    private Image selectedImage;
+
+    private bool hasExited = false;
     public UnityEvent onClickedPurchased { get; private set; } = new UnityEvent();
 
     CarUpgrades carUpgrades;
@@ -27,16 +29,24 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
 
         carUpgrades = GameObject.FindWithTag("Player").GetComponent<CarUpgrades>();
 
-        antiSlipperyState.onClick.AddListener( delegate { ManageButton("WheelsSpikes");} );
+        selectedImage = GameObject.FindWithTag("SelectedImage").GetComponent<Image>();
+
+        antiSlipperyState.onClick.AddListener( delegate { ManageButton("WheelsSpikes", antiSlipperyState);} );
+
+        antiSlowState.onClick.AddListener( delegate { ManageButton("WheelsChains", antiSlowState);} );
 
         boxCanvas = GameObject.FindWithTag("ShopCanvas");
 
         boxCanvas.SetActive(false);
+
+        selectedImage.gameObject.SetActive(false);
     }
 
     public void OnBoxEntered()
     {
         boxCanvas.SetActive(true);
+
+        hasExited = false;
 
         upgradeList = FindObjectsOfType<MonoBehaviour>().OfType<IUpgrade>().ToList();
 
@@ -46,24 +56,43 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
             upgradeDictionary.Add(upgrade.GetType().Name, upgrade);
         }
     }
+    void AssignUpgrade(IUpgrade upgrade)
+    {
+        carUpgrades.AddUpgrade(upgrade);
+    }
 
     public void OnBoxExit()
     {
+        if(hasExited) return;
+
+        Debug.Log(currentUpgrade.GetType().Name);   
+        AssignUpgrade(currentUpgrade);
         boxCanvas.SetActive(false);
         onClickedPurchased?.Invoke();
+        hasExited = true;
     }
-    void ManageButton(string buttonName)
+    void ManageButton(string upgradeToApply, Button button)
     {
-        if (upgradeDictionary.TryGetValue(buttonName, out IUpgrade upgrade))
+        if (upgradeDictionary.TryGetValue(upgradeToApply, out IUpgrade upgrade))
         {
             currentUpgrade = upgrade;
-        }
-        else
-        {
-            Debug.LogWarning($"Upgrade '{buttonName}' no encontrado.");
+
+            if(button != null)
+            {
+                RectTransform buttonRectTransform = button.GetComponent<RectTransform>();
+
+                Vector2 buttonWorldPosition = buttonRectTransform.position;
+
+                selectedImage.rectTransform.position = new Vector3(buttonWorldPosition.x + 38.7f, buttonWorldPosition.y + 42f);
+
+                selectedImage.gameObject.SetActive(true);
+            }
+            else
+            {
+                Debug.Log("skd");
+            }
         }
 
-        carUpgrades.AddUpgrade(currentUpgrade);
 
     }
 

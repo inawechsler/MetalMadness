@@ -69,9 +69,9 @@ public class StateManager : MonoBehaviour
             int randomStateIndex = Random.Range(0, availableStates.Count);
             IState randomState = availableStates[randomStateIndex];
 
-            ChangeCurrentState(slipperyState);
+            ChangeCurrentState(randomState);
 
-            Debug.Log($"Superficie {surface.name} ahora tiene el estado: {state.GetType().Name}");
+            Debug.Log($"Superficie {surface.name} ahora tiene el estado: {randomState.GetType().Name}");
         }
     }
 
@@ -101,7 +101,7 @@ public class StateManager : MonoBehaviour
     public void OnLapCompleted()
     {
         currentLap++;
-        //AssignRandomStates();
+        AssignRandomStates();
         // Cada 3 vueltas
 
     }
