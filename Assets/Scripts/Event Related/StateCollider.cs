@@ -13,7 +13,6 @@ public class StateCollider : MonoBehaviour
             counter++;
             var controller = collision.gameObject.GetComponent<TopDownController>();
             StateManager.Instance.state.EnterState(controller);
-            Debug.Log($"{controller.gameObject.name} entró {counter} veces con {gameObject.name} en el estado {StateManager.Instance.state}");
         }
     }
 

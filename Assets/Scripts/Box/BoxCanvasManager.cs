@@ -8,7 +8,8 @@ using System.Linq;
 public class BoxCanvasManager : MonoBehaviour, IBoxObserver
 {
     private GameObject boxCanvas;
-    [SerializeField] Button purchaseButton, antiSlipperyState, antiSlowState, speedBost;
+    [SerializeField] Button purchaseButton;
+    [SerializeField] List<Button> upgradeButtons;
    
     private List<IUpgrade> upgradeList = new List<IUpgrade>();
 
@@ -31,11 +32,16 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
 
         selectedImage = GameObject.FindWithTag("SelectedImage").GetComponent<Image>();
 
-        antiSlipperyState.onClick.AddListener( delegate { ManageButton("WheelsSpikes", antiSlipperyState);} );
+        //antiSlipperyState.onClick.AddListener( delegate { ManageButton("WheelsSpikes", antiSlipperyState);} );
 
-        antiSlowState.onClick.AddListener( delegate { ManageButton("WheelsChains", antiSlowState);} );
+        //antiSlowState.onClick.AddListener( delegate { ManageButton("WheelsChains", antiSlowState);} );
 
-        speedBost.onClick.AddListener( delegate { ManageButton("SpeedBoost", speedBost);} );
+        //speedBost.onClick.AddListener( delegate { ManageButton("SpeedBoost", speedBost);} );
+
+        foreach(var button in upgradeButtons)
+        {
+            button.onClick.AddListener(delegate { ManageButton((button.gameObject.name), button); });
+        }
 
         boxCanvas = GameObject.FindWithTag("ShopCanvas");
 
@@ -53,10 +59,11 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
 
         hasExited = false;
 
+        
+
         foreach(var upgrade in FindObjectsOfType<MonoBehaviour>().OfType<IUpgrade>().ToList())
         {
             upgradeList.Add(upgrade);
-            Debug.Log("Sentence: " + upgrade.GetType().Name);
         }
 
         foreach (var upgrade in upgradeList)
@@ -65,7 +72,6 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
             {
                 continue;
             }
-            Debug.Log("upgradeList: " + upgrade.GetType().Name);
 
             upgradeDictionary.Add(upgrade.GetType().Name, upgrade);
 

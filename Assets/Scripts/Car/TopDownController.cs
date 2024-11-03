@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -15,16 +16,18 @@ public class TopDownController : MonoBehaviour
     float accelerationInput = 0;
     float steeringInput = 0;
 
+
     float velocity;
 
-    [SerializeField] public float currentMaxSpeedCap { get; private set; }
+    [SerializeField] public float currentMaxSpeedCap { get; private set; } = 20;
+
+    public float lastSpeedBefChange { get; private set; }
 
     float rotationAngle = 0;
 
     [SerializeField] float maxSpeed = 20f;
 
     float velocitVsUp;
-
 
     public Rigidbody2D rb2D;
 
@@ -86,8 +89,7 @@ public class TopDownController : MonoBehaviour
 
     void ManageCarSpeed()
     {
-
-
+        Debug.Log(currentMaxSpeedCap);
         if (velocity > maxSpeed)
         {
             rb2D.velocity -= rb2D.velocity.normalized * 0.5f;
@@ -104,9 +106,9 @@ public class TopDownController : MonoBehaviour
         //Calculo que tan para adelante estoy yendo en la direc de mi velocidad
         velocitVsUp = Vector2.Dot(transform.up, rb2D.velocity);
 
-        maxSpeed = car.onTrack ? 20 : 10;
-        currentMaxSpeedCap = maxSpeed;
-        //Limito para no ir más rapido que la max en la direccion "forward"{ 
+        maxSpeed = car.onTrack ? currentMaxSpeedCap : 10;
+
+        //Limito para no ir más rapido que la max en la direccion "forward"
         if (car.onTrack)
         {
             if (velocity > maxSpeed)
@@ -114,7 +116,7 @@ public class TopDownController : MonoBehaviour
                 rb2D.velocity = rb2D.velocity.normalized * maxSpeed;
             }
 
-        } 
+        }
 
 
         //Limito para ir más lento en reversa
@@ -135,6 +137,7 @@ public class TopDownController : MonoBehaviour
 
     void ApplySteering()
     {
+        //Con el 8 labura bien, dobla solo si a cierta velocidad
         float minSpeedBefTurningFactor = (rb2D.velocity.magnitude / 8);
         minSpeedBefTurningFactor = Mathf.Clamp01(minSpeedBefTurningFactor);
 
@@ -146,10 +149,23 @@ public class TopDownController : MonoBehaviour
 
     public float SetMaxSpeedCap(float maxSpeedCap)
     {
-        currentDriftFactor = maxSpeed;
-        return maxSpeed = maxSpeedCap;
+
+        currentMaxSpeedCap = maxSpeed;
+        Debug.Log(maxSpeedCap);
+        currentMaxSpeedCap = maxSpeedCap;
+
+        return currentMaxSpeedCap;
     }
 
+
+    public void SetLastSpeedBefChange(float maxSpeedCap)
+    {
+        if (lastSpeedBefChange > maxSpeedCap)
+        {
+            return;
+        }
+        lastSpeedBefChange = maxSpeedCap;
+    }
     public float SetDriftFactor(float newDrift)
     {
         if(driftFactor <= .85f)

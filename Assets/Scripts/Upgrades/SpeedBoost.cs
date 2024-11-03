@@ -8,8 +8,8 @@ public class SpeedBoost : MonoBehaviour, IUpgrade
 
     public void ApplyUpgrade(TopDownController controller)
     {
-        Debug.Log(controller.currentMaxSpeedCap);
-        controller.SetMaxSpeedCap(controller.currentMaxSpeedCap * 20);
+
+        controller.SetMaxSpeedCap(controller.currentMaxSpeedCap * 1.25f);
     }
 
     public bool CounteractState(IState state)

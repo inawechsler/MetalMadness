@@ -12,7 +12,6 @@ public class StateManager : MonoBehaviour
     public static StateManager Instance;
     public IState state;
     public IState slipperyState;
-    public IState normalState;
     public IState slowState;
     [SerializeField] TopDownController[] topDownController;
 
@@ -42,7 +41,6 @@ public class StateManager : MonoBehaviour
         if (SceneNameManager.Instance.IsRaceScene(SceneManager.GetActiveScene()))
         {
             topDownController = FindObjectsOfType<TopDownController>();
-            normalState = GameObject.FindWithTag("States").GetComponent<NormalState>();
             slipperyState = GameObject.FindWithTag("States").GetComponent<SlippyState>();
             slowState = GameObject.FindWithTag("States").GetComponent<SlowState>();
             FindAvailableStates();
@@ -69,7 +67,7 @@ public class StateManager : MonoBehaviour
             int randomStateIndex = Random.Range(0, availableStates.Count);
             IState randomState = availableStates[randomStateIndex];
 
-            ChangeCurrentState(randomState);
+            ChangeCurrentState(slowState);
 
             Debug.Log($"Superficie {surface.name} ahora tiene el estado: {randomState.GetType().Name}");
         }
