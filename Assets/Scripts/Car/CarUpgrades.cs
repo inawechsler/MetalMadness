@@ -47,6 +47,7 @@ public class CarUpgrades : MonoBehaviour
 
     public bool HasUpgradeToCounteract(IState state)
     {
+
         return activeUpgradeList.Any(upgrade => upgrade.CounteractState(state));
     }
 }

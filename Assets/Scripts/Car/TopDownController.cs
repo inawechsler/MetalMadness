@@ -9,7 +9,7 @@ public class TopDownController : MonoBehaviour
     public float accelerationFactor = 35.0f;
     public float turnFactor = 3.5f;
 
-    [SerializeField] public float driftFactor { get; private set; } = .85f;
+    public float driftFactor { get; private set; } = .85f;
     public float currentDriftFactor { get; private set; }
 
     float accelerationInput = 0;
@@ -17,9 +17,11 @@ public class TopDownController : MonoBehaviour
 
     float velocity;
 
+    [SerializeField] public float currentMaxSpeedCap { get; private set; }
+
     float rotationAngle = 0;
 
-    float maxSpeed = 20f;
+    [SerializeField] float maxSpeed = 20f;
 
     float velocitVsUp;
 
@@ -103,7 +105,8 @@ public class TopDownController : MonoBehaviour
         velocitVsUp = Vector2.Dot(transform.up, rb2D.velocity);
 
         maxSpeed = car.onTrack ? 20 : 10;
-        //Limito para no ir más rapido que la max en la direccion "forward"
+        currentMaxSpeedCap = maxSpeed;
+        //Limito para no ir más rapido que la max en la direccion "forward"{ 
         if (car.onTrack)
         {
             if (velocity > maxSpeed)
@@ -143,6 +146,7 @@ public class TopDownController : MonoBehaviour
 
     public float SetMaxSpeedCap(float maxSpeedCap)
     {
+        currentDriftFactor = maxSpeed;
         return maxSpeed = maxSpeedCap;
     }
 

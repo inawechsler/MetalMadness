@@ -8,7 +8,7 @@ using System.Linq;
 public class BoxCanvasManager : MonoBehaviour, IBoxObserver
 {
     private GameObject boxCanvas;
-    [SerializeField] Button purchaseButton, antiSlipperyState, antiSlowState;
+    [SerializeField] Button purchaseButton, antiSlipperyState, antiSlowState, speedBost;
    
     private List<IUpgrade> upgradeList = new List<IUpgrade>();
 
@@ -35,9 +35,14 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
 
         antiSlowState.onClick.AddListener( delegate { ManageButton("WheelsChains", antiSlowState);} );
 
+        speedBost.onClick.AddListener( delegate { ManageButton("SpeedBoost", speedBost);} );
+
         boxCanvas = GameObject.FindWithTag("ShopCanvas");
 
         boxCanvas.SetActive(false);
+
+
+
 
         selectedImage.gameObject.SetActive(false);
     }
@@ -48,12 +53,22 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
 
         hasExited = false;
 
-        upgradeList = FindObjectsOfType<MonoBehaviour>().OfType<IUpgrade>().ToList();
+        foreach(var upgrade in FindObjectsOfType<MonoBehaviour>().OfType<IUpgrade>().ToList())
+        {
+            upgradeList.Add(upgrade);
+            Debug.Log("Sentence: " + upgrade.GetType().Name);
+        }
 
         foreach (var upgrade in upgradeList)
         {
-            GetType().Name.ToString();
+            if (upgradeDictionary.ContainsKey(upgrade.GetType().Name))
+            {
+                continue;
+            }
+            Debug.Log("upgradeList: " + upgrade.GetType().Name);
+
             upgradeDictionary.Add(upgrade.GetType().Name, upgrade);
+
         }
     }
     void AssignUpgrade(IUpgrade upgrade)
