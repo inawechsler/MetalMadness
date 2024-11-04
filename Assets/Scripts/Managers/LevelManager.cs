@@ -4,13 +4,15 @@ using UnityEngine;
 
 public class LevelManager : MonoBehaviour, IBoxObserver
 {
-    public void OnBoxEntered()
+    public void OnBoxEntered(EntityType type, CarUpgrades carUpgrades)
     {
+        if(type == EntityType.Ai) return;
         Time.timeScale = 0f;
     }
 
-    public void OnBoxExit()
+    public void OnBoxExit(EntityType type, CarUpgrades carUpgrades)
     {
+        if (type == EntityType.Ai) return;
         Time.timeScale = 1f;
     }
 

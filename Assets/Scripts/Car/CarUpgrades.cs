@@ -7,6 +7,7 @@ public class CarUpgrades : MonoBehaviour
 {
     private List<IUpgrade> activeUpgradeList = new List<IUpgrade>();
     private TopDownController controller;
+    public EntityType type;
 
 
     private void Start()
@@ -22,7 +23,6 @@ public class CarUpgrades : MonoBehaviour
 
     public void AddUpgrade(IUpgrade upgrade)
     {
-        Debug.Log(controller.gameObject.name);
         if(upgrade.isEventCounter)
         {
             IUpgrade upgradeToRemove = GetActiveCounterUpgrade();

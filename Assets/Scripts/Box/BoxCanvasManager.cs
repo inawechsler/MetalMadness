@@ -26,17 +26,11 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
 
     private void Awake()
     {
-        purchaseButton.onClick.AddListener(OnBoxExit);
+        purchaseButton.onClick.AddListener(BoxExitDispatcher);
 
         carUpgrades = GameObject.FindWithTag("Player").GetComponent<CarUpgrades>();
 
         selectedImage = GameObject.FindWithTag("SelectedImage").GetComponent<Image>();
-
-        //antiSlipperyState.onClick.AddListener( delegate { ManageButton("WheelsSpikes", antiSlipperyState);} );
-
-        //antiSlowState.onClick.AddListener( delegate { ManageButton("WheelsChains", antiSlowState);} );
-
-        //speedBost.onClick.AddListener( delegate { ManageButton("SpeedBoost", speedBost);} );
 
         foreach(var button in upgradeButtons)
         {
@@ -47,19 +41,15 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
 
         boxCanvas.SetActive(false);
 
-
-
-
         selectedImage.gameObject.SetActive(false);
     }
 
-    public void OnBoxEntered()
+    public void OnBoxEntered(EntityType type, CarUpgrades carUpgrades)
     {
+        if (type == EntityType.Ai) return;
         boxCanvas.SetActive(true);
 
         hasExited = false;
-
-        
 
         foreach(var upgrade in FindObjectsOfType<MonoBehaviour>().OfType<IUpgrade>().ToList())
         {
@@ -82,8 +72,14 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
         carUpgrades.AddUpgrade(upgrade);
     }
 
-    public void OnBoxExit()
+    void BoxExitDispatcher()
     {
+        OnBoxExit(EntityType.Player, carUpgrades);
+    }
+
+    public void OnBoxExit(EntityType type, CarUpgrades carUpgrades)
+    {
+        if (type == EntityType.Ai) return;
         if(hasExited) return;
 
         Debug.Log(currentUpgrade.GetType().Name);   

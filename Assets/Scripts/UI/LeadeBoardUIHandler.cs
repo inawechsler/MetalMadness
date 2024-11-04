@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Linq;
 public class LeadeBoardUIHandler : MonoBehaviour
 {
     public GameObject leaderboardItem;
     CarLapCounter[] carLapCountersArr;
     SetLeaderBoardInfo[] setLeaderBoardInfos;
+    int carCount;
     // Start is called before the first frame update
     void Start()
     {
@@ -15,6 +17,7 @@ public class LeadeBoardUIHandler : MonoBehaviour
 
         carLapCountersArr = CarRankingManager.Instance.carList.ToArray();
 
+        carCount = carLapCountersArr.Length;
         setLeaderBoardInfos = new SetLeaderBoardInfo[carLapCountersArr.Length];
 
         for (int i = 0; i < carLapCountersArr.Length; i++)
@@ -35,15 +38,18 @@ public class LeadeBoardUIHandler : MonoBehaviour
         }
 
         // Actualiza la UI basándose en el ranking
-        foreach (var rank in rankingList)
-        {
-        
-            // Instanciar un nuevo elemento para cada posición en el ranking
-            GameObject leaderboardInfoGO = Instantiate(leaderboardItem, transform);
+        var limitedRankingList = rankingList.Take(carCount);
 
+        // Actualiza la UI con el ranking limitado a la cantidad de autos
+        int position = 1;
+        foreach (var rank in limitedRankingList)
+        {
+            GameObject leaderboardInfoGO = Instantiate(leaderboardItem, transform);
             SetLeaderBoardInfo info = leaderboardInfoGO.GetComponent<SetLeaderBoardInfo>();
+
             info.SetDriverText(rank.Value);  // Nombre del coche
-            info.SetPosText(rank.Key);       // Posición en el ranking
+            info.SetPosText(position);       // Posición secuencial
+            position++;
         }
     }
 }

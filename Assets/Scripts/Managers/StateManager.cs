@@ -2,6 +2,7 @@ using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
@@ -17,6 +18,8 @@ public class StateManager : MonoBehaviour
 
     [SerializeField] private List<GameObject> surfaces; // Las superficies
     [SerializeField] private List<IState> availableStates; // La lista de estados disponibles
+
+    [SerializeField] TextMeshProUGUI[] ZoneText;
 
     [SerializeField] private int lapsToTriggerChange = 1;
     private int currentLap = 0;
@@ -67,9 +70,14 @@ public class StateManager : MonoBehaviour
             int randomStateIndex = Random.Range(0, availableStates.Count);
             IState randomState = availableStates[randomStateIndex];
 
-            ChangeCurrentState(slowState);
+            ChangeCurrentState(randomState);
 
-            Debug.Log($"Superficie {surface.name} ahora tiene el estado: {randomState.GetType().Name}");
+            for (int i = 0; i < ZoneText.Length; i++)
+            {
+                ZoneText[i].text = $"{randomState.GetType().Name}";
+            }
+
+            //Debug.Log($"Superficie {surface.name} ahora tiene el estado: {randomState.GetType().Name}");
         }
     }
 

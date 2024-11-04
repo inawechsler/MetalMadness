@@ -89,7 +89,6 @@ public class TopDownController : MonoBehaviour
 
     void ManageCarSpeed()
     {
-        Debug.Log(currentMaxSpeedCap);
         if (velocity > maxSpeed)
         {
             rb2D.velocity -= rb2D.velocity.normalized * 0.5f;
@@ -151,7 +150,6 @@ public class TopDownController : MonoBehaviour
     {
 
         currentMaxSpeedCap = maxSpeed;
-        Debug.Log(maxSpeedCap);
         currentMaxSpeedCap = maxSpeedCap;
 
         return currentMaxSpeedCap;
