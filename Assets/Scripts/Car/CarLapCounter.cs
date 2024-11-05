@@ -102,8 +102,7 @@ public class CarLapCounter : MonoBehaviour
                 {
                     lapsCompleted++;
                     passedCheckPointNumber = 0;
-                    StateManager.Instance.OnLapCompleted();
-
+                    
                     if (gameObject.CompareTag("Player"))
                     {
                         CarRankingManager.Instance.SetLapsCompleted(1);

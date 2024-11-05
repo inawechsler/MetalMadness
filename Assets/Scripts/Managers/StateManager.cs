@@ -46,7 +46,6 @@ public class StateManager : MonoBehaviour
             slipperyState = GameObject.FindWithTag("States").GetComponent<SlippyState>();
             slowState = GameObject.FindWithTag("States").GetComponent<SlowState>();
             FindAvailableStates();
-            AssignRandomStates();
         }
     }
 
@@ -79,22 +78,7 @@ public class StateManager : MonoBehaviour
     public void OnLapCompleted()
     {
         currentLap++;
-        if (!lapChangeCooldown)
-        {
-            AssignRandomStates();
-        }
-        StartCoroutine(manageBoolState());
-
-        // Cada 3 vueltas
-
+        AssignRandomStates();
     }
 
-    IEnumerator manageBoolState()
-    {
-        lapChangeCooldown = true;
-
-        yield return new WaitForSeconds(2f);
-
-        lapChangeCooldown = false;
-    }
 }
