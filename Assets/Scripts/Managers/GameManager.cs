@@ -40,7 +40,7 @@ public class GameManager : MonoBehaviour
     {
         FacadeManager.Instance.Init();
     }
-    // update is called once per frame
+   
     void Update()
     {
         if(Input.GetKey(KeyCode.Escape))

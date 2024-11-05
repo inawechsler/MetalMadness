@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class FacadeManager : MonoBehaviour
 {
     public static FacadeManager Instance;
-    // Start is called before the first frame update
+   
     
     
     void Awake()
@@ -28,7 +28,7 @@ public class FacadeManager : MonoBehaviour
     }
 
 
-    // Update is called once per frame
+   
     void Update()
     {
         
