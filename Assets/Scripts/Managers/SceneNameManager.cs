@@ -1,15 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
-using UnityEngine.SceneManagement;
 using UnityEngine;
-
+using UnityEngine.SceneManagement; 
+using UnityEditor; 
+using System.Collections.Generic; 
 public class SceneNameManager : MonoBehaviour
 {
     public static SceneNameManager Instance;
     [SerializeField] List<SceneAsset> raceScemes = new();
     List<string> raceNames = new();
-    // Start is called before the first frame update
+
     void Awake()
     {
         if (Instance == null)
@@ -31,13 +29,14 @@ public class SceneNameManager : MonoBehaviour
             }
         }
     }
+
     public bool IsRaceScene(Scene scene)
     {
-        return raceNames.Contains(scene.name);   
+        return raceNames.Contains(scene.name);
     }
-    // Update is called once per frame
+
     void Update()
     {
-        
+
     }
 }
