@@ -9,10 +9,12 @@ public class AIBoxManager : MonoBehaviour, IBoxObserver
 {
     List<IUpgrade> upgradeList = new List<IUpgrade>();
     IUpgrade upgradeToApply;
+    LeadeBoardUIHandler boardUIHandler;
 
     private void Awake()
     {
         upgradeList = FindObjectsOfType<MonoBehaviour>().OfType<IUpgrade>().ToList();
+        boardUIHandler = FindAnyObjectByType<LeadeBoardUIHandler>();
     }
     public void OnBoxEntered(EntityType type, CarUpgrades carUpgrades)
     {
@@ -21,6 +23,7 @@ public class AIBoxManager : MonoBehaviour, IBoxObserver
         upgradeToApply = ManageUpgradeToApply(carUpgrades);
 
         carUpgrades.AddUpgrade(upgradeToApply);
+        boardUIHandler.UpdateImage(upgradeToApply, carUpgrades );
     }
 
     public void OnBoxExit(EntityType type, CarUpgrades carUpgrades)

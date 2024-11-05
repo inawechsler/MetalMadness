@@ -12,7 +12,7 @@ public class StateCollider : MonoBehaviour
     {
         if (collision.gameObject.GetComponent<TopDownController>() != null)
         {
-            counter++;
+            if (StateManager.Instance.state == null) return;
             var controller = collision.gameObject.GetComponent<TopDownController>();
             StateManager.Instance.state.EnterState(controller);
         }
@@ -22,6 +22,7 @@ public class StateCollider : MonoBehaviour
     {
         if (collision.gameObject.GetComponent<TopDownController>() != null)
         {
+            if (StateManager.Instance.state == null) return;
             var controller = collision.gameObject.GetComponent<TopDownController>();
             StateManager.Instance.state.ExitState(controller);
 

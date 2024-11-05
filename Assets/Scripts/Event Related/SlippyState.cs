@@ -9,7 +9,9 @@ public class SlippyState : MonoBehaviour, IState
 
         if (!controller.carUpgrades.HasUpgradeToCounteract(this))
         {
+
             controller.isOnState = true;
+            controller.SetLastSpeedBefChange(controller.currentMaxSpeedCap);
         }
     }
 
@@ -17,6 +19,7 @@ public class SlippyState : MonoBehaviour, IState
     {
         controller.isOnState = false;  // Desactivar el estado resbaladizo
         controller.SetDriftFactor(controller.currentDriftFactor);
+        controller.SetMaxSpeedCap(controller.lastSpeedBefChange);
         //StateManager.Instance.ChangeCurrentState(StateManager.Instance.normalState);  // Cambiar al estado normal
     }
 
