@@ -51,7 +51,6 @@ public class StateManager : MonoBehaviour
 
     private void FindAvailableStates()
     {
-        // Encuentra todos los objetos que implementen la interfaz IState
         availableStates = FindObjectsOfType<MonoBehaviour>().OfType<IState>().ToList();
 
         if (availableStates.Count == 0)
@@ -64,9 +63,9 @@ public class StateManager : MonoBehaviour
     {
         foreach (GameObject surface in surfaces)
         {
-            int randomStateIndex = Random.Range(0, availableStates.Count);
+            int randomStateIndex = Random.Range(0, availableStates.Count); //Del 0 a la cantidad de IStates que encuentre
 
-            IState randomState = availableStates[randomStateIndex];
+            IState randomState = availableStates[randomStateIndex]; //Devuelve el estado de la lista con el indice random
 
             var stateColl = surface.GetComponent<StateCollider>();
 
