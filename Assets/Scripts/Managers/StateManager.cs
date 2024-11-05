@@ -11,7 +11,6 @@ using UnityEngine.SceneManagement;
 public class StateManager : MonoBehaviour
 {
     public static StateManager Instance;
-    public IState state;
     public IState slipperyState;
     public IState slowState;
     [SerializeField] TopDownController[] topDownController;
@@ -20,7 +19,6 @@ public class StateManager : MonoBehaviour
     [SerializeField] private List<IState> availableStates; // La lista de estados disponibles
     [SerializeField] TextMeshProUGUI[] ZoneText;
     [SerializeField] TextMeshProUGUI[] StateText;
-
     private bool lapChangeCooldown = false;
 
     [SerializeField] private int lapsToTriggerChange = 1;
@@ -49,6 +47,7 @@ public class StateManager : MonoBehaviour
             slipperyState = GameObject.FindWithTag("States").GetComponent<SlippyState>();
             slowState = GameObject.FindWithTag("States").GetComponent<SlowState>();
             FindAvailableStates();
+            AssignRandomStates();
         }
     }
 
@@ -71,9 +70,9 @@ public class StateManager : MonoBehaviour
 
             IState randomState = availableStates[randomStateIndex];
 
-            Debug.Log(surface.name + "Has" + randomStateIndex + ": " + randomState.GetType().Name);
-            ChangeCurrentState(randomState);
-            ShowAvailableStates();
+            var stateColl = surface.GetComponent<StateCollider>();
+
+            stateColl.SetCurrentState(randomState);
 
             int index = surfaces.IndexOf(surface);
 
@@ -81,38 +80,6 @@ public class StateManager : MonoBehaviour
             ZoneText[index].text = $"{randomState.GetType().Name}";
 
         }
-    }
-
-
-    private void ShowAvailableStates()
-    {
-        Debug.Log("Estados disponibles:");
-        for (int i = 0; i < availableStates.Count; i++)
-        {
-            Debug.Log($"{i}: {availableStates[i].GetType().Name}");
-        }
-    }
-    void Update()
-    {
-        if (SceneNameManager.Instance.IsRaceScene(SceneManager.GetActiveScene()))
-        {
-            foreach (TopDownController car in topDownController)
-            {
-                if(state != null)
-                state.UpdateState(car);
-            }
-        }
-    }
-
-    public void ChangeCurrentState(IState newState)
-    {
-        if (newState == null)
-        {
-            Debug.LogError("El  estado es nulo, no se puede cambiar el estado.");
-            return; 
-        }
-
-        state = newState; 
     }
 
     public void OnLapCompleted()
