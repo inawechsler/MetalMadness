@@ -11,7 +11,7 @@ public class StateCollider : MonoBehaviour
 
     [SerializeField] TextMeshProUGUI ZoneText;
     [SerializeField] TextMeshProUGUI StateText;
-    public List<TopDownController> upgrades { get; private set; } = new List<TopDownController>();
+    public List<TopDownController> carListInZone { get; private set; } = new List<TopDownController>();
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -19,7 +19,7 @@ public class StateCollider : MonoBehaviour
         {
             if (state == null) return;
             var controller = collision.gameObject.GetComponent<TopDownController>();
-            upgrades.Add(controller);
+            carListInZone.Add(controller);
             state.EnterState(controller);
         }
     }
@@ -27,7 +27,7 @@ public class StateCollider : MonoBehaviour
     {
         if (SceneNameManager.Instance.IsRaceScene(SceneManager.GetActiveScene()))
         {
-            foreach (TopDownController car in upgrades)
+            foreach (TopDownController car in carListInZone)
             {
                 if (state != null)
                     state.UpdateState(car);
@@ -40,7 +40,7 @@ public class StateCollider : MonoBehaviour
         {
             if (state == null) return;
             var controller = collision.gameObject.GetComponent<TopDownController>();
-            upgrades.Remove(controller);
+            carListInZone.Remove(controller);
             state.ExitState(controller);
 
         }
@@ -49,7 +49,7 @@ public class StateCollider : MonoBehaviour
 
     public void SetCurrentState(IState newState)
     {
-        if (upgrades.Count != 0)
+        if (carListInZone.Count != 0)
         {
             Debug.Log("Esperando hasta que no haya autos en la zona...");
             StartCoroutine(WaitAndSetState(newState));
@@ -65,10 +65,10 @@ public class StateCollider : MonoBehaviour
 
     private IEnumerator WaitAndSetState(IState newState)
     {
-        // Espera hasta que la lista `upgrades` esté vacía
-        while (upgrades.Count != 0)
+        // Espera hasta que la lista esté vacía
+        while (carListInZone.Count != 0)
         {
-            yield return null; // Espera hasta el siguiente frame
+            yield return null; // Se queda ahi hasta que la lista esté vacía
         }
 
         // Cuando no haya autos en la zona, cambia el estado

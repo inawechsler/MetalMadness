@@ -37,19 +37,19 @@ public class BoxShopEnter : MonoBehaviour
             if (collision.gameObject.CompareTag("Player"))
             {
                 playerCarUpgrades = carUpgrades;
-                NotifyObserver(pitState, EntityType.Player, playerCarUpgrades);
+                NotifyObserver(pitState, EntityType.Player, playerCarUpgrades);//Si es Player, en el Enter le manda PitState true, es decir está entrando y el enum que le pasa es Player
             }
 
             if (collision.gameObject.CompareTag("AI"))
             {
                 aiCarUpgrades = carUpgrades;
-                NotifyObserver(pitState, EntityType.Ai, aiCarUpgrades);
+                NotifyObserver(pitState, EntityType.Ai, aiCarUpgrades);//Si es AI, en el Enter le manda PitState true, es decir está entrando y el enum que le pasa es AI
             }
         }
 
     }
 
-    private void NotifyExitBox(EntityType type, CarUpgrades carUpgrades)
+    private void NotifyExitBox(EntityType type, CarUpgrades carUpgrades)//Evento suscripto al click de Purchase de BoxCanvasManager, al tocarlo recibe pitState en falso, por lo que maneja la salida de Pits
     {
         pitState = false;
         NotifyObserver(pitState, type, carUpgrades);
@@ -60,7 +60,7 @@ public class BoxShopEnter : MonoBehaviour
         boxObservers.RemoveAll(o => o != null);
     }
 
-    public void NotifyObserver(bool hasEntered, EntityType type, CarUpgrades carUpgrades)
+    public void NotifyObserver(bool pitState, EntityType type, CarUpgrades carUpgrades)
     {
 
         if (isNotifying) return;
@@ -69,7 +69,7 @@ public class BoxShopEnter : MonoBehaviour
 
         foreach (var observer in boxObservers)
         {
-            if (hasEntered)
+            if (pitState)
                 observer.OnBoxEntered(type, carUpgrades);
             else
                 observer.OnBoxExit(type, carUpgrades);

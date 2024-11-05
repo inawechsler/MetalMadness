@@ -51,9 +51,6 @@ public class CarRankingManager : MonoBehaviour
                   
             boardUIHandler = GameObject.FindWithTag("Leaderboard").GetComponent<LeadeBoardUIHandler>();
 
-        
-
-       
             CarLapCounter[] carLapCountersArr = FindObjectsOfType<CarLapCounter>();
 
             carList = carLapCountersArr.ToList();
@@ -82,12 +79,12 @@ public class CarRankingManager : MonoBehaviour
     {
         if (carLapCounter.lapsCompleted >= LapsToComplete)
         {
-            if (!carLapCounter.isRaceCompleted) // Solo si aún no ha completado la carrera
+            if (!carLapCounter.isRaceCompleted) // Solo si aún no terminó la carrera
             {
                 carLapCounter.isRaceCompleted = true;
-                carsFinishedRace++; // Incrementar cuando un coche completa la carrera
+                carsFinishedRace++; // Incrementar cuando un auto completa la carrera
 
-                // Finalizar el ranking para este coche
+                // Finalizar el ranking para este auto
                 int finalPosition = carList.IndexOf(carLapCounter) + 1;
 
                 if (!ranking.ContainsKey(finalPosition))
@@ -96,7 +93,7 @@ public class CarRankingManager : MonoBehaviour
                 }
                 else
                 {
-                    while (ranking.ContainsKey(finalPosition))
+                    while (ranking.ContainsKey(finalPosition)) //Si contiene el puesto que quiere usar, aumenta hasta que no haya nada y lo guarda ahí
                     {
                         finalPosition++;
                     }
@@ -108,7 +105,7 @@ public class CarRankingManager : MonoBehaviour
 
                 Debug.Log($"Carros terminados: {carsFinishedRace} / {carList.Count}");
 
-                // Si todos los coches han terminado, cambiar de escena
+                // Si todos los autos terminaron, cambiar de escena
                 if (carsFinishedRace == carList.Count)
                 {
                     SceneManager.LoadScene("LevelResume");
@@ -117,12 +114,13 @@ public class CarRankingManager : MonoBehaviour
         }
         else
         {
-            carList = carList.OrderByDescending(car => car.lapsCompleted)
-                             .ThenByDescending(car => car.PassedCheckPointNumber)
-                             .ThenBy(car => car.TimeAtLastCheckPointPassed)
-                             .ToList();
+            carList = carList.OrderByDescending(car => car.lapsCompleted) //Ordnena primero de mayor a menor en base a las vueltas
+                             .ThenByDescending(car => car.PassedCheckPointNumber) // Si son iguales lo hace en base a quien tiene mas checkpoints
+                             .ThenBy(car => car.TimeAtLastCheckPointPassed) //Si son iguales lo hace en base al tiempo en el que pasaron el checkpoint
+                             .ToList(); //Lo hace lista
 
             ranking.Clear();
+
             for (int i = 0; i < carList.Count; i++)
             {
                 ranking[i + 1] = carList[i].gameObject.name;
@@ -131,8 +129,9 @@ public class CarRankingManager : MonoBehaviour
             // Actualizar la UI con el ranking actual
             boardUIHandler.UpdateList(ranking.ToList());
 
-            // Actualizar posición individual del coche
+            // Actualizar posición individual del auto
             carPosition = carList.IndexOf(carLapCounter) + 1;
+
             carLapCounter.SetCarPosition(carPosition);
 
             if (carPosition == 1 && !lapCompletedTriggered)
@@ -142,7 +141,7 @@ public class CarRankingManager : MonoBehaviour
                 lapCompletedTriggered = true;
             }
 
-            // Restablecer el disparo para la próxima vuelta
+            // Restablecer el triggereo para la próxima vuelta
             if (carLapCounter.PassedCheckPointNumber == 0)
             {
                 lapCompletedTriggered = false;

@@ -90,7 +90,7 @@ public class LeadeBoardUIHandler : MonoBehaviour
             SetLeaderBoardInfo info = leaderboardInfoGO.GetComponent<SetLeaderBoardInfo>();
 
             info.SetDriverText(rank.Value);  // Nombre del coche
-            info.SetPosText(position);       // Posición secuencial
+            info.SetPosText(position);       // Posición 
             position++;
         }
     }
