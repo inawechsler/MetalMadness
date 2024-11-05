@@ -36,7 +36,7 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
 
         foreach(var button in upgradeButtons)
         {
-            button.onClick.AddListener(delegate { ManageButton((button.gameObject.name), button); });
+            button.onClick.AddListener(delegate { ManageButton((button.gameObject.name), button); }); //Por cada boton subscribe en el click a ManageButton pasando como parametros el nombre del boton y el Button como tal
         }
 
         boxCanvas = GameObject.FindWithTag("ShopCanvas");
@@ -50,49 +50,49 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
 
     public void OnBoxEntered(EntityType type, CarUpgrades carUpgrades)
     {
-        if (type == EntityType.Ai) return;
+        if (type == EntityType.Ai) return; //Si recibe enum AI se va
         boxCanvas.SetActive(true);
 
         hasExited = false;
 
         foreach(var upgrade in FindObjectsOfType<MonoBehaviour>().OfType<IUpgrade>().ToList())
         {
-            upgradeList.Add(upgrade);
+            upgradeList.Add(upgrade); //Por cada IUpgrade lo agrega a upgradeList
         }
 
         foreach (var upgrade in upgradeList)
         {
             if (upgradeDictionary.ContainsKey(upgrade.GetType().Name))
             {
-                continue;
+                continue; //Si tiene la Key, pasa al siguiente
             }
 
-            upgradeDictionary.Add(upgrade.GetType().Name, upgrade);
+            upgradeDictionary.Add(upgrade.GetType().Name, upgrade); //Agrega al diccionario el nombre del upgrade y el IUpgrade
 
         }
     }
-    void AssignUpgrade(IUpgrade upgrade)
+    void AssignUpgrade(IUpgrade upgrade) 
     {
         carUpgrades.AddUpgrade(upgrade);
         boardUIHandler.UpdateImage(upgrade, carUpgrades);
     }
 
-    void BoxExitDispatcher()
+    void BoxExitDispatcher()//En purchase llamo a este evento
     {
-        OnBoxExit(EntityType.Player, carUpgrades);
+        OnBoxExit(EntityType.Player, carUpgrades); //LLama a OnBoxExit
     }
 
-    public void OnBoxExit(EntityType type, CarUpgrades carUpgrades)
+    public void OnBoxExit(EntityType type, CarUpgrades carUpgrades)//Lógica de asignado de upgrade y Oculto el canvas
     {
         if (type == EntityType.Ai) return;
         if(hasExited) return;
  
         AssignUpgrade(currentUpgrade);
         boxCanvas.SetActive(false);
-        onClickedPurchased?.Invoke();
+        onClickedPurchased?.Invoke(); //Invoco el evento llamado en BoxShop
         hasExited = true;
     }
-    void ManageButton(string upgradeToApply, Button button)
+    void ManageButton(string upgradeToApply, Button button) //Se encarga de mostrar el objeto seleccionado y guardar el upgrade seleccionado, no lo aplica, solo lo guarda
     {
         if (upgradeDictionary.TryGetValue(upgradeToApply, out IUpgrade upgrade))
         {
