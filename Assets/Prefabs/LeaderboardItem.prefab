@@ -186,6 +186,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   posText: {fileID: 7278138545842669638}
   driverText: {fileID: 6928613785406149556}
+  spriteRenderer: {fileID: 0}
 --- !u!1 &8893215502924545204
 GameObject:
   m_ObjectHideFlags: 0

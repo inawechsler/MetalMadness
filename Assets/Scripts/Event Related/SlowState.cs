@@ -12,9 +12,6 @@ public class SlowState : MonoBehaviour, IState
         if (!controller.carUpgrades.HasUpgradeToCounteract(this))
         {
             controller.SetLastSpeedBefChange(controller.currentMaxSpeedCap);
-            
-            if (controller.gameObject.CompareTag("Player")) Debug.Log("Enter: " + controller.lastSpeedBefChange);
-
 
             controller.SetMaxSpeedCap(slowedAcceleration);
         }
@@ -26,7 +23,7 @@ public class SlowState : MonoBehaviour, IState
         if (!controller.carUpgrades.HasUpgradeToCounteract(this))
         {
             controller.isOnState = false;
-
+            controller.SetDriftFactor(controller.currentDriftFactor);
             controller.SetMaxSpeedCap(controller.lastSpeedBefChange);
         }
 

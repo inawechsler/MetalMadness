@@ -47,7 +47,6 @@ public class StateManager : MonoBehaviour
             slipperyState = GameObject.FindWithTag("States").GetComponent<SlippyState>();
             slowState = GameObject.FindWithTag("States").GetComponent<SlowState>();
             FindAvailableStates();
-            AssignRandomStates();
         }
     }
 
@@ -88,6 +87,7 @@ public class StateManager : MonoBehaviour
         {
             foreach (TopDownController car in topDownController)
             {
+                if(state != null)
                 state.UpdateState(car);
             }
         }

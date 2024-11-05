@@ -10,7 +10,8 @@ public class SetLeaderBoardInfo : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
+        //sprite.gameObject.SetActive(false);
     }
 
     public void SetDriverText(string text)
@@ -23,8 +24,5 @@ public class SetLeaderBoardInfo : MonoBehaviour
     {
         posText.text = pos.ToString();
     }
-
- 
-
 
 }

@@ -9,6 +9,10 @@ public class LeadeBoardUIHandler : MonoBehaviour
     public GameObject leaderboardItem;
     CarLapCounter[] carLapCountersArr;
     SetLeaderBoardInfo[] setLeaderBoardInfos;
+    [SerializeField] private Sprite Mud, Ice, Speed, Temp;
+
+    [SerializeField] private Image carImage;
+    [SerializeField] private Image boostImage;
     int carCount;
     // Start is called before the first frame update
     void Start()
@@ -18,6 +22,7 @@ public class LeadeBoardUIHandler : MonoBehaviour
         carLapCountersArr = CarRankingManager.Instance.carList.ToArray();
 
         carCount = carLapCountersArr.Length;
+
         setLeaderBoardInfos = new SetLeaderBoardInfo[carLapCountersArr.Length];
 
         for (int i = 0; i < carLapCountersArr.Length; i++)
@@ -29,6 +34,30 @@ public class LeadeBoardUIHandler : MonoBehaviour
             setLeaderBoardInfos[i].SetPosText(i + 1);
         }
     }
+    public void UpdateImage(IUpgrade upgrade, CarUpgrades controller)
+    {
+
+        switch (upgrade)
+        {
+            case SpeedBoost:
+                Temp = Speed;
+                Debug.Log("Speed");
+                break;
+            case WheelsChains:
+                Temp = Mud;
+                Debug.Log("Mud");
+                break;
+            case WheelsSpikes:
+                Temp = Ice;
+                Debug.Log("Ice");
+                break;
+
+        }
+
+        carImage.sprite = controller.gameObject.GetComponent<SpriteRenderer>().sprite;
+        boostImage.sprite = Temp;
+    }
+
     public void UpdateList(List<KeyValuePair<int, string>> rankingList)
     {
         // Limpia los elementos antiguos de la UI
