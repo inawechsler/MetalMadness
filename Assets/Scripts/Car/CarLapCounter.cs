@@ -84,7 +84,7 @@ public class CarLapCounter : MonoBehaviour
             {
                 return;
             }
-            Debug.Log(passedCheckPointNumber);
+  
 
             CheckPoints checkPoints = collision.GetComponent<CheckPoints>();
 
@@ -108,9 +108,6 @@ public class CarLapCounter : MonoBehaviour
                     {
                         CarRankingManager.Instance.SetLapsCompleted(1);
                         GameManager.Instance.text.text = "Laps: " + CarRankingManager.Instance.LapsCompleted.ToString() + "/" + CarRankingManager.Instance.LapsToComplete.ToString();
-                    } else
-                    {
-                        Debug.Log(gameObject.name);
                     }
 
 

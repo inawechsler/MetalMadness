@@ -6,6 +6,9 @@ using UnityEngine;
 public class SlowState : MonoBehaviour, IState
 {
     private float slowedAcceleration = 11f;
+
+    public Color color { get; set; } = new Color(91, 70, 65, 20);
+
     public void EnterState(TopDownController controller)
     {
 
@@ -23,7 +26,6 @@ public class SlowState : MonoBehaviour, IState
         if (!controller.carUpgrades.HasUpgradeToCounteract(this))
         {
             controller.isOnState = false;
-            controller.SetDriftFactor(controller.currentDriftFactor);
             controller.SetMaxSpeedCap(controller.lastSpeedBefChange);
         }
 

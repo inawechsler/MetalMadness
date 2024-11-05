@@ -4,14 +4,15 @@ public class SlippyState : MonoBehaviour, IState
 {
     public float slipperyDrift = 1f;
     private bool isOnState = false;
+
+    public Color color { get; set; } = new Color(113, 181, 236, 20);
+
     public void EnterState(TopDownController controller)
     {
 
         if (!controller.carUpgrades.HasUpgradeToCounteract(this))
         {
-
             controller.isOnState = true;
-            controller.SetLastSpeedBefChange(controller.currentMaxSpeedCap);
         }
     }
 
@@ -19,7 +20,6 @@ public class SlippyState : MonoBehaviour, IState
     {
         controller.isOnState = false;  // Desactivar el estado resbaladizo
         controller.SetDriftFactor(controller.currentDriftFactor);
-        controller.SetMaxSpeedCap(controller.lastSpeedBefChange);
         //StateManager.Instance.ChangeCurrentState(StateManager.Instance.normalState);  // Cambiar al estado normal
     }
 
