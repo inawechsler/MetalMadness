@@ -17,8 +17,7 @@ public class StateManager : MonoBehaviour
 
     [SerializeField] private List<GameObject> surfaces; // Las superficies
     [SerializeField] private List<IState> availableStates; // La lista de estados disponibles
-    [SerializeField] TextMeshProUGUI[] ZoneText;
-    [SerializeField] TextMeshProUGUI[] StateText;
+
     private bool lapChangeCooldown = false;
 
     [SerializeField] private int lapsToTriggerChange = 1;
@@ -73,11 +72,6 @@ public class StateManager : MonoBehaviour
             var stateColl = surface.GetComponent<StateCollider>();
 
             stateColl.SetCurrentState(randomState);
-
-            int index = surfaces.IndexOf(surface);
-
-            StateText[index].text = $"{randomState.GetType().Name}";
-            ZoneText[index].text = $"{randomState.GetType().Name}";
 
         }
     }

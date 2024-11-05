@@ -8,7 +8,11 @@ public class StateCollider : MonoBehaviour
 {
     int counter;
     IState state;
+
+    [SerializeField] TextMeshProUGUI ZoneText;
+    [SerializeField] TextMeshProUGUI StateText;
     public List<TopDownController> upgrades { get; private set; } = new List<TopDownController>();
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.GetComponent<TopDownController>() != null)
@@ -45,8 +49,33 @@ public class StateCollider : MonoBehaviour
 
     public void SetCurrentState(IState newState)
     {
-        if (newState == null) Debug.Log("ASA");
+        if (upgrades.Count != 0)
+        {
+            Debug.Log("Esperando hasta que no haya autos en la zona...");
+            StartCoroutine(WaitAndSetState(newState));
+        }
+        else
+        {
+            if (newState == null) Debug.Log("Estado inválido");
+            state = newState;
+            ZoneText.text = state.GetType().Name;
+            StateText.text = state.GetType().Name;
+        }
+    }
+
+    private IEnumerator WaitAndSetState(IState newState)
+    {
+        // Espera hasta que la lista `upgrades` esté vacía
+        while (upgrades.Count != 0)
+        {
+            yield return null; // Espera hasta el siguiente frame
+        }
+
+        // Cuando no haya autos en la zona, cambia el estado
         state = newState;
+        Debug.Log("Estado cambiado exitosamente.");
+        ZoneText.text = state.GetType().Name;
+        StateText.text = state.GetType().Name;
     }
 }
 
