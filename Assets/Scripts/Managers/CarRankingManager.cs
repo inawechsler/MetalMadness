@@ -26,6 +26,8 @@ public class CarRankingManager : MonoBehaviour
     public List<KeyValuePair<int, string>> tempRanking { get; private set; } = new List<KeyValuePair<int, string>>();
     public int LapsToComplete => lapsToComplete;
 
+    private bool lapCompletedTriggered = false;
+
     private LeadeBoardUIHandler boardUIHandler;
    
 
@@ -132,6 +134,19 @@ public class CarRankingManager : MonoBehaviour
             // Actualizar posición individual del coche
             carPosition = carList.IndexOf(carLapCounter) + 1;
             carLapCounter.SetCarPosition(carPosition);
+
+            if (carPosition == 1 && !lapCompletedTriggered)
+            {
+                if(lapsCompleted > 0) StateManager.Instance.OnLapCompleted();
+
+                lapCompletedTriggered = true;
+            }
+
+            // Restablecer el disparo para la próxima vuelta
+            if (carLapCounter.PassedCheckPointNumber == 0)
+            {
+                lapCompletedTriggered = false;
+            }
 
         }
     }
