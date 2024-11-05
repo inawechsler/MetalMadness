@@ -57,14 +57,6 @@ public class StateManager : MonoBehaviour
         // Encuentra todos los objetos que implementen la interfaz IState
         availableStates = FindObjectsOfType<MonoBehaviour>().OfType<IState>().ToList();
 
-        foreach (var state in availableStates)
-        {
-            if (availableStates.Contains(state))
-            {
-                availableStates.Remove(state);
-            }
-        }
-
         if (availableStates.Count == 0)
         {
             Debug.LogWarning("No se encontraron estados disponibles.");
@@ -76,19 +68,18 @@ public class StateManager : MonoBehaviour
         foreach (GameObject surface in surfaces)
         {
             int randomStateIndex = Random.Range(0, availableStates.Count);
-  
+
             IState randomState = availableStates[randomStateIndex];
 
             Debug.Log(surface.name + "Has" + randomStateIndex + ": " + randomState.GetType().Name);
             ChangeCurrentState(randomState);
             ShowAvailableStates();
 
+            int index = surfaces.IndexOf(surface);
 
-            for (int i = 0; i < ZoneText.Length; i++)
-            {
-                StateText[i].text = $"{randomState.GetType().Name}";
-                ZoneText[i].text = $"{randomState.GetType().Name}";
-            }
+            StateText[index].text = $"{randomState.GetType().Name}";
+            ZoneText[index].text = $"{randomState.GetType().Name}";
+
         }
     }
 
