@@ -8,7 +8,8 @@ using System.Linq;
 public class BoxCanvasManager : MonoBehaviour, IBoxObserver
 {
     private GameObject boxCanvas;
-    [SerializeField] Button purchaseButton, antiSlipperyState, antiSlowState;
+    [SerializeField] Button purchaseButton;
+    [SerializeField] List<Button> upgradeButtons;
    
     private List<IUpgrade> upgradeList = new List<IUpgrade>();
 
@@ -25,15 +26,16 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
 
     private void Awake()
     {
-        purchaseButton.onClick.AddListener(OnBoxExit);
+        purchaseButton.onClick.AddListener(BoxExitDispatcher);
 
         carUpgrades = GameObject.FindWithTag("Player").GetComponent<CarUpgrades>();
 
         selectedImage = GameObject.FindWithTag("SelectedImage").GetComponent<Image>();
 
-        antiSlipperyState.onClick.AddListener( delegate { ManageButton("WheelsSpikes", antiSlipperyState);} );
-
-        antiSlowState.onClick.AddListener( delegate { ManageButton("WheelsChains", antiSlowState);} );
+        foreach(var button in upgradeButtons)
+        {
+            button.onClick.AddListener(delegate { ManageButton((button.gameObject.name), button); });
+        }
 
         boxCanvas = GameObject.FindWithTag("ShopCanvas");
 
@@ -42,18 +44,27 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
         selectedImage.gameObject.SetActive(false);
     }
 
-    public void OnBoxEntered()
+    public void OnBoxEntered(EntityType type, CarUpgrades carUpgrades)
     {
+        if (type == EntityType.Ai) return;
         boxCanvas.SetActive(true);
 
         hasExited = false;
 
-        upgradeList = FindObjectsOfType<MonoBehaviour>().OfType<IUpgrade>().ToList();
+        foreach(var upgrade in FindObjectsOfType<MonoBehaviour>().OfType<IUpgrade>().ToList())
+        {
+            upgradeList.Add(upgrade);
+        }
 
         foreach (var upgrade in upgradeList)
         {
-            GetType().Name.ToString();
+            if (upgradeDictionary.ContainsKey(upgrade.GetType().Name))
+            {
+                continue;
+            }
+
             upgradeDictionary.Add(upgrade.GetType().Name, upgrade);
+
         }
     }
     void AssignUpgrade(IUpgrade upgrade)
@@ -61,8 +72,14 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
         carUpgrades.AddUpgrade(upgrade);
     }
 
-    public void OnBoxExit()
+    void BoxExitDispatcher()
     {
+        OnBoxExit(EntityType.Player, carUpgrades);
+    }
+
+    public void OnBoxExit(EntityType type, CarUpgrades carUpgrades)
+    {
+        if (type == EntityType.Ai) return;
         if(hasExited) return;
 
         Debug.Log(currentUpgrade.GetType().Name);   

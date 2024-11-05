@@ -13,19 +13,13 @@ public class Car : MonoBehaviour
 {
 
 
-    public bool onTrack, offTrack, canFinish;
-    float elapsedCollisionTime;
-    private Rigidbody2D rb;
-    float maxSpeedonTrack = 35f;
-    float maxSpeedoffTrack = 10f;
+    public bool onTrack;
     public float raycastDistance = 1f;
     private CarUpgrades upgrades;
     // Start is called before the first frame update
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
-        upgrades = GetComponent<CarUpgrades>();
     }
     void Start()
     {
@@ -35,17 +29,7 @@ public class Car : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-
-
-        offTrack = !onTrack;
- 
         CheckWhereIsRunning();
-        ManageLapTime();
-
-
-
-
     }
 
 
@@ -74,61 +58,4 @@ public class Car : MonoBehaviour
             }
         }
     }
-
-    void ManageLapTime()
-    {
-        if (elapsedCollisionTime > 8f)
-        {
-            canFinish = false;
-        }
-        else
-        {
-            elapsedCollisionTime += Time.deltaTime;
-        }
-    }
-
-
-    //public float GetSpeed()
-    //{
-    //    return speed;
-    //}
-    //void ManageSpeed()
-    //{
-    //    if (onTrack)
-    //    {
-    //        if (speed < maxSpeedonTrack)
-    //        {
-    //            speed += .5f;
-    //        }
-
-    //    }
-    //    else
-    //    {
-    //        if (speed >= maxSpeedoffTrack)
-    //        {
-    //            speed -= .5f;
-    //            //rb.velocity = -direction * speed;
-    //        } else
-    //        {
-    //            speed += .5f;
-    //        }
-    //    }
-
-    //    rb.velocity = -direction * speed;
-    //}
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.gameObject.CompareTag("FinishLine"))
-        {
-            onTrack = true;
-            if (!canFinish)
-            {
-                canFinish = true;
-                //GameManager.Instance.SetLaps(1);
-                elapsedCollisionTime = 0f;
-            }
-        }
-    }
-    
 }

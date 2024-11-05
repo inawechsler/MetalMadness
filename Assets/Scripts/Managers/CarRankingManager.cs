@@ -1,5 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using TMPro;
@@ -16,13 +16,14 @@ public class CarRankingManager : MonoBehaviour
     public Dictionary<int, string> ranking = new Dictionary<int, string>();
 
     private int lapsCompleted;
-
+    string text;
     public int LapsCompleted => lapsCompleted;
 
     private int lapsToComplete = 3;
 
     private int carsFinishedRace = 0;
 
+    public List<KeyValuePair<int, string>> tempRanking { get; private set; } = new List<KeyValuePair<int, string>>();
     public int LapsToComplete => lapsToComplete;
 
     private LeadeBoardUIHandler boardUIHandler;
@@ -57,7 +58,7 @@ public class CarRankingManager : MonoBehaviour
 
             foreach (CarLapCounter lapCounter in carList)
             {
-                lapCounter.OnCheckPointPassed += OnPassCheckPoint;
+                lapCounter.OnCheckPointPassed.AddListener(OnPassCheckPoint);
             }
         }
     }
@@ -108,24 +109,30 @@ public class CarRankingManager : MonoBehaviour
                 // Si todos los coches han terminado, cambiar de escena
                 if (carsFinishedRace == carList.Count)
                 {
-                    UnityEngine.SceneManagement.SceneManager.LoadScene("LevelResume");
+                    SceneManager.LoadScene("LevelResume");
                 }
             }
         }
         else
         {
-            // Mientras la carrera sigue en progreso, ordenar y mostrar posiciones actuales
-            carList = carList.OrderByDescending(index => index.lapsCompleted)
-                             .ThenByDescending(index => index.PassedCheckPointNumber)
-                             .ThenBy(index => index.TimeAtLastCheckPointPassed)
+            carList = carList.OrderByDescending(car => car.lapsCompleted)
+                             .ThenByDescending(car => car.PassedCheckPointNumber)
+                             .ThenBy(car => car.TimeAtLastCheckPointPassed)
                              .ToList();
 
-            carPosition = carList.IndexOf(carLapCounter) + 1;
+            ranking.Clear();
+            for (int i = 0; i < carList.Count; i++)
+            {
+                ranking[i + 1] = carList[i].gameObject.name;
+            }
 
+            // Actualizar la UI con el ranking actual
+            boardUIHandler.UpdateList(ranking.ToList());
+
+            // Actualizar posición individual del coche
+            carPosition = carList.IndexOf(carLapCounter) + 1;
             carLapCounter.SetCarPosition(carPosition);
 
-            // Actualizar el ranking dinámico mientras la carrera está en progreso
-            boardUIHandler.UpdateList(carList.Select(car => new KeyValuePair<int, string>(carList.IndexOf(car) + 1, car.gameObject.name)).ToList());
         }
     }
 }

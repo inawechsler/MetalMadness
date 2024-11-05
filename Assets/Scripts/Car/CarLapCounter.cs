@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using Unity.VisualScripting;
+using UnityEngine.Events;
 
 public class CarLapCounter : MonoBehaviour
 {
@@ -37,7 +38,7 @@ public class CarLapCounter : MonoBehaviour
         return this.carPosition = carPosition;
     }
 
-    public event Action<CarLapCounter> OnCheckPointPassed;
+    public UnityEvent<CarLapCounter> OnCheckPointPassed;
 
 
     private IEnumerator ShowPosition(float timeToVanish)
@@ -83,6 +84,7 @@ public class CarLapCounter : MonoBehaviour
             {
                 return;
             }
+            Debug.Log(passedCheckPointNumber);
 
             CheckPoints checkPoints = collision.GetComponent<CheckPoints>();
 
@@ -90,10 +92,10 @@ public class CarLapCounter : MonoBehaviour
             {
                 passedCheckPointNumber = checkPoints.checkPointNumber;
 
+                
                 numberOfPassedCheckpoints++;
 
                 timeAtLastCheckPointPassed = Time.time;
-
 
 
                 if (checkPoints.isFinishLine)
@@ -102,12 +104,13 @@ public class CarLapCounter : MonoBehaviour
                     passedCheckPointNumber = 0;
                     StateManager.Instance.OnLapCompleted();
 
-                    TopDownController controller = FindAnyObjectByType<TopDownController>();
-
                     if (gameObject.CompareTag("Player"))
                     {
                         CarRankingManager.Instance.SetLapsCompleted(1);
                         GameManager.Instance.text.text = "Laps: " + CarRankingManager.Instance.LapsCompleted.ToString() + "/" + CarRankingManager.Instance.LapsToComplete.ToString();
+                    } else
+                    {
+                        Debug.Log(gameObject.name);
                     }
 
 
