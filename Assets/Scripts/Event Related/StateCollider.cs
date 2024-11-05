@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-
 public class StateCollider : MonoBehaviour
 {
     int counter;
-    
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.GetComponent<TopDownController>() != null)
@@ -29,3 +28,6 @@ public class StateCollider : MonoBehaviour
         }
     }
 }
+
+
+

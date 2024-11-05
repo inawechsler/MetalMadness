@@ -12,7 +12,9 @@ public class LeadeBoardUIHandler : MonoBehaviour
     [SerializeField] private Sprite Mud, Ice, Speed, Temp;
 
     [SerializeField] private Image carImage;
-    [SerializeField] private Image boostImage;
+    [SerializeField] private Image AIboostImage;
+    [SerializeField] private Image PJUpgradeImage;
+    [SerializeField] private Image PJBoostImage;
     int carCount;
     // Start is called before the first frame update
     void Start()
@@ -36,26 +38,37 @@ public class LeadeBoardUIHandler : MonoBehaviour
     }
     public void UpdateImage(IUpgrade upgrade, CarUpgrades controller)
     {
-
         switch (upgrade)
         {
             case SpeedBoost:
                 Temp = Speed;
-                Debug.Log("Speed");
                 break;
             case WheelsChains:
                 Temp = Mud;
-                Debug.Log("Mud");
                 break;
             case WheelsSpikes:
                 Temp = Ice;
-                Debug.Log("Ice");
                 break;
 
         }
+        
 
-        carImage.sprite = controller.gameObject.GetComponent<SpriteRenderer>().sprite;
-        boostImage.sprite = Temp;
+        if (controller.CompareTag("AI"))
+        {
+            carImage.sprite = controller.gameObject.GetComponent<SpriteRenderer>().sprite;
+            AIboostImage.sprite = Temp;
+        } else
+        {
+            if(Temp == Speed)
+            {
+                PJBoostImage.sprite = Temp;
+            }else
+            {
+                PJUpgradeImage.sprite = Temp;
+            }
+
+        }
+
     }
 
     public void UpdateList(List<KeyValuePair<int, string>> rankingList)

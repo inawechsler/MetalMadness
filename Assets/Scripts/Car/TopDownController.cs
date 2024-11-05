@@ -168,7 +168,10 @@ public class TopDownController : MonoBehaviour
     {
         if(driftFactor <= .85f)
         {
+            
             currentDriftFactor = driftFactor;
+            if (currentDriftFactor == 0) currentDriftFactor = .85f;
+            Debug.Log(currentDriftFactor);
         }
 
        return driftFactor = newDrift;

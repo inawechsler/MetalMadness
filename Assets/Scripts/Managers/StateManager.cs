@@ -18,8 +18,10 @@ public class StateManager : MonoBehaviour
 
     [SerializeField] private List<GameObject> surfaces; // Las superficies
     [SerializeField] private List<IState> availableStates; // La lista de estados disponibles
-
     [SerializeField] TextMeshProUGUI[] ZoneText;
+    [SerializeField] TextMeshProUGUI[] StateText;
+
+    private bool lapChangeCooldown = false;
 
     [SerializeField] private int lapsToTriggerChange = 1;
     private int currentLap = 0;
@@ -63,24 +65,33 @@ public class StateManager : MonoBehaviour
 
     private void AssignRandomStates()
     {
-        // Recorre todas las superficies y asigna un estado aleatorio de la lista de estados disponibles
         foreach (GameObject surface in surfaces)
         {
             int randomStateIndex = Random.Range(0, availableStates.Count);
+
             IState randomState = availableStates[randomStateIndex];
 
+            Debug.Log(surface.name + "Has" + randomStateIndex + ": " + randomState.GetType().Name);
             ChangeCurrentState(randomState);
+            ShowAvailableStates();
 
-            for (int i = 0; i < ZoneText.Length; i++)
-            {
-                ZoneText[i].text = $"{randomState.GetType().Name}";
-            }
+            int index = surfaces.IndexOf(surface);
 
-            //Debug.Log($"Superficie {surface.name} ahora tiene el estado: {randomState.GetType().Name}");
+            StateText[index].text = $"{randomState.GetType().Name}";
+            ZoneText[index].text = $"{randomState.GetType().Name}";
+
         }
     }
 
-    // Update is called once per frame
+
+    private void ShowAvailableStates()
+    {
+        Debug.Log("Estados disponibles:");
+        for (int i = 0; i < availableStates.Count; i++)
+        {
+            Debug.Log($"{i}: {availableStates[i].GetType().Name}");
+        }
+    }
     void Update()
     {
         if (SceneNameManager.Instance.IsRaceScene(SceneManager.GetActiveScene()))
@@ -107,8 +118,22 @@ public class StateManager : MonoBehaviour
     public void OnLapCompleted()
     {
         currentLap++;
-        AssignRandomStates();
+        if (!lapChangeCooldown)
+        {
+            AssignRandomStates();
+        }
+        StartCoroutine(manageBoolState());
+
         // Cada 3 vueltas
 
+    }
+
+    IEnumerator manageBoolState()
+    {
+        lapChangeCooldown = true;
+
+        yield return new WaitForSeconds(2f);
+
+        lapChangeCooldown = false;
     }
 }

@@ -43,7 +43,6 @@ public class AIBoxManager : MonoBehaviour, IBoxObserver
         int randomUpgradeIndex = Random.Range(0, upgradeList.Count); // Cambié el rango para incluir el último índice
         IUpgrade upgrade = upgradeList[randomUpgradeIndex];
 
-        Debug.Log($"Auto {carUpgrades.gameObject.name} ahora tiene el upgrade: {upgrade.GetType().Name}");
         return upgrade;
     }
 

@@ -24,6 +24,8 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
 
     CarUpgrades carUpgrades;
 
+    LeadeBoardUIHandler boardUIHandler;
+
     private void Awake()
     {
         purchaseButton.onClick.AddListener(BoxExitDispatcher);
@@ -40,6 +42,8 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
         boxCanvas = GameObject.FindWithTag("ShopCanvas");
 
         boxCanvas.SetActive(false);
+
+        boardUIHandler = FindAnyObjectByType<LeadeBoardUIHandler>();
 
         selectedImage.gameObject.SetActive(false);
     }
@@ -70,6 +74,7 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
     void AssignUpgrade(IUpgrade upgrade)
     {
         carUpgrades.AddUpgrade(upgrade);
+        boardUIHandler.UpdateImage(upgrade, carUpgrades);
     }
 
     void BoxExitDispatcher()
@@ -81,8 +86,7 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
     {
         if (type == EntityType.Ai) return;
         if(hasExited) return;
-
-        Debug.Log(currentUpgrade.GetType().Name);   
+ 
         AssignUpgrade(currentUpgrade);
         boxCanvas.SetActive(false);
         onClickedPurchased?.Invoke();
