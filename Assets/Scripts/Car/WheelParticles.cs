@@ -20,9 +20,14 @@ public class WheelSkidMarks : MonoBehaviour
         trRenderer = GetComponent<TrailRenderer>();
 
         particleSystemSmoke = GetComponent<ParticleSystem>();
-        
-        emissionModule = particleSystemSmoke.emission;
-        emissionModule.rateOverDistance = 0;
+
+        if(particleSystemSmoke != null)
+        {
+
+            emissionModule = particleSystemSmoke.emission;
+            emissionModule.rateOverDistance = 0;
+
+        }
 
 
         if (trRenderer != null)
