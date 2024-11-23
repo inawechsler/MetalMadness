@@ -46,6 +46,8 @@ public class WheelSkidMarks : MonoBehaviour
             emissionModule.rateOverTime = particleEmissionRate;
         }
 
+        if (trRenderer  == null) { return; }
+
         if (controller.isTireScreeching(out float lateralVelocity, out bool isBraking)) //Out para evitar pasar referencia, uso puntero, toma los valores de este script
         {
             particleEmissionRate = isBraking ? 30 : Mathf.Abs(lateralVelocity) * 2; // Si estoy frenando es 30, si no, la emisión es proporcional a la velocidad lateral

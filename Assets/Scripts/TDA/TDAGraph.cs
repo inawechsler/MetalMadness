@@ -9,36 +9,53 @@ public class TDAGraph : MonoBehaviour
     private Dictionary<Vector3Int, Dictionary<Vector3Int, int>> graph;
     private Tilemap tilemap;
 
+
+    void DrawCircle(Vector3 center, float radius, int segments)
+    {
+        float angleStep = 360f / segments;
+        Vector3 previousPoint = center + new Vector3(radius, 0, 0);
+
+        for (int i = 1; i <= segments; i++)
+        {
+            float angle = i * angleStep;
+            Vector3 newPoint = center + new Vector3(radius * Mathf.Cos(Mathf.Deg2Rad * angle), radius * Mathf.Sin(Mathf.Deg2Rad * angle), 0);
+
+            Debug.DrawLine(previousPoint, newPoint, Color.red);
+            previousPoint = newPoint;
+        }
+    }
     public void InitGraph(Tilemap tilemap)
     {
         this.tilemap = tilemap;
-
         graph = new Dictionary<Vector3Int, Dictionary<Vector3Int, int>>();
 
-        foreach(Vector3Int pos in tilemap.cellBounds.allPositionsWithin)
+        float tileSize = tilemap.cellSize.x; // Asume que los tiles son cuadrados
+
+        foreach (Vector3Int pos in tilemap.cellBounds.allPositionsWithin)
         {
             if (!tilemap.HasTile(pos)) continue;
-            
+
+            // Dibuja un círculo en la posición del tile
+            Vector3 worldPosition = tilemap.CellToWorld(pos);
+            DrawCircle(worldPosition, tileSize / 2, 20);  // Ajusta el número de segmentos para suavizar el círculo
+
             AddVertex(pos);
 
             Vector3Int[] neighbours = {
-                    pos + Vector3Int.up,
-                    pos + Vector3Int.down,
-                    pos + Vector3Int.left,
+                pos + Vector3Int.up,
+                pos + Vector3Int.down,
+                pos + Vector3Int.left,
                 pos + Vector3Int.right
-                };
+        };
 
-            foreach(var neighbour in neighbours)
+            foreach (var neighbour in neighbours)
             {
                 if (tilemap.HasTile(neighbour))
                 {
                     AddEdge(pos, neighbour, 1);
                 }
-
             }
-
         }
-
     }
 
 
