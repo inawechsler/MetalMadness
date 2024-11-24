@@ -45,6 +45,11 @@ public class TDAGraph : MonoBehaviour
 
     }
 
+    //public int GetTileWeight(Vector3Int neighbours)
+    //{
+    //    Vector3Int
+    //}
+
 
     private void AddVertex(Vector3Int tileToAdd)
     {

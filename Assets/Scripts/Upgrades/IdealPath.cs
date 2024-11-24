@@ -26,11 +26,19 @@ public class IdealPath : MonoBehaviour, IUpgrade
 
         var chec = checkPoints.First(s => s.checkPointNumber == 1);
 
-        Vector3Int startPoint = Vector3Int.RoundToInt(FindClosestNode(Vector3Int.RoundToInt(chec.transform.position),
-                  Dijkstra.GetNodes()));
+        Vector3Int startPoint = new Vector3Int(-19, 27, 0);
 
-        Vector3Int targetPoint = FindClosestNode(Vector3Int.RoundToInt(GetFinishCheckPoint().transform.position),
-          Dijkstra.GetNodes()); // Assuming this method returns the list of nodes
+
+        //FindClosestNode(Vector3Int.RoundToInt(chec.transform.position), //Encuentro el punto del checkpoint de inicio y abajo con el target
+        //          Dijkstra.GetNodes());
+
+        Vector3Int targetPoint = new Vector3Int(-12, 29, 0);
+
+
+          //FindClosestNode(Vector3Int.RoundToInt(GetFinishCheckPoint().transform.position),
+          //Dijkstra.GetNodes()); // Assuming this method returns the list of nodes
+
+        DrawPath(startPoint, targetPoint);
 
         Debug.DrawLine(tilemap.CellToWorld(startPoint), tilemap.CellToWorld(startPoint) + Vector3.up * 0.5f, Color.red, 5f);
         Debug.DrawLine(tilemap.CellToWorld(targetPoint), tilemap.CellToWorld(targetPoint) + Vector3.up * 0.5f, Color.green, 5f);
@@ -39,7 +47,7 @@ public class IdealPath : MonoBehaviour, IUpgrade
         Debug.Log($"Inicio: {startPoint}, Destino: {targetPoint}");
         Debug.Log($"{chec.gameObject.name}");
 
-        DrawPath(startPoint, targetPoint);
+
 
 
       
@@ -79,21 +87,7 @@ public class IdealPath : MonoBehaviour, IUpgrade
 
     public void ApplyUpgrade(TopDownController controller)
     {
-        Vector3Int inicio = new Vector3Int(0, 0, 0);
-        Vector3Int destino = FindClosestNode(
-    Vector3Int.RoundToInt(GetFinishCheckPoint().transform.position),
-    Dijkstra.GetNodes() // Assuming this method returns the list of nodes
-);
-
-        List<Vector3Int> ruta = Dijkstra.Dijkstra(inicio, destino);
-
-        LineRenderer lineRenderer = GetComponent<LineRenderer>();
-        lineRenderer.positionCount = ruta.Count;
-
-        for (int i = 0; i < ruta.Count; i++)
-        {
-            lineRenderer.SetPosition(i, tilemap.CellToWorld(ruta[i]));
-        }
+        
     }
 
     public bool CounteractState(IState state)
