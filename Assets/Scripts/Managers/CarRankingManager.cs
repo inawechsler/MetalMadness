@@ -114,10 +114,19 @@ public class CarRankingManager : MonoBehaviour
         }
         else
         {
+<<<<<<< Updated upstream
             carList = carList.OrderByDescending(car => car.lapsCompleted) //Ordnena primero de mayor a menor en base a las vueltas
                              .ThenByDescending(car => car.PassedCheckPointNumber) // Si son iguales lo hace en base a quien tiene mas checkpoints
                              .ThenBy(car => car.TimeAtLastCheckPointPassed) //Si son iguales lo hace en base al tiempo en el que pasaron el checkpoint
                              .ToList(); //Lo hace lista
+=======
+            QuickSort(carList, 0, carList.Count - 1);
+
+            //carList = carList.OrderByDescending(car => car.lapsCompleted) //Ordnena primero de mayor a menor en base a las vueltas
+            //                 .ThenByDescending(car => car.PassedCheckPointNumber) // Si son iguales lo hace en base a quien tiene mas checkpoints
+            //                 .ThenBy(car => car.TimeAtLastCheckPointPassed) //Si son iguales lo hace en base al tiempo en el que pasaron el checkpoint
+            //                 .ToList(); //Lo hace lista 
+>>>>>>> Stashed changes
 
             ranking.Clear();
 
