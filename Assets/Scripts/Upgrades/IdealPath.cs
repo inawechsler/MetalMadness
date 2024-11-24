@@ -14,6 +14,8 @@ public class IdealPath : MonoBehaviour, IUpgrade
 
     public Tilemap tilemap;
 
+    private Dictionary<Vector3Int, TileCollider> tileCollidersLocal;
+
     public void Start()
     {
         Dijkstra = GameObject.FindWithTag("Managers").GetComponent<TDAGraph>();
@@ -22,30 +24,32 @@ public class IdealPath : MonoBehaviour, IUpgrade
 
         Dijkstra.InitGraph(tilemap);
 
+        tileCollidersLocal = Dijkstra.tileColliders;
+
         checkPoints = FindObjectsOfType<CheckPoints>().ToList();
 
         var chec = checkPoints.First(s => s.checkPointNumber == 1);
 
-        Vector3Int startPoint = new Vector3Int(-19, 27, 0);
+        //Vector3Int startPoint = new Vector3Int(-19, 27, 0);
 
 
-        //FindClosestNode(Vector3Int.RoundToInt(chec.transform.position), //Encuentro el punto del checkpoint de inicio y abajo con el target
-        //          Dijkstra.GetNodes());
+        ////FindClosestNode(Vector3Int.RoundToInt(chec.transform.position), //Encuentro el punto del checkpoint de inicio y abajo con el target
+        ////          Dijkstra.GetNodes());
 
-        Vector3Int targetPoint = new Vector3Int(-12, 29, 0);
-
-
-          //FindClosestNode(Vector3Int.RoundToInt(GetFinishCheckPoint().transform.position),
-          //Dijkstra.GetNodes()); // Assuming this method returns the list of nodes
-
-        DrawPath(startPoint, targetPoint);
-
-        Debug.DrawLine(tilemap.CellToWorld(startPoint), tilemap.CellToWorld(startPoint) + Vector3.up * 0.5f, Color.red, 5f);
-        Debug.DrawLine(tilemap.CellToWorld(targetPoint), tilemap.CellToWorld(targetPoint) + Vector3.up * 0.5f, Color.green, 5f);
+        //Vector3Int targetPoint = new Vector3Int(-12, 29, 0);
 
 
-        Debug.Log($"Inicio: {startPoint}, Destino: {targetPoint}");
-        Debug.Log($"{chec.gameObject.name}");
+        //  //FindClosestNode(Vector3Int.RoundToInt(GetFinishCheckPoint().transform.position),
+        //  //Dijkstra.GetNodes()); // Assuming this method returns the list of nodes
+
+        //DrawPath(startPoint, targetPoint);
+
+        ////Debug.DrawLine(tilemap.CellToWorld(startPoint), tilemap.CellToWorld(startPoint) + Vector3.up * 0.5f, Color.red, 5f);
+        ////Debug.DrawLine(tilemap.CellToWorld(targetPoint), tilemap.CellToWorld(targetPoint) + Vector3.up * 0.5f, Color.green, 5f);
+
+
+        //Debug.Log($"Inicio: {startPoint}, Destino: {targetPoint}");
+        //Debug.Log($"{chec.gameObject.name}");
 
 
 
@@ -56,7 +60,7 @@ public class IdealPath : MonoBehaviour, IUpgrade
     void DrawPath(Vector3Int start, Vector3Int target)
     {
         // Calcular el camino usando Dijkstra
-        List<Vector3Int> path = Dijkstra.Dijkstra(start, target);
+        List<TileCollider> path = Dijkstra.Dijkstra(tileCollidersLocal[start], tileCollidersLocal[target]);
 
         // Dibujar el camino con LineRenderer
         if (path.Count > 0)
@@ -66,7 +70,8 @@ public class IdealPath : MonoBehaviour, IUpgrade
 
             for (int i = 0; i < path.Count; i++)
             {
-                lineRenderer.SetPosition(i, tilemap.CellToWorld(path[i]));
+                TileCollider tempTile = path[i];
+                lineRenderer.SetPosition(i, tilemap.CellToWorld(tempTile.GetPosition()));
             }
         }
         else
@@ -74,14 +79,14 @@ public class IdealPath : MonoBehaviour, IUpgrade
             Debug.LogError("No se encontró un camino entre los puntos seleccionados.");
         }
 
-        foreach (Vector3Int node in Dijkstra.GetNodes())
+        foreach (TileCollider node in Dijkstra.GetNodes())
         {
-            if (node == FindClosestNode(target, Dijkstra.GetNodes())
+            if (node == tileCollidersLocal[target]
                 ||
-                node == FindClosestNode(start, Dijkstra.GetNodes())) continue;
+                node == tileCollidersLocal[start]) continue;
 
 
-            Debug.DrawLine(tilemap.CellToWorld(node), tilemap.CellToWorld(node) + Vector3.up * 0.5f, Color.white, int.MaxValue);
+            Debug.DrawLine(tilemap.CellToWorld(node.GetPosition()), tilemap.CellToWorld(node.GetPosition()) + Vector3.up * 0.5f, Color.white, int.MaxValue);
         }
     }
 

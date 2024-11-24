@@ -7,101 +7,111 @@ using UnityEngine.Tilemaps;
 
 public class TDAGraph : MonoBehaviour
 {
-    private Dictionary<Vector3Int, Dictionary<Vector3Int, int>> graph;
+    private Dictionary<TileCollider, Dictionary<TileCollider, int>> graph;
     private Tilemap tilemap;
 
 
-    
+    public Dictionary<Vector3Int, TileCollider> tileColliders { get; private set; }
+
+
+    [SerializeField] TileCollider tileColliderPrefab;
+
+
     public void InitGraph(Tilemap tilemap)
     {
-        this.tilemap = tilemap;
+        graph = new();
+        tileColliders = new();
 
-        graph = new Dictionary<Vector3Int, Dictionary<Vector3Int, int>>();
-
-        foreach(Vector3Int pos in tilemap.cellBounds.allPositionsWithin)
+        foreach (Vector3Int pos in tilemap.cellBounds.allPositionsWithin)
         {
-            Debug.DrawLine(pos, pos, Color.red);
-            if (!tilemap.HasTile(pos)) continue;
-            
-            AddVertex(pos);
+            // Instancia un nuevo TileCollider en la posición correspondiente
+            TileCollider tileColliderInstance = Instantiate(tileColliderPrefab, tilemap.CellToWorld(pos), Quaternion.identity);
+
+            tileColliders.Add(pos, tileColliderInstance);
 
             Vector3Int[] neighbours = {
-                    pos + Vector3Int.up,
-                    pos + Vector3Int.down,
-                    pos + Vector3Int.left,
+                pos + Vector3Int.up,
+                pos + Vector3Int.down,
+                pos + Vector3Int.left,
                 pos + Vector3Int.right
-                };
+            };
 
-            foreach(var neighbour in neighbours)
+            foreach (var neighbour in neighbours)
             {
                 if (tilemap.HasTile(neighbour))
                 {
-                    AddEdge(pos, neighbour, 1);
+                    TileCollider neighbourCollider = Instantiate(tileColliderPrefab, tilemap.CellToWorld(neighbour), Quaternion.identity);
+                    Debug.Log("JA2");
+                    tileColliders.Add(neighbour, tileColliderInstance);
+                    if (!graph.ContainsKey(tileColliders[neighbour]))
+                    {
+                        Debug.Log("skd");
+                        AddEdge(tileColliderInstance, neighbourCollider, 1);
+                    }
                 }
-
             }
 
         }
 
     }
 
-    //public int GetTileWeight(Vector3Int neighbours)
-    //{
-    //    Vector3Int
-    //}
+    public int GetTileWeight(Vector3Int neighbours)
+    {
+        return 0;
+    }
 
 
-    private void AddVertex(Vector3Int tileToAdd)
+    private void AddVertex(TileCollider tileToAdd)
     {
         if (!graph.ContainsKey(tileToAdd))
         {
-            graph[tileToAdd] = new Dictionary<Vector3Int, int>();
+            graph[tileToAdd] = new Dictionary<TileCollider, int>();
         }
     }
 
-    private void AddEdge(Vector3Int tile1,  Vector3Int tile2, int distancia)
+    private void AddEdge(TileCollider tile1, TileCollider tile2, int distance)
     {
         if (!graph.ContainsKey(tile1) || !graph.ContainsKey(tile2)) return;
 
-        graph[tile1][tile2] = distancia;
-        graph[tile2][tile1] = distancia;
+        graph[tile1][tile2] = distance;
+        graph[tile2][tile1] = distance;
     }
 
-    public List<Vector3Int> GetNeighbours(Vector3Int tile)
+    public List<TileCollider> GetNeighbours(TileCollider tile)
     {
         if (graph.ContainsKey(tile))
         {
-            return new List<Vector3Int>(graph[tile].Keys);
+            return new List<TileCollider>(graph[tile].Keys);
         }
-        return new List<Vector3Int>();
+        return new List<TileCollider>();
     }
 
-    public List<Vector3Int> GetNodes()
+    public List<TileCollider> GetNodes()
     {
         return graph.Keys.ToList();
     }
 
-    public int EdgeWeight(Vector3Int tile1, Vector3Int tile2)
+    public int EdgeWeight(TileCollider tile1, TileCollider tile2)
     {
-        if(graph.ContainsKey(tile1) && graph.ContainsKey(tile2))
+        if (graph.ContainsKey(tile1) && graph[tile1].ContainsKey(tile2))
         {
             return graph[tile1][tile2];
         }
         return int.MaxValue;
     }
 
-    public List<Vector3Int> Dijkstra(Vector3Int start, Vector3Int target)
+    public List<TileCollider> Dijkstra(TileCollider start, TileCollider target)
     {
-        var weights = new Dictionary<Vector3Int, int>();
-        var previous = new Dictionary<Vector3Int, Vector3Int?>();  // Almacena el nodo anterior
-        var visited = new HashSet<Vector3Int>();
-        var priorityQueue = new PriorityQueueTDA<Vector3Int>();
+        var weights = new Dictionary<TileCollider, int>();
+        var previous = new Dictionary<TileCollider, TileCollider?>(); // Almacena el nodo anterior
+        var visited = new HashSet<TileCollider>();
+        var priorityQueue = new PriorityQueueTDA<TileCollider>();
 
         // Inicializa todos los nodos con una distancia infinita
         foreach (var tile in graph.Keys)
         {
             weights[tile] = int.MaxValue;
-            previous[tile] = null;  // Inicia a null
+            previous[tile] = null; // Inicia a null
         }
 
         // Establece el peso inicial para el nodo de inicio
@@ -126,7 +136,7 @@ public class TDAGraph : MonoBehaviour
                 if (visited.Contains(neighbour)) continue;
 
                 int weight = EdgeWeight(currentTile, neighbour);
-                int newDist = weights[currentTile] + weight;  // Suma la distancia actual al peso del vecino
+                int newDist = weights[currentTile] + weight; // Suma la distancia actual al peso del vecino
 
                 // Si encontramos una ruta más corta, actualizamos la distancia y el nodo anterior
                 if (newDist < weights[neighbour])
@@ -139,19 +149,22 @@ public class TDAGraph : MonoBehaviour
         }
 
         // Generar el camino desde el nodo objetivo hacia el nodo de inicio
-        var path = new List<Vector3Int>();
+        var path = new List<TileCollider>();
 
-        // Asegurarse de que el nodo de destino tiene un valor válido
-        Vector3Int? current = target;
-        while (current.HasValue)
+        TileCollider? current = target;
+        while (current != null)
         {
-            path.Add(current.Value);
-            current = previous[current.Value];
+            path.Add(current);
+            current = previous[current];
         }
 
-        path.Reverse();  // Revertir el camino para que vaya de inicio a destino
+        path.Reverse(); // Revertir el camino para que vaya de inicio a destino
         return path;
     }
 
+    private TileCollider GetTileCollider(Vector3Int position)
+    {
+        return tileColliders.ContainsKey(position) ? tileColliders[position] : null;
+    }
 
 }
