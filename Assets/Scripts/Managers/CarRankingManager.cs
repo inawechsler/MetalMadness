@@ -74,6 +74,68 @@ public class CarRankingManager : MonoBehaviour
     }
 
 
+    static public int Partition(List<CarLapCounter> arr, int left, int right)
+    {
+        // Comprobar que left y right están dentro de los límites de la lista
+        if (arr == null || arr.Count == 0 || left < 0 || right >= arr.Count || left > right)
+        {
+            return -1;  // Indicar que no se puede proceder
+        }
+
+        CarLapCounter pivot = arr[(left + right) / 2];  // Tomamos el auto en el centro como pivote
+
+        while (left <= right) // Modificar para que el ciclo no se repita indefinidamente
+        {
+            // Buscar un elemento mayor que el pivote en la izquierda
+            while (arr[left].lapsCompleted > pivot.lapsCompleted ||
+                   (arr[left].lapsCompleted == pivot.lapsCompleted && arr[left].PassedCheckPointNumber > pivot.PassedCheckPointNumber) ||
+                   (arr[left].lapsCompleted == pivot.lapsCompleted && arr[left].PassedCheckPointNumber == pivot.PassedCheckPointNumber && arr[left].TimeAtLastCheckPointPassed < pivot.TimeAtLastCheckPointPassed))
+            {
+                left++;
+            }
+
+            // Buscar un elemento menor que el pivote en la derecha
+            while (arr[right].lapsCompleted < pivot.lapsCompleted ||
+                   (arr[right].lapsCompleted == pivot.lapsCompleted && arr[right].PassedCheckPointNumber < pivot.PassedCheckPointNumber) ||
+                   (arr[right].lapsCompleted == pivot.lapsCompleted && arr[right].PassedCheckPointNumber == pivot.PassedCheckPointNumber && arr[right].TimeAtLastCheckPointPassed > pivot.TimeAtLastCheckPointPassed))
+            {
+                right--;
+            }
+
+            if (left <= right)
+            {
+                // Intercambiar elementos
+                CarLapCounter temp = arr[right];
+                arr[right] = arr[left];
+                arr[left] = temp;
+                left++;
+                right--;
+            }
+        }
+
+        return left;  // Regresar left como el nuevo índice de partición
+    }
+
+    static public void QuickSort(List<CarLapCounter> arr, int left, int right)
+    {
+        if (left < right)
+        {
+            int pivot = Partition(arr, left, right); // Obtener índice de partición
+
+            if (left < pivot - 1) // Verificar que el rango tiene más de un elemento
+            {
+                QuickSort(arr, left, pivot - 1); // Recursión en la mitad izquierda
+            }
+
+            if (pivot < right) // Verificar que el rango tiene más de un elemento
+            {
+                QuickSort(arr, pivot, right); // Recursión en la mitad derecha
+            }
+        }
+    }
+
+
+
 
     void OnPassCheckPoint(CarLapCounter carLapCounter)
     {
@@ -114,10 +176,12 @@ public class CarRankingManager : MonoBehaviour
         }
         else
         {
-            carList = carList.OrderByDescending(car => car.lapsCompleted) //Ordnena primero de mayor a menor en base a las vueltas
+            QuickSort(carList, 0, carList.Count -1);
+
+           /* carList = carList.OrderByDescending(car => car.lapsCompleted) //Ordnena primero de mayor a menor en base a las vueltas
                              .ThenByDescending(car => car.PassedCheckPointNumber) // Si son iguales lo hace en base a quien tiene mas checkpoints
                              .ThenBy(car => car.TimeAtLastCheckPointPassed) //Si son iguales lo hace en base al tiempo en el que pasaron el checkpoint
-                             .ToList(); //Lo hace lista
+                             .ToList(); //Lo hace lista */
 
             ranking.Clear();
 
@@ -149,6 +213,7 @@ public class CarRankingManager : MonoBehaviour
 
         }
     }
+
 }
     
 
