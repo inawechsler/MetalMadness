@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -16,59 +17,64 @@ public class IdealPath : MonoBehaviour, IUpgrade
     public void Start()
     {
         Dijkstra = GameObject.FindWithTag("Managers").GetComponent<TDAGraph>();
+
         tilemap = GameObject.FindWithTag("Track").GetComponent<Tilemap>();
+
         Dijkstra.InitGraph(tilemap);
+
         checkPoints = FindObjectsOfType<CheckPoints>().ToList();
-        // Obtener dos posiciones aleatorias válidas
-        List<Vector3Int> posicionesValidas = ObtenerPosicionesValidas(tilemap);
-        if (posicionesValidas.Count < 2)
-        {
-            Debug.LogError("No hay suficientes tiles válidos en el Tilemap para calcular un camino.");
-            return;
-        }
 
-        // Seleccionar puntos aleatorios
-        Vector3Int inicio = posicionesValidas[Random.Range(0, posicionesValidas.Count)];
-        Vector3Int destino = FindClosestNode(
-    Vector3Int.RoundToInt(GetFinishCheckPoint().transform.position),
-    Dijkstra.GetNodes()); // Assuming this method returns the list of nodes
+        var chec = checkPoints.First(s => s.checkPointNumber == 1);
 
-        Debug.Log($"Inicio: {inicio}, Destino: {destino}");
+        Vector3Int startPoint = Vector3Int.RoundToInt(FindClosestNode(Vector3Int.RoundToInt(chec.transform.position),
+                  Dijkstra.GetNodes()));
 
+        Vector3Int targetPoint = FindClosestNode(Vector3Int.RoundToInt(GetFinishCheckPoint().transform.position),
+          Dijkstra.GetNodes()); // Assuming this method returns the list of nodes
+
+        Debug.DrawLine(tilemap.CellToWorld(startPoint), tilemap.CellToWorld(startPoint) + Vector3.up * 0.5f, Color.red, 5f);
+        Debug.DrawLine(tilemap.CellToWorld(targetPoint), tilemap.CellToWorld(targetPoint) + Vector3.up * 0.5f, Color.green, 5f);
+
+
+        Debug.Log($"Inicio: {startPoint}, Destino: {targetPoint}");
+        Debug.Log($"{chec.gameObject.name}");
+
+        DrawPath(startPoint, targetPoint);
+
+
+      
+    }
+
+    void DrawPath(Vector3Int start, Vector3Int target)
+    {
         // Calcular el camino usando Dijkstra
-        List<Vector3Int> ruta = Dijkstra.Dijkstra(inicio, destino);
+        List<Vector3Int> path = Dijkstra.Dijkstra(start, target);
 
         // Dibujar el camino con LineRenderer
-        if (ruta.Count > 0)
+        if (path.Count > 0)
         {
             LineRenderer lineRenderer = GetComponent<LineRenderer>();
-            lineRenderer.positionCount = ruta.Count;
+            lineRenderer.positionCount = path.Count;
 
-            for (int i = 0; i < ruta.Count; i++)
+            for (int i = 0; i < path.Count; i++)
             {
-                lineRenderer.SetPosition(i, tilemap.CellToWorld(ruta[i]));
+                lineRenderer.SetPosition(i, tilemap.CellToWorld(path[i]));
             }
         }
         else
         {
             Debug.LogError("No se encontró un camino entre los puntos seleccionados.");
         }
-    }
 
-    // Método para obtener todas las posiciones válidas del Tilemap
-    private List<Vector3Int> ObtenerPosicionesValidas(Tilemap tilemap)
-    {
-        List<Vector3Int> posicionesValidas = new List<Vector3Int>();
-
-        foreach (Vector3Int pos in tilemap.cellBounds.allPositionsWithin)
+        foreach (Vector3Int node in Dijkstra.GetNodes())
         {
-            if (tilemap.HasTile(pos))
-            {
-                posicionesValidas.Add(pos);
-            }
-        }
+            if (node == FindClosestNode(target, Dijkstra.GetNodes())
+                ||
+                node == FindClosestNode(start, Dijkstra.GetNodes())) continue;
 
-        return posicionesValidas;
+
+            Debug.DrawLine(tilemap.CellToWorld(node), tilemap.CellToWorld(node) + Vector3.up * 0.5f, Color.white, int.MaxValue);
+        }
     }
 
     public void ApplyUpgrade(TopDownController controller)
@@ -98,8 +104,6 @@ public class IdealPath : MonoBehaviour, IUpgrade
     public CheckPoints GetFinishCheckPoint()
     {
         var checkPointNearPos = checkPoints.First(s => s.isFinishLine);
-
-        Debug.Log(checkPointNearPos.gameObject.name);
         return checkPointNearPos;
     }
     private Vector3Int FindClosestNode(Vector3Int position, List<Vector3Int> nodes)
