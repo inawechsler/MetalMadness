@@ -3,18 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using static UnityEngine.RuleTile.TilingRuleOutput;
 
 
 public class TDAGraph : MonoBehaviour
 {
     private Dictionary<Vector3Int, Dictionary<Vector3Int, int>> graph;
-    private Tilemap tilemap;
-
+    public TileCollider tColl;
 
     
-    public void InitGraph(Tilemap tilemap)
+    public void InitGraph(Tilemap tilemap, Tilemap stateTiles)
     {
-        this.tilemap = tilemap;
 
         graph = new Dictionary<Vector3Int, Dictionary<Vector3Int, int>>();
 
@@ -34,20 +33,36 @@ public class TDAGraph : MonoBehaviour
 
             foreach(var neighbour in neighbours)
             {
+                int weightChanged = stateTiles.HasTile(neighbour) ? 4 : 1;
+
+                if (stateTiles.HasTile(neighbour))
+                {
+                    TileCollider tile = Instantiate(tColl, tilemap.CellToWorld(neighbour), Quaternion.identity);
+                    tile.GetWeight();
+
+                    Debug.DrawLine(tilemap.CellToWorld(neighbour), tilemap.CellToWorld(neighbour) + Vector3.up * 0.5f, (tile.GetWeight() ? Color.white : Color.black), Mathf.Infinity);
+                }
+
+
                 if (tilemap.HasTile(neighbour))
                 {
-                    AddEdge(pos, neighbour, 1);
+                    AddEdge(pos, neighbour, weightChanged);
                 }
 
             }
+
+
 
         }
 
     }
 
-    //public int GetTileWeight(Vector3Int neighbours)
+    //public int GetTileWeight(Vector3Int neighbours, Tilemap map)
     //{
-    //    Vector3Int
+    //    if (map.HasTile(neighbours))
+    //    {
+
+    //    }
     //}
 
 

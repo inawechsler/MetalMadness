@@ -10,7 +10,9 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
     private GameObject boxCanvas;
     [SerializeField] Button purchaseButton;
     [SerializeField] List<Button> upgradeButtons;
-   
+
+    Button localButtonTemp;
+
     private List<IUpgrade> upgradeList = new List<IUpgrade>();
 
     private Dictionary<string, IUpgrade> upgradeDictionary = new Dictionary<string, IUpgrade>();
@@ -25,6 +27,8 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
     CarUpgrades carUpgrades;
 
     LeadeBoardUIHandler boardUIHandler;
+
+    private Stack<ShopMemento> shopMementoStack = new Stack<ShopMemento>(5);
 
     private void Awake()
     {
@@ -70,6 +74,7 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
             upgradeDictionary.Add(upgrade.GetType().Name, upgrade); //Agrega al diccionario el nombre del upgrade y el IUpgrade
 
         }
+        StartCoroutine(WaitForRestoreKey());
     }
     void AssignUpgrade(IUpgrade upgrade) 
     {
@@ -80,6 +85,8 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
     void BoxExitDispatcher()//En purchase llamo a este evento
     {
         OnBoxExit(EntityType.Player, carUpgrades); //LLama a OnBoxExit
+
+        selectedImage.gameObject.SetActive(false);
     }
 
     public void OnBoxExit(EntityType type, CarUpgrades carUpgrades)//Lógica de asignado de upgrade y Oculto el canvas
@@ -91,6 +98,9 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
         boxCanvas.SetActive(false);
         onClickedPurchased?.Invoke(); //Invoco el evento llamado en BoxShop
         hasExited = true;
+
+        ShopMemento savedMemento = SaveState(currentUpgrade.GetType().Name, localButtonTemp);
+        shopMementoStack.Push(savedMemento);
     }
     void ManageButton(string upgradeToApply, Button button) //Se encarga de mostrar el objeto seleccionado y guardar el upgrade seleccionado, no lo aplica, solo lo guarda
     {
@@ -100,6 +110,9 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
 
             if(button != null)
             {
+                localButtonTemp = button;
+                Debug.Log(localButtonTemp.ToString());
+
                 RectTransform buttonRectTransform = button.GetComponent<RectTransform>();
 
                 Vector2 buttonWorldPosition = buttonRectTransform.position;
@@ -113,8 +126,50 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
                 Debug.Log("skd");
             }
         }
-
-
     }
 
+
+    private IEnumerator WaitForRestoreKey()
+    {
+        while (boxCanvas.activeSelf) // Solo escucha mientras el Canvas está activo
+        {
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                if (!shopMementoStack.isEmpty())
+                {
+                    ShopMemento lastMemento = shopMementoStack.Pop(); // Obtén el último memento
+                    RestoreState(lastMemento); // Restaura el estado
+                }
+                else
+                {
+                    Debug.Log("No hay estados guardados para restaurar.");
+                }
+            }
+            yield return null; // Espera un frame antes de continuar
+        }
+    }
+
+    private ShopMemento SaveState(string upgrade, Button button)
+    {
+        string upgradeToSave = upgrade;
+        Button buttonToSave = button;
+
+        Debug.Log(upgrade + " " + button.gameObject.name);
+
+        return new ShopMemento(upgradeToSave, buttonToSave);
+    }
+
+    private void RestoreState(ShopMemento upgradeToRestore)
+    {
+        if (upgradeToRestore == null)
+        {
+            Debug.LogError("El estado guardado es null. No se puede restaurar.");
+            return;
+        }
+        if (upgradeToRestore.upgrade is null) Debug.Log("pgrade");
+        if (upgradeToRestore.button is null) Debug.Log("button");
+        //Debug.Log(upgradeToRestore.upgrade.GetType().Name + " " + upgradeToRestore.button.gameObject.name);
+        ManageButton(upgradeToRestore.upgrade, upgradeToRestore.button);
+
+    }
 }

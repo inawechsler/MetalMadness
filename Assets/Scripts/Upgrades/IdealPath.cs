@@ -12,7 +12,7 @@ public class IdealPath : MonoBehaviour, IUpgrade
     public List<CheckPoints> checkPoints;
     public bool isEventCounter { get; } = false;
 
-    public Tilemap tilemap;
+    public Tilemap tilemap, tileWState;
 
     public void Start()
     {
@@ -20,7 +20,9 @@ public class IdealPath : MonoBehaviour, IUpgrade
 
         tilemap = GameObject.FindWithTag("Track").GetComponent<Tilemap>();
 
-        Dijkstra.InitGraph(tilemap);
+        tileWState = GameObject.FindWithTag("TileState").GetComponent<Tilemap>();
+
+        Dijkstra.InitGraph(tilemap, tileWState);
 
         checkPoints = FindObjectsOfType<CheckPoints>().ToList();
 
@@ -39,9 +41,6 @@ public class IdealPath : MonoBehaviour, IUpgrade
           //Dijkstra.GetNodes()); // Assuming this method returns the list of nodes
 
         DrawPath(startPoint, targetPoint);
-
-        Debug.DrawLine(tilemap.CellToWorld(startPoint), tilemap.CellToWorld(startPoint) + Vector3.up * 0.5f, Color.red, 5f);
-        Debug.DrawLine(tilemap.CellToWorld(targetPoint), tilemap.CellToWorld(targetPoint) + Vector3.up * 0.5f, Color.green, 5f);
 
 
         Debug.Log($"Inicio: {startPoint}, Destino: {targetPoint}");
@@ -74,15 +73,15 @@ public class IdealPath : MonoBehaviour, IUpgrade
             Debug.LogError("No se encontró un camino entre los puntos seleccionados.");
         }
 
-        foreach (Vector3Int node in Dijkstra.GetNodes())
-        {
-            if (node == FindClosestNode(target, Dijkstra.GetNodes())
-                ||
-                node == FindClosestNode(start, Dijkstra.GetNodes())) continue;
+        //foreach (Vector3Int node in Dijkstra.GetNodes())
+        //{
+        //    if (node == FindClosestNode(target, Dijkstra.GetNodes())
+        //        ||
+        //        node == FindClosestNode(start, Dijkstra.GetNodes())) continue;
 
 
-            Debug.DrawLine(tilemap.CellToWorld(node), tilemap.CellToWorld(node) + Vector3.up * 0.5f, Color.white, int.MaxValue);
-        }
+        //    Debug.DrawLine(tilemap.CellToWorld(node), tilemap.CellToWorld(node) + Vector3.up * 0.5f, Color.white, int.MaxValue);
+        //}
     }
 
     public void ApplyUpgrade(TopDownController controller)

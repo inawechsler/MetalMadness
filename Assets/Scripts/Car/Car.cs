@@ -47,7 +47,7 @@ public class Car : MonoBehaviour
         if (hit.collider != null)
         {
 
-            if (hit.collider.gameObject.CompareTag("Track"))
+            if (hit.collider.gameObject.CompareTag("Track") || hit.collider.gameObject.CompareTag("TileState"))
             {
                 onTrack = true;
 

@@ -18,6 +18,7 @@ TagManager:
   - ShopCanvas
   - EventSystem
   - SelectedImage
+  - TileState
   layers:
   - Default
   - TransparentFX

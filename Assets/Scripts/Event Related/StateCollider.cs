@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 public class StateCollider : MonoBehaviour
 {
     int counter;
-    IState state;
+    public IState state { get; private set; }
 
     [SerializeField] TextMeshProUGUI ZoneText;
     [SerializeField] TextMeshProUGUI StateText;
