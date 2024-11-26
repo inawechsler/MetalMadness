@@ -54,7 +54,7 @@ public class TDAGraph : MonoBehaviour
             }
         }
 
-        Dijkstra(spawnPoint(SceneManager.GetActiveScene().name, "Start"), spawnPoint(SceneManager.GetActiveScene().name, "End"));
+        //Dijkstra(spawnPoint(SceneManager.GetActiveScene().name, "Start"), spawnPoint(SceneManager.GetActiveScene().name, "End"));
     }
 
     Vector3Int spawnPoint(string sceneName, string pointToReturn)
@@ -148,7 +148,7 @@ public class TDAGraph : MonoBehaviour
     public void UpdateGraphWeights(Tilemap stateTiles) //Hago Lista de Keys y Valores del grafo, y le asigno el nuevo valor que le llega a las aristas que unen a estos respectivamente
     {
 
-        Dijkstra(spawnPoint(SceneManager.GetActiveScene().name, "Start"), spawnPoint(SceneManager.GetActiveScene().name, "End"));
+        //Dijkstra(spawnPoint(SceneManager.GetActiveScene().name, "Start"), spawnPoint(SceneManager.GetActiveScene().name, "End"));
         foreach (var node in graph.Keys.ToList())
         {
             foreach (var neighbour in graph[node].Keys.ToList())
