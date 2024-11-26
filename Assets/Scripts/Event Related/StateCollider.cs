@@ -51,7 +51,6 @@ public class StateCollider : MonoBehaviour
     {
         if (carListInZone.Count != 0)
         {
-            Debug.Log("Esperando hasta que no haya autos en la zona...");
             StartCoroutine(WaitAndSetState(newState)); //Si hay autos en la zona llama a corrutina
         }
         else
@@ -73,7 +72,7 @@ public class StateCollider : MonoBehaviour
 
         // Cuando no haya autos en la zona, cambia el estado
         state = newState;
-        Debug.Log("Estado cambiado exitosamente.");
+
         ZoneText.text = state.GetType().Name;
         StateText.text = state.GetType().Name;
     }

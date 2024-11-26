@@ -11,7 +11,7 @@ public class CarRankingManager : MonoBehaviour
     public static CarRankingManager Instance;
 
     public int carPosition = 0;
-    public List<CarLapCounter> carList {  get; private set; } = new List<CarLapCounter>();
+    public List<CarLapCounter> carList { get; private set; } = new List<CarLapCounter>();
 
     public Dictionary<int, string> ranking = new Dictionary<int, string>();
 
@@ -19,7 +19,7 @@ public class CarRankingManager : MonoBehaviour
     string text;
     public int LapsCompleted => lapsCompleted;
 
-    private int lapsToComplete = 6;
+    private int lapsToComplete = 30;
 
     private int carsFinishedRace = 0;
 
@@ -29,7 +29,7 @@ public class CarRankingManager : MonoBehaviour
     private bool lapCompletedTriggered = false;
 
     private LeadeBoardUIHandler boardUIHandler;
-   
+
 
     private void Awake()
     {
@@ -48,7 +48,7 @@ public class CarRankingManager : MonoBehaviour
     {
         if (SceneNameManager.Instance.IsRaceScene(SceneManager.GetActiveScene()))
         {
-                  
+
             boardUIHandler = GameObject.FindWithTag("Leaderboard").GetComponent<LeadeBoardUIHandler>();
 
             CarLapCounter[] carLapCountersArr = FindObjectsOfType<CarLapCounter>();
@@ -64,12 +64,12 @@ public class CarRankingManager : MonoBehaviour
 
     private void Update()
     {
-     
+
     }
     public int SetLapsCompleted(int value)
     {
 
-       return lapsCompleted += value;
+        return lapsCompleted += value;
 
     }
 
@@ -176,12 +176,12 @@ public class CarRankingManager : MonoBehaviour
         }
         else
         {
-            QuickSort(carList, 0, carList.Count -1);
+            QuickSort(carList, 0, carList.Count - 1);
 
-           /* carList = carList.OrderByDescending(car => car.lapsCompleted) //Ordnena primero de mayor a menor en base a las vueltas
-                             .ThenByDescending(car => car.PassedCheckPointNumber) // Si son iguales lo hace en base a quien tiene mas checkpoints
-                             .ThenBy(car => car.TimeAtLastCheckPointPassed) //Si son iguales lo hace en base al tiempo en el que pasaron el checkpoint
-                             .ToList(); //Lo hace lista */
+            /* carList = carList.OrderByDescending(car => car.lapsCompleted) //Ordnena primero de mayor a menor en base a las vueltas
+                              .ThenByDescending(car => car.PassedCheckPointNumber) // Si son iguales lo hace en base a quien tiene mas checkpoints
+                              .ThenBy(car => car.TimeAtLastCheckPointPassed) //Si son iguales lo hace en base al tiempo en el que pasaron el checkpoint
+                              .ToList(); //Lo hace lista */
 
             ranking.Clear();
 
@@ -198,11 +198,18 @@ public class CarRankingManager : MonoBehaviour
 
             carLapCounter.SetCarPosition(carPosition);
 
-            if (carPosition == 1 && !lapCompletedTriggered)
-            {
-                if(lapsCompleted > 0) StateManager.Instance.OnLapCompleted();
+            // El líder actual es el primer auto en la lista ordenada
+            var currentLeader = carList.FirstOrDefault();
 
-                lapCompletedTriggered = true;
+            // Verifica si el líder ha completado al menos una vuelta
+            if (currentLeader != null && currentLeader.lapsCompleted > 0)
+            {
+                // Solo ejecuta si el líder actual cambia
+                if (!lapCompletedTriggered)
+                {
+                    lapCompletedTriggered = true;
+                    StateManager.Instance.OnLapCompleted();
+                }
             }
 
             // Restablecer el triggereo para la pr�xima vuelta

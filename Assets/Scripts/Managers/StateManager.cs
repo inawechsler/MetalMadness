@@ -7,6 +7,8 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Tilemaps;
+using UnityEngine.Timeline;
 
 public class StateManager : MonoBehaviour
 {
@@ -14,6 +16,11 @@ public class StateManager : MonoBehaviour
     public IState slipperyState;
     public IState slowState;
     [SerializeField] TopDownController[] topDownController;
+    private TDAGraph GrafoDij;
+
+    private bool canAssignStates = true; // Bandera para controlar el cooldown
+
+    [SerializeField] List<Tilemap> tileMaps;
 
     [SerializeField] private List<GameObject> surfaces; // Las superficies
     [SerializeField] private List<IState> availableStates; // La lista de estados disponibles
@@ -43,9 +50,16 @@ public class StateManager : MonoBehaviour
         if (SceneNameManager.Instance.IsRaceScene(SceneManager.GetActiveScene()))
         {
             topDownController = FindObjectsOfType<TopDownController>();
-            slipperyState = GameObject.FindWithTag("States").GetComponent<SlippyState>();
-            slowState = GameObject.FindWithTag("States").GetComponent<SlowState>();
+            slipperyState = GameObject.FindWithTag("TileState").GetComponent<SlippyState>();
+            slowState = GameObject.FindWithTag("TileState").GetComponent<SlowState>();
+            GrafoDij = GameObject.FindWithTag("Managers").GetComponent<TDAGraph>();
             FindAvailableStates();
+
+            foreach(var surf in surfaces)
+            {
+                tileMaps.Add(surf.GetComponent<Tilemap>());
+            }
+            
         }
     }
 
@@ -61,17 +75,30 @@ public class StateManager : MonoBehaviour
 
     private void AssignRandomStates()
     {
+        if (!canAssignStates) return; // Si está en cooldown, no hacer nada
+
+        canAssignStates = false; // Activar cooldown
+
         foreach (GameObject surface in surfaces)
         {
-            int randomStateIndex = Random.Range(0, availableStates.Count); //Del 0 a la cantidad de IStates que encuentre
+            int randomStateIndex = Random.Range(0, availableStates.Count);
 
-            IState randomState = availableStates[randomStateIndex]; //Devuelve el estado de la lista con el indice random
-
+            IState randomState = availableStates[randomStateIndex];
             var stateColl = surface.GetComponent<StateCollider>();
 
             stateColl.SetCurrentState(randomState);
 
+            GrafoDij.UpdateGraphWeights(surface.GetComponent<Tilemap>());
         }
+
+        // Iniciar cooldown
+        StartCoroutine(ResetCooldown());
+    }
+
+    private IEnumerator ResetCooldown()
+    {
+        yield return new WaitForSeconds(9f); // Esperar 9 segundos
+        canAssignStates = true; // Resetear cooldown
     }
 
     public void OnLapCompleted()

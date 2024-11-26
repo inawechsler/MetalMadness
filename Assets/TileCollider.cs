@@ -6,17 +6,23 @@ public class TileCollider : MonoBehaviour
 {
     public IState currentState { get; private set; }
 
-    private void OnTriggerEnter2D(Collider2D collider)
+    public void GetTileState()
     {
-        if (collider.gameObject.CompareTag("States"))
+
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.forward, 1, 1);
+
+        if (hit.collider.gameObject.name == "State")
         {
 
-            var tileOnUpgrade = collider.GetComponent<StateCollider>();
+            var tileOnUpgrade = hit.collider.GetComponent<StateCollider>();
             currentState = tileOnUpgrade.state;
-            Debug.Log(currentState.GetType().Name);
+            Debug.Log(currentState != null);
+        } else
+        {
+
         }
-    
-        Debug.Log(collider.gameObject.name);    
+
+
     }
 
     public bool GetWeight()
