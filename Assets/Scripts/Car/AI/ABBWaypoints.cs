@@ -9,8 +9,7 @@ public class ABBWaypoints : MonoBehaviour
     // Método para agregar un waypoint al árbol
     public void AgregarElem(AICheckPoints wp)
     {
-        // Calculamos la distancia desde la posición del waypoint hacia el objeto "raíz" del árbol (que podría ser el coche o un punto central)
-        float dist = Vector3.Distance(wp.transform.position, transform.position);  // Distancia al coche
+        float dist = Vector3.Distance(wp.Position, transform.position);  // Distancia al coche
         raiz = AgregarElemRecursivo(raiz, wp, dist);
     }
 
@@ -45,7 +44,7 @@ public class ABBWaypoints : MonoBehaviour
             Debug.LogWarning("El árbol de waypoints está vacío");
             return null;
         }
-        Debug.Log("Buscando waypoint más cercano desde la posición: " + position); // Verificar la posición
+        Debug.Log("Buscando waypoint más cercano desde la posición: " + position);
         return FindClosestWPRecursivo(raiz, position);
     }
 
@@ -60,26 +59,30 @@ public class ABBWaypoints : MonoBehaviour
         AICheckPoints closest = nodo.info;
         float closestDist = distActual;
 
-        // Si la distancia al nodo izquierdo es más pequeña, buscar en el izquierdo
-        if (nodo.hijoIzq != null)
+        // Decidir en qué subárbol buscar según la distancia
+        if (position.x < nodo.info.transform.position.x)  // Si la posición está a la izquierda del nodo, ir al subárbol izquierdo
         {
-            AICheckPoints leftClosest = FindClosestWPRecursivo(nodo.hijoIzq, position);
-            float leftDist = Vector3.Distance(position, leftClosest.transform.position);
-            if (leftDist < closestDist)
+            if (nodo.hijoIzq != null)
             {
-                closest = leftClosest;
-                closestDist = leftDist;
+                AICheckPoints leftClosest = FindClosestWPRecursivo(nodo.hijoIzq, position);
+                float leftDist = Vector3.Distance(position, leftClosest.transform.position);
+                if (leftDist < closestDist)
+                {
+                    closest = leftClosest;
+                    closestDist = leftDist;
+                }
             }
         }
-
-        // Si la distancia al nodo derecho es más pequeña, buscar en el derecho
-        if (nodo.hijoDer != null)
+        else // Si está a la derecha, ir al subárbol derecho
         {
-            AICheckPoints rightClosest = FindClosestWPRecursivo(nodo.hijoDer, position);
-            float rightDist = Vector3.Distance(position, rightClosest.transform.position);
-            if (rightDist < closestDist)
+            if (nodo.hijoDer != null)
             {
-                closest = rightClosest;
+                AICheckPoints rightClosest = FindClosestWPRecursivo(nodo.hijoDer, position);
+                float rightDist = Vector3.Distance(position, rightClosest.transform.position);
+                if (rightDist < closestDist)
+                {
+                    closest = rightClosest;
+                }
             }
         }
 

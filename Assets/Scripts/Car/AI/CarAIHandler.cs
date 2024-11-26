@@ -37,6 +37,7 @@ public class CarAIHandler : MonoBehaviour
     {
         controller = GetComponent<TopDownController>();
         allAIWP = FindObjectsOfType<AICheckPoints>();
+        currentWP = FindObjectOfType<AICheckPoints>();
         capsuleCollider = GetComponent<CapsuleCollider2D>();
 
         waypointTree = FindObjectOfType<ABBWaypoints>();
@@ -54,6 +55,7 @@ public class CarAIHandler : MonoBehaviour
     {
         
 
+        Debug.Log("CurrentWP :" + currentWP);
      
         Vector2 inputVector = Vector2.zero;
 
