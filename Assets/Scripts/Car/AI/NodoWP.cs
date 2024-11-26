@@ -4,16 +4,19 @@ using UnityEngine;
 
 public class NodoWDP : MonoBehaviour
 {
-    public AICheckPoints info;   // El waypoint
-    public NodoWDP hijoIzq;       // Subárbol izquierdo
-    public NodoWDP hijoDer;       // Subárbol derecho
-    public float distancia;      // Distancia del waypoint al coche, usada para ordenar en el árbol
+    public List<AICheckPoints> info;   // Lista de waypoints en el nodo
+    public NodoWDP hijoIzq;             // Subárbol izquierdo
+    public NodoWDP hijoDer;             // Subárbol derecho
+    public float distancia;             // Distancia del waypoint al coche, usada para ordenar en el árbol
 
-    public NodoWDP(AICheckPoints wp, float dist)
+    // Constructor para inicializar el nodo con una lista de waypoints
+    public NodoWDP(List<AICheckPoints> waypoints, float dist)
     {
-        this.info = wp;
+        this.info = waypoints;
         this.distancia = dist;
         this.hijoIzq = null;
         this.hijoDer = null;
     }
+
+
 }

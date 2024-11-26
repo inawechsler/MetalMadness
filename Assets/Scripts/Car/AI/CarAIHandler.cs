@@ -25,27 +25,42 @@ public class CarAIHandler : MonoBehaviour
     TopDownController controller;
 
 
-    AICheckPoints currentWP;
+   // AICheckPoints currentWP;
     AICheckPoints[] allAIWP;
 
     CapsuleCollider2D capsuleCollider;
 
-    ABBWaypoints waypointTree;
+    public  ABBWaypoints waypointTree;
+    private NodoWDP currentNode;
+    private AICheckPoints currentWP;
 
     // Start is called before the first frame update
     void Start()
     {
         controller = GetComponent<TopDownController>();
         allAIWP = FindObjectsOfType<AICheckPoints>();
-        currentWP = FindObjectOfType<AICheckPoints>();
+       
         capsuleCollider = GetComponent<CapsuleCollider2D>();
 
+        currentNode = waypointTree.raiz;
+
         waypointTree = FindObjectOfType<ABBWaypoints>();
+
+     
 
         foreach (var wp in allAIWP)
         {
             waypointTree.AgregarElem(wp);
         }
+
+        currentNode = waypointTree.raiz;
+        if (currentNode != null && currentNode.info.Count > 0)
+        {
+            currentWP = currentNode.info[0];  // Comienza con el primer waypoint del nodo
+        }
+
+        // Empieza el enumerador para recorrer el ABB
+        StartCoroutine(WaypointEnumerator());
 
         Debug.Log("Waypoints agregados: " + allAIWP.Length);
     }
@@ -119,44 +134,31 @@ public class CarAIHandler : MonoBehaviour
 
     float ManageWPSpeed(AICheckPoints nextWP)
     {
-
-        return nextWP.maxSpeed = Random.Range(20, 25);
+        return nextWP.maxSpeed > 0 ? nextWP.maxSpeed : Random.Range(20, 25);
     }
 
 
     void FollowWP()
     {
-
         if (currentWP == null)
         {
-            // Si no hay waypoint asignado, buscar el más cercano.
-            currentWP = waypointTree.FindClosestWP(transform.position);
-            if (currentWP == null)
-            {
-                Debug.LogError("No se encontró un waypoint cercano.");
-                return;
-            }
+            Debug.LogWarning("No hay waypoint asignado.");
+            return;
         }
-
-        // Añadir un desplazamiento aleatorio para dar un movimiento más natural
-        float radius = 3.0f;
-        Vector2 randomOffset = Random.insideUnitCircle * radius;
-        targetPosition = currentWP.transform.position + new Vector3(randomOffset.x, randomOffset.y, 0f);
 
         // Calcular la distancia al waypoint
-        float distanceToWP = (targetPosition - transform.position).magnitude;
-        float adjustedMinDist = currentWP.minDistToReachWP + Random.Range(0.5f, 2.0f);
-
-        // Si la IA está cerca del waypoint, buscar el siguiente
-        if (distanceToWP <= adjustedMinDist)
+        float distanceToWP = Vector3.Distance(transform.position, currentWP.transform.position);
+        if (distanceToWP <= currentWP.minDistToReachWP)
         {
-            // Solo cambiar de waypoint cuando se alcanza el waypoint actual
-            currentWP = waypointTree.FindClosestWP(transform.position);
-            if (currentWP == null)
-            {
-                Debug.LogError("No se pudo encontrar un nuevo waypoint.");
-            }
+            // Pasar al siguiente waypoint en el nodo
+            TraverseToNextWaypoint();
         }
+
+        // Lógica para mover hacia el waypoint
+        targetPosition = currentWP.transform.position;
+        float turnInput = TurnTowardsTarget();
+        float speedInput = ManageAISpeed(turnInput);
+        controller.SetInputVector(new Vector2(turnInput, speedInput));
 
 
         //if (currentWP == null)
@@ -191,5 +193,84 @@ public class CarAIHandler : MonoBehaviour
         //    //Devuelve el waypont mas cercano a la IA
         //    return allAIWP.OrderBy(index => Vector3.Distance(transform.position, index.transform.position)).FirstOrDefault();
         //}
+    }
+
+    private IEnumerator WaypointEnumerator()
+    {
+        while (true)
+        {
+            // Si no hay waypoints en el árbol
+            if (currentNode == null)
+            {
+                Debug.LogWarning("El árbol ABB está vacío.");
+                yield break;
+            }
+
+            // Si estamos en un nodo con waypoint, comenzamos a movernos hacia él
+            currentWP = currentNode.info[0];
+
+            // Esperamos hasta que lleguemos al waypoint
+            while (Vector3.Distance(transform.position, currentWP.transform.position) > currentWP.minDistToReachWP)
+            {
+                yield return null;  // Esperamos un frame
+            }
+
+            // Ahora que hemos llegado, pasamos al siguiente nodo del árbol (in-order traversal)
+            TraverseToNextWaypoint();
+        }
+    }
+
+    // Método para recorrer el árbol en orden
+    private void TraverseToNextWaypoint()
+    {
+        if (currentNode != null)
+        {
+            // Obtener el siguiente waypoint disponible dentro del nodo
+            int currentIndex = currentNode.info.IndexOf(currentWP);
+            if (currentIndex < currentNode.info.Count - 1)
+            {
+                // Avanzar al siguiente waypoint en la lista
+                currentWP = currentNode.info[currentIndex + 1];
+            }
+            else
+            {
+                // Si no hay más waypoints en este nodo, encontrar el siguiente nodo
+                currentNode = FindNextClosestNode(currentNode);
+                if (currentNode != null && currentNode.info.Count > 0)
+                {
+                    currentWP = currentNode.info[0];  // Comienza con el primer waypoint del siguiente nodo
+                }
+            }
+        }
+    }
+
+    // Método para encontrar el siguiente nodo más cercano en el árbol
+    private NodoWDP FindNextClosestNode(NodoWDP node)
+    {
+        // Buscar el hijo más cercano (izquierda o derecha) dependiendo de la distancia
+        if (node.hijoIzq != null && node.hijoDer != null)
+        {
+            float leftDist = Vector3.Distance(transform.position, node.hijoIzq.info[0].transform.position);
+            float rightDist = Vector3.Distance(transform.position, node.hijoDer.info[0].transform.position);
+
+            if (leftDist < rightDist)
+            {
+                return node.hijoIzq;
+            }
+            else
+            {
+                return node.hijoDer;
+            }
+        }
+        else if (node.hijoIzq != null)
+        {
+            return node.hijoIzq;
+        }
+        else if (node.hijoDer != null)
+        {
+            return node.hijoDer;
+        }
+
+        return null;  // Si no hay hijos, terminamos
     }
 }
