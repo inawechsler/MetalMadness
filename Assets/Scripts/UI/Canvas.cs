@@ -9,7 +9,8 @@ public class Canvas : MonoBehaviour, IBoxObserver
     //  Start is called before the first frame update
     [SerializeField] Image velocity;
     TopDownController car;
-    Canvas canvas;
+    [SerializeField] GameObject lightCanvas, canvas;
+    [SerializeField] Image[] raceLights;
 
 
 
@@ -32,7 +33,7 @@ public class Canvas : MonoBehaviour, IBoxObserver
         velocity.fillAmount = 0;
         car = GameObject.FindGameObjectWithTag("Player").GetComponent<TopDownController>();
 
-        canvas = GetComponent<Canvas>();
+        LevelManager.Instance.LightSet(raceLights, lightCanvas);
     }
     //    Update is called once per frame
     void Update()

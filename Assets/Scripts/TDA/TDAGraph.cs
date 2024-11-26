@@ -10,8 +10,7 @@ using UnityEngine.Tilemaps;
 public class TDAGraph : MonoBehaviour
 {
     private Dictionary<Vector3Int, Dictionary<Vector3Int, int>> graph;
-    private Dictionary<(Vector3Int, Vector3Int), int> edgeWeightCache;
-    public TileCollider tColl;
+    private Dictionary<Vector3Int, Dictionary<Vector3Int, int>> nodesInCollision;
     private Tilemap tilemap;
     private Car car;
     //Vector3Int funciona como nodo ya que representa cada celda en el tilemap
@@ -24,7 +23,7 @@ public class TDAGraph : MonoBehaviour
     public void InitGraph(Tilemap tilemap, List<Tilemap> stateTilemaps)
     {
         graph = new Dictionary<Vector3Int, Dictionary<Vector3Int, int>>();
-        edgeWeightCache = new Dictionary<(Vector3Int, Vector3Int), int>();
+        nodesInCollision = new Dictionary<Vector3Int, Dictionary<Vector3Int, int>>();
         this.tilemap = tilemap;
         foreach (Vector3Int pos in tilemap.cellBounds.allPositionsWithin)
         {
@@ -47,6 +46,7 @@ public class TDAGraph : MonoBehaviour
                 foreach (var state in stateTilemaps)
                 {
                     weight = CheckNodeOnCollision(neighbour, state); // Calcular peso dinámico en base a si esta en un evento activo o no
+                    
                 }
 
 
@@ -54,7 +54,7 @@ public class TDAGraph : MonoBehaviour
             }
         }
 
-        Dijkstra(spawnPoint(SceneManager.GetActiveScene().name, "Start"), spawnPoint(SceneManager.GetActiveScene().name, "End"));
+        //Dijkstra(spawnPoint(SceneManager.GetActiveScene().name, "Start"), spawnPoint(SceneManager.GetActiveScene().name, "End"));
     }
 
     Vector3Int spawnPoint(string sceneName, string pointToReturn)
@@ -85,27 +85,35 @@ public class TDAGraph : MonoBehaviour
         return vecToGive;
 
     }
-   
+
 
     private int CheckNodeOnCollision(Vector3Int nodePosition, Tilemap stateTiles)
     {
-
         int weight = 1;
+
         if (stateTiles.HasTile(nodePosition))
         {
-            if (FindNodeOnCollider(nodePosition, stateTiles)) //Revisa si el nodo esta en un collider y si el collider está acti
+            if (FindNodeOnCollider(nodePosition, stateTiles)) // Revisa si el nodo está en colisión activa
             {
-                    weight = 20; // Peso más alto si tiene un estado activo
+                weight = 20; // Peso más alto si tiene un estado activo
 
+                if (!nodesInCollision.ContainsKey(nodePosition))
+                {
+                    nodesInCollision[nodePosition] = new Dictionary<Vector3Int, int>();
+                }
+
+                // Agrega vecinos con peso de colisión (ejemplo: peso 20)
+                foreach (var neighbour in GetNeighbours(nodePosition))
+                {
+                    nodesInCollision[nodePosition][neighbour] = 20;
+                }
             }
+
             Debug.DrawLine(tilemap.CellToWorld(nodePosition), tilemap.CellToWorld(nodePosition) + Vector3.up * 0.5f, (weight == 1 ? Color.white : Color.black), 10);
-
         }
-
 
         return weight; // Peso normal si no tiene estado activo
     }
-
     private bool FindNodeOnCollider(Vector3Int position, Tilemap stateTiles)
     {
         Vector3 worldPosition = stateTiles.GetCellCenterWorld(position); // Centro exacto de la celda
@@ -148,10 +156,10 @@ public class TDAGraph : MonoBehaviour
     public void UpdateGraphWeights(Tilemap stateTiles) //Hago Lista de Keys y Valores del grafo, y le asigno el nuevo valor que le llega a las aristas que unen a estos respectivamente
     {
 
-        Dijkstra(spawnPoint(SceneManager.GetActiveScene().name, "Start"), spawnPoint(SceneManager.GetActiveScene().name, "End"));
-        foreach (var node in graph.Keys.ToList())
+        //Dijkstra(spawnPoint(SceneManager.GetActiveScene().name, "Start"), spawnPoint(SceneManager.GetActiveScene().name, "End"));
+        foreach (var node in nodesInCollision.Keys.ToList())
         {
-            foreach (var neighbour in graph[node].Keys.ToList())
+            foreach (var neighbour in nodesInCollision[node].Keys.ToList())
             {
                 int newWeight = CheckNodeOnCollision(neighbour, stateTiles);
                 graph[node][neighbour] = newWeight;

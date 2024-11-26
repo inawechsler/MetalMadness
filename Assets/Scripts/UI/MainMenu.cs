@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
-    [SerializeField] Button Race;
+    [SerializeField] Button Race, Exit;
 
 
     
@@ -25,6 +25,10 @@ public class MainMenu : MonoBehaviour
         SceneManager.LoadScene("Race3");
     }
 
+    void OnExit()
+    {
+        Application.Quit();
+    }
     void onRumble()
     {
 

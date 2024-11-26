@@ -31,7 +31,7 @@ public class LevelResume : MonoBehaviour
                 break;
             }
 
-            textMeshPros[i].text = $"{car.Key}. {car.Value}";
+            textMeshPros[i].text = $"{car.Value}";
             i++;
         }
 
@@ -44,6 +44,7 @@ public class LevelResume : MonoBehaviour
 
     void LoadNextRace()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene("Race2");
+        //UnityEngine.SceneManagement.SceneManager.LoadScene("Race2");
+        Application.Quit();
     }
 }
