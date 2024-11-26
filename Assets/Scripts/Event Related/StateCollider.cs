@@ -7,11 +7,11 @@ using UnityEngine.SceneManagement;
 public class StateCollider : MonoBehaviour
 {
     int counter;
-    IState state;
+    public IState state { get; private set; }
 
     [SerializeField] TextMeshProUGUI ZoneText;
     [SerializeField] TextMeshProUGUI StateText;
-    public List<TopDownController> carListInZone { get; private set; } = new List<TopDownController>();
+    public List<TopDownController> carListInZone { get; private set; } = new List<TopDownController>(); //Autos en esta superficie
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -51,12 +51,11 @@ public class StateCollider : MonoBehaviour
     {
         if (carListInZone.Count != 0)
         {
-            Debug.Log("Esperando hasta que no haya autos en la zona...");
-            StartCoroutine(WaitAndSetState(newState));
+            StartCoroutine(WaitAndSetState(newState)); //Si hay autos en la zona llama a corrutina
         }
         else
         {
-            if (newState == null) Debug.Log("Estado inválido");
+            if (newState == null) Debug.Log("Estado inválido"); //Si está vacía ejecuta directamente el cambio de estados
             state = newState;
             ZoneText.text = state.GetType().Name;
             StateText.text = state.GetType().Name;
@@ -73,7 +72,7 @@ public class StateCollider : MonoBehaviour
 
         // Cuando no haya autos en la zona, cambia el estado
         state = newState;
-        Debug.Log("Estado cambiado exitosamente.");
+
         ZoneText.text = state.GetType().Name;
         StateText.text = state.GetType().Name;
     }

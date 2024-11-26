@@ -18,6 +18,8 @@ TagManager:
   - ShopCanvas
   - EventSystem
   - SelectedImage
+  - TileState
+  - TileState2
   layers:
   - Default
   - TransparentFX
@@ -25,7 +27,7 @@ TagManager:
   - CarLayer
   - Water
   - UI
-  - 
+  - Tile
   - 
   - 
   - 

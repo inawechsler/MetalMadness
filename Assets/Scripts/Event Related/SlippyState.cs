@@ -18,9 +18,8 @@ public class SlippyState : MonoBehaviour, IState
 
     public void ExitState(TopDownController controller)
     {
-        controller.isOnState = false;  // Desactivar el estado resbaladizo
+        controller.isOnState = false;  
         controller.SetDriftFactor(controller.currentDriftFactor);
-        //StateManager.Instance.ChangeCurrentState(StateManager.Instance.normalState);  // Cambiar al estado normal
     }
 
     public void UpdateState(TopDownController controller)

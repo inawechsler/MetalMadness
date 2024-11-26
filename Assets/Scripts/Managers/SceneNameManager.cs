@@ -1,14 +1,14 @@
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement; 
-using UnityEditor; 
-using System.Collections.Generic; 
+using UnityEngine.SceneManagement;
+
 public class SceneNameManager : MonoBehaviour
 {
     public static SceneNameManager Instance;
-    [SerializeField] List<SceneAsset> raceScemes = new();
-    List<string> raceNames = new();
 
-    void Awake()
+    [SerializeField] private List<string> raceScenes = new List<string>(); // Lista de nombres de escenas
+
+    private void Awake()
     {
         if (Instance == null)
         {
@@ -19,24 +19,11 @@ public class SceneNameManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+
         DontDestroyOnLoad(gameObject);
-
-        foreach (SceneAsset asset in raceScemes)
-        {
-            if (asset != null)
-            {
-                raceNames.Add(asset.name);
-            }
-        }
     }
-
     public bool IsRaceScene(Scene scene)
     {
-        return raceNames.Contains(scene.name);
-    }
-
-    void Update()
-    {
-
+        return raceScenes.Contains(scene.name);
     }
 }

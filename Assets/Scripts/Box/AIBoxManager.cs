@@ -13,14 +13,14 @@ public class AIBoxManager : MonoBehaviour, IBoxObserver
 
     private void Awake()
     {
-        upgradeList = FindObjectsOfType<MonoBehaviour>().OfType<IUpgrade>().ToList();
+        upgradeList = FindObjectsOfType<MonoBehaviour>().OfType<IUpgrade>().Where(upgrade => upgrade.GetType().Name != "IdealPath").ToList();
         boardUIHandler = FindAnyObjectByType<LeadeBoardUIHandler>();
     }
     public void OnBoxEntered(EntityType type, CarUpgrades carUpgrades)
     {
-        if (type == EntityType.Player) return;
+        if (type == EntityType.Player) return; //Si el player entra, retorna
 
-        upgradeToApply = ManageUpgradeToApply(carUpgrades);
+        upgradeToApply = ManageUpgradeToApply(carUpgrades); //Consigue el upgrade a aplicar
 
         carUpgrades.AddUpgrade(upgradeToApply);
         boardUIHandler.UpdateImage(upgradeToApply, carUpgrades );
@@ -39,8 +39,8 @@ public class AIBoxManager : MonoBehaviour, IBoxObserver
             Debug.LogWarning("No hay upgrades disponibles en upgradeList.");
             return null; // Retorna null si no hay upgrades disponibles
         }
-
-        int randomUpgradeIndex = Random.Range(0, upgradeList.Count); // Cambié el rango para incluir el último índice
+        
+        int randomUpgradeIndex = Random.Range(0, upgradeList.Count); // Número random del 0 a cantidad de States
         IUpgrade upgrade = upgradeList[randomUpgradeIndex];
 
         return upgrade;

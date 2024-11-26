@@ -15,7 +15,7 @@ public class Car : MonoBehaviour
 
     public bool onTrack;
     public float raycastDistance = 1f;
-    private CarUpgrades upgrades;
+    public CarUpgrades upgrades;
     // Start is called before the first frame update
 
     private void Awake()
@@ -23,7 +23,7 @@ public class Car : MonoBehaviour
     }
     void Start()
     {
-
+        upgrades = GetComponent<CarUpgrades>();
     }
 
     // Update is called once per frame
@@ -47,7 +47,7 @@ public class Car : MonoBehaviour
         if (hit.collider != null)
         {
 
-            if (hit.collider.gameObject.CompareTag("Track"))
+            if (hit.collider.gameObject.CompareTag("Track") || hit.collider.gameObject.CompareTag("TileState"))
             {
                 onTrack = true;
 

@@ -180,7 +180,7 @@ public class TopDownController : MonoBehaviour
         return velocity;
     }
 
-    void KillOrthogonalVelocity()
+    void KillOrthogonalVelocity() //Mantiene el movimiento del auto alineado a la direccion de giro, calcula vel hacia adelante y la lateral, combinandolas para multiplicar por driftFactor, lo que simula derrape
     {
 
         Vector2 forwardVelocity = transform.up * Vector2.Dot(rb2D.velocity, transform.up);
@@ -202,19 +202,19 @@ public class TopDownController : MonoBehaviour
         accelerationInput = inputVector.y;
     }
 
-    public bool isTireScreeching(out float lateralVelocity, out bool isBraking)
+    public bool isTireScreeching(out float lateralVelocity, out bool isBraking) //Uso out para utilizar los valores del script de particulas
     {
         lateralVelocity = GetLateralVelocity();
 
         isBraking = false;
 
-        if (accelerationInput < 0 && velocitVsUp > 0)
+        if (accelerationInput < 0 && velocitVsUp > 0)//Si no está acelerando con input verdadero
         {
             isBraking = true;
             return true;
         }
 
-        if(Mathf.Abs(GetLateralVelocity()) > 4f)
+        if(Mathf.Abs(GetLateralVelocity()) > 4f) //Si sobrepasa el 4 devuelve verdader
         {
             return true;
         }

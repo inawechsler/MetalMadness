@@ -11,7 +11,7 @@ public class CarRankingManager : MonoBehaviour
     public static CarRankingManager Instance;
 
     public int carPosition = 0;
-    public List<CarLapCounter> carList {  get; private set; } = new List<CarLapCounter>();
+    public List<CarLapCounter> carList { get; private set; } = new List<CarLapCounter>();
 
     public Dictionary<int, string> ranking = new Dictionary<int, string>();
 
@@ -19,7 +19,7 @@ public class CarRankingManager : MonoBehaviour
     string text;
     public int LapsCompleted => lapsCompleted;
 
-    private int lapsToComplete = 6;
+    private int lapsToComplete = 30;
 
     private int carsFinishedRace = 0;
 
@@ -29,7 +29,7 @@ public class CarRankingManager : MonoBehaviour
     private bool lapCompletedTriggered = false;
 
     private LeadeBoardUIHandler boardUIHandler;
-   
+
 
     private void Awake()
     {
@@ -48,7 +48,7 @@ public class CarRankingManager : MonoBehaviour
     {
         if (SceneNameManager.Instance.IsRaceScene(SceneManager.GetActiveScene()))
         {
-                  
+
             boardUIHandler = GameObject.FindWithTag("Leaderboard").GetComponent<LeadeBoardUIHandler>();
 
             CarLapCounter[] carLapCountersArr = FindObjectsOfType<CarLapCounter>();
@@ -64,14 +64,76 @@ public class CarRankingManager : MonoBehaviour
 
     private void Update()
     {
-     
+
     }
     public int SetLapsCompleted(int value)
     {
 
-       return lapsCompleted += value;
+        return lapsCompleted += value;
 
     }
+
+
+    static public int Partition(List<CarLapCounter> arr, int left, int right)
+    {
+        // Comprobar que left y right estï¿½n dentro de los lï¿½mites de la lista
+        if (arr == null || arr.Count == 0 || left < 0 || right >= arr.Count || left > right)
+        {
+            return -1;  // Indicar que no se puede proceder
+        }
+
+        CarLapCounter pivot = arr[(left + right) / 2];  // Tomamos el auto en el centro como pivote
+
+        while (left <= right) // Modificar para que el ciclo no se repita indefinidamente
+        {
+            // Buscar un elemento mayor que el pivote en la izquierda
+            while (arr[left].lapsCompleted > pivot.lapsCompleted ||
+                   (arr[left].lapsCompleted == pivot.lapsCompleted && arr[left].PassedCheckPointNumber > pivot.PassedCheckPointNumber) ||
+                   (arr[left].lapsCompleted == pivot.lapsCompleted && arr[left].PassedCheckPointNumber == pivot.PassedCheckPointNumber && arr[left].TimeAtLastCheckPointPassed < pivot.TimeAtLastCheckPointPassed))
+            {
+                left++;
+            }
+
+            // Buscar un elemento menor que el pivote en la derecha
+            while (arr[right].lapsCompleted < pivot.lapsCompleted ||
+                   (arr[right].lapsCompleted == pivot.lapsCompleted && arr[right].PassedCheckPointNumber < pivot.PassedCheckPointNumber) ||
+                   (arr[right].lapsCompleted == pivot.lapsCompleted && arr[right].PassedCheckPointNumber == pivot.PassedCheckPointNumber && arr[right].TimeAtLastCheckPointPassed > pivot.TimeAtLastCheckPointPassed))
+            {
+                right--;
+            }
+
+            if (left <= right)
+            {
+                // Intercambiar elementos
+                CarLapCounter temp = arr[right];
+                arr[right] = arr[left];
+                arr[left] = temp;
+                left++;
+                right--;
+            }
+        }
+
+        return left;  // Regresar left como el nuevo ï¿½ndice de particiï¿½n
+    }
+
+    static public void QuickSort(List<CarLapCounter> arr, int left, int right)
+    {
+        if (left < right)
+        {
+            int pivot = Partition(arr, left, right); // Obtener ï¿½ndice de particiï¿½n
+
+            if (left < pivot - 1) // Verificar que el rango tiene mï¿½s de un elemento
+            {
+                QuickSort(arr, left, pivot - 1); // Recursiï¿½n en la mitad izquierda
+            }
+
+            if (pivot < right) // Verificar que el rango tiene mï¿½s de un elemento
+            {
+                QuickSort(arr, pivot, right); // Recursiï¿½n en la mitad derecha
+            }
+        }
+    }
+
 
 
 
@@ -79,7 +141,7 @@ public class CarRankingManager : MonoBehaviour
     {
         if (carLapCounter.lapsCompleted >= LapsToComplete)
         {
-            if (!carLapCounter.isRaceCompleted) // Solo si aún no terminó la carrera
+            if (!carLapCounter.isRaceCompleted) // Solo si aï¿½n no terminï¿½ la carrera
             {
                 carLapCounter.isRaceCompleted = true;
                 carsFinishedRace++; // Incrementar cuando un auto completa la carrera
@@ -93,7 +155,7 @@ public class CarRankingManager : MonoBehaviour
                 }
                 else
                 {
-                    while (ranking.ContainsKey(finalPosition)) //Si contiene el puesto que quiere usar, aumenta hasta que no haya nada y lo guarda ahí
+                    while (ranking.ContainsKey(finalPosition)) //Si contiene el puesto que quiere usar, aumenta hasta que no haya nada y lo guarda ahï¿½
                     {
                         finalPosition++;
                     }
@@ -114,10 +176,12 @@ public class CarRankingManager : MonoBehaviour
         }
         else
         {
-            carList = carList.OrderByDescending(car => car.lapsCompleted) //Ordnena primero de mayor a menor en base a las vueltas
-                             .ThenByDescending(car => car.PassedCheckPointNumber) // Si son iguales lo hace en base a quien tiene mas checkpoints
-                             .ThenBy(car => car.TimeAtLastCheckPointPassed) //Si son iguales lo hace en base al tiempo en el que pasaron el checkpoint
-                             .ToList(); //Lo hace lista
+            QuickSort(carList, 0, carList.Count - 1);
+
+            /* carList = carList.OrderByDescending(car => car.lapsCompleted) //Ordnena primero de mayor a menor en base a las vueltas
+                              .ThenByDescending(car => car.PassedCheckPointNumber) // Si son iguales lo hace en base a quien tiene mas checkpoints
+                              .ThenBy(car => car.TimeAtLastCheckPointPassed) //Si son iguales lo hace en base al tiempo en el que pasaron el checkpoint
+                              .ToList(); //Lo hace lista */
 
             ranking.Clear();
 
@@ -129,19 +193,26 @@ public class CarRankingManager : MonoBehaviour
             // Actualizar la UI con el ranking actual
             boardUIHandler.UpdateList(ranking.ToList());
 
-            // Actualizar posición individual del auto
+            // Actualizar posiciï¿½n individual del auto
             carPosition = carList.IndexOf(carLapCounter) + 1;
 
             carLapCounter.SetCarPosition(carPosition);
 
-            if (carPosition == 1 && !lapCompletedTriggered)
-            {
-                if(lapsCompleted > 0) StateManager.Instance.OnLapCompleted();
+            // El lÃ­der actual es el primer auto en la lista ordenada
+            var currentLeader = carList.FirstOrDefault();
 
-                lapCompletedTriggered = true;
+            // Verifica si el lÃ­der ha completado al menos una vuelta
+            if (currentLeader != null && currentLeader.lapsCompleted > 0)
+            {
+                // Solo ejecuta si el lÃ­der actual cambia
+                if (!lapCompletedTriggered)
+                {
+                    lapCompletedTriggered = true;
+                    StateManager.Instance.OnLapCompleted();
+                }
             }
 
-            // Restablecer el triggereo para la próxima vuelta
+            // Restablecer el triggereo para la prï¿½xima vuelta
             if (carLapCounter.PassedCheckPointNumber == 0)
             {
                 lapCompletedTriggered = false;
@@ -149,6 +220,7 @@ public class CarRankingManager : MonoBehaviour
 
         }
     }
+
 }
     
 

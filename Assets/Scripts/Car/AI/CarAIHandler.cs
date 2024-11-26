@@ -76,13 +76,13 @@ public class CarAIHandler : MonoBehaviour
         Vector2 vecTarget = targetPosition - transform.position;
         vecTarget.Normalize();
 
-        float angleToTarget = Vector2.SignedAngle(transform.up, vecTarget);
+        float angleToTarget = Vector2.SignedAngle(transform.up, vecTarget); //Angulo entre la orientación del auto en relación al target (WP)
         angleToTarget *= -1;
 
 
-        float steeringAmount = angleToTarget / 45f;
+        float steeringAmount = angleToTarget / 45f; //Calculo giro necesario entre 45(45 es giro completo a la derecha o izquierda
 
-        steeringAmount = Mathf.Clamp(steeringAmount, -1f, 1f);
+        steeringAmount = Mathf.Clamp(steeringAmount, -1f, 1f);//Rango de -1 a 1, 1 Derecha, -1 izquierda
 
         return steeringAmount;
 
@@ -91,13 +91,12 @@ public class CarAIHandler : MonoBehaviour
     float ManageAISpeed(float inputX)
     {
 
-        if (controller.GetVelocityMag() > maxSpeed)
+        if (controller.GetVelocityMag() > maxSpeed) //Si mayor deja de acelerar
         {
             return 0;
         }
 
-        // Reduce menos la velocidad al girar
-        return Mathf.Clamp(1.0f - Mathf.Abs(inputX) * 0.5f, 0.5f, 1.0f);
+        return Mathf.Clamp(1.0f - Mathf.Abs(inputX) * 0.5f, 0.5f, 1.0f); //Multiplico el positivo de X (giro), al restar el resultado es valor entre 0.5(giro Max) y 1(giro Max), clampeo para que cuando la IA gire brusco baje velocidad pero nunca menos que la mitad de su aceleración
     }
 
     float ManageWPSpeed(AICheckPoints nextWP)
@@ -115,14 +114,14 @@ public class CarAIHandler : MonoBehaviour
 
         if (currentWP != null)
         {
-            // Añadir un desplazamiento aleatorio dentro de un radio alrededor del waypoint
+            // Añade desplazamiento aleatorio dentro de un radio alrededor del waypoint
             float radius = 3.0f; // Radio de tolerancia para no seguir un camino tan lineal
             Vector2 randomOffset = Random.insideUnitCircle * radius;
             targetPosition = currentWP.transform.position + new Vector3(randomOffset.x, randomOffset.y, 0f);
 
             float distanceToWP = (targetPosition - transform.position).magnitude;
 
-            // Añadir un margen de error a la distancia mínima para alcanzar el waypoint
+            // Añade un margen de error a la distancia mínima para alcanzar el waypoint
             float adjustedMinDist = currentWP.minDistToReachWP + Random.Range(0.5f, 2.0f);
 
             if (distanceToWP <= adjustedMinDist)
