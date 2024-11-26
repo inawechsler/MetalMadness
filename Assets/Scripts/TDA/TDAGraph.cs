@@ -5,8 +5,6 @@ using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
-using UnityEngine.WSA;
-using static UnityEngine.RuleTile.TilingRuleOutput;
 
 
 public class TDAGraph : MonoBehaviour

@@ -19,7 +19,7 @@ TagManager:
   - EventSystem
   - SelectedImage
   - TileState
-  - TileState2
+  - Canvas
   layers:
   - Default
   - TransparentFX
