@@ -110,6 +110,8 @@ public class CarAIHandler : MonoBehaviour
         if (currentWP == null)
         {
             currentWP = FindClosestWP();
+
+            Debug.Log(currentWP.gameObject.name);
         }
 
         if (currentWP != null)

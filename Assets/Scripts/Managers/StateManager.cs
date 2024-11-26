@@ -97,9 +97,9 @@ public class StateManager : MonoBehaviour
 
             stateColl.SetCurrentState(randomState);
 
-            UpdateGraph();
-        }
 
+        }
+        UpdateGraph();
         // Iniciar cooldown
         StartCoroutine(ResetCooldown());
     }
