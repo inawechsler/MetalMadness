@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
 using UnityEngine.WSA;
 using static UnityEngine.RuleTile.TilingRuleOutput;
@@ -53,9 +54,36 @@ public class TDAGraph : MonoBehaviour
             }
         }
 
-        Dijkstra(new Vector3Int(-19, 27, 0), new Vector3Int(-12, 29, 0));
+        Dijkstra(spawnPoint(SceneManager.GetActiveScene().name, "Start"), spawnPoint(SceneManager.GetActiveScene().name, "End"));
     }
 
+    Vector3Int spawnPoint(string sceneName, string pointToReturn)
+    {
+        Vector3Int vecToGive = Vector3Int.zero;
+        if(pointToReturn.ToLower() == "start")
+        {
+            switch (sceneName)
+            {
+                case "Race":
+                    return vecToGive = new Vector3Int(-19, 27, 0);
+                case "Race3":
+                    return vecToGive = new Vector3Int(-109, 130, 0);
+            }
+        }
+        else
+        {
+            switch (sceneName)
+            {
+                case "Race":
+                    return vecToGive = new Vector3Int(-12, 29, 0);
+                case "Race3":
+                    return vecToGive = new Vector3Int(-129, 116, 0);
+            }
+        }
+
+        return vecToGive;
+
+    }
    
 
     private int CheckNodeOnCollision(Vector3Int nodePosition, Tilemap stateTiles)
@@ -78,40 +106,6 @@ public class TDAGraph : MonoBehaviour
         return weight; // Peso normal si no tiene estado activo
     }
 
-    //private bool FindNodeOnCollider(Vector3Int position, Tilemap stateTiles)
-    //{
-    //    Vector3 worldPosition = stateTiles.GetCellCenterWorld(position); // Centro exacto de la celda
-
-    //    var hit = Physics2D.Raycast(worldPosition, Vector2.zero); // Raycast en la posición exacta
-
-    //    if (hit.collider.gameObject.GetComponent<StateCollider>() != null)
-    //    {
-    //        var stateCol = hit.collider.gameObject.GetComponent<StateCollider>();
-
-    //        if (stateTiles == null) Debug.LogWarning(stateTiles.gameObject.name + "nil");
-
-
-    //        if (stateCol == null) Debug.LogWarning("statecol nil");
-
-    //        var stateToCompare = stateCol.state;
-
-    //        if (stateToCompare == null) Debug.LogWarning("statecompare nil");
-
-    //        // Verifica si el auto tiene un upgrade que contrarreste el estado
-    //        bool hasUpgrade = car.upgrades.HasUpgradeToCounteract(stateToCompare);
-
-    //        if (car.upgrades == null) Debug.LogWarning("car.upgrades nil");
-
-    //        return !hasUpgrade; // Devuelve true si no tiene el upgrade
-
-    //    }
-
-    //    if (hit.collider == null) Debug.LogWarning("hit.collider nil");
-
-    //    return false; // Si no hay colisión o no se cumple ninguna condición
-
-    //}
-
     private bool FindNodeOnCollider(Vector3Int position, Tilemap stateTiles)
     {
         Vector3 worldPosition = stateTiles.GetCellCenterWorld(position); // Centro exacto de la celda
@@ -126,12 +120,7 @@ public class TDAGraph : MonoBehaviour
         }
         if (position == new Vector3Int(-36, 6, 0)) Debug.Log("js" + hit.collider.gameObject.name);
 
-
         var isTileOnCollider = hit.collider.GetComponent<StateCollider>();
-        if(isTileOnCollider != null )
-        {
-            Debug.Log($"Objeto detectado por Raycast: {stateTiles.WorldToCell(worldPosition)} : {hit.collider.gameObject.name}");
-        }
 
         if (isTileOnCollider == null)
         {
@@ -164,7 +153,6 @@ public class TDAGraph : MonoBehaviour
         {
             foreach (var neighbour in graph[node].Keys.ToList())
             {
-
                 int newWeight = CheckNodeOnCollision(neighbour, stateTiles);
                 graph[node][neighbour] = newWeight;
             }

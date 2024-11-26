@@ -36,6 +36,7 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
 
         carUpgrades = GameObject.FindWithTag("Player").GetComponent<CarUpgrades>();
 
+
         selectedImage = GameObject.FindWithTag("SelectedImage").GetComponent<Image>();
 
         foreach(var button in upgradeButtons)
@@ -87,6 +88,8 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
         OnBoxExit(EntityType.Player, carUpgrades); //LLama a OnBoxExit
 
         selectedImage.gameObject.SetActive(false);
+
+        StateManager.Instance.UpdateGraph();
     }
 
     public void OnBoxExit(EntityType type, CarUpgrades carUpgrades)//Lógica de asignado de upgrade y Oculto el canvas

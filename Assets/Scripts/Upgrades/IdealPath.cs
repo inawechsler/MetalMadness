@@ -20,6 +20,11 @@ public class IdealPath : MonoBehaviour, IUpgrade
 
         tilemap = GameObject.FindWithTag("Track").GetComponent<Tilemap>();
 
+        tilesWState = GameObject.FindGameObjectsWithTag("TileState")
+          .Select(obj => obj.GetComponent<Tilemap>())
+          .Where(tilemap => tilemap != null)
+          .ToList();
+
         Dijkstra.InitGraph(tilemap, tilesWState);
 
         checkPoints = FindObjectsOfType<CheckPoints>().ToList();

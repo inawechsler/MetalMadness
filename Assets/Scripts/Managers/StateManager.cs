@@ -20,7 +20,7 @@ public class StateManager : MonoBehaviour
 
     private bool canAssignStates = true; // Bandera para controlar el cooldown
 
-    [SerializeField] List<Tilemap> tileMaps;
+    [SerializeField] public List<Tilemap> tileMaps { get; set; }
 
     [SerializeField] private List<GameObject> surfaces; // Las superficies
     [SerializeField] private List<IState> availableStates; // La lista de estados disponibles
@@ -55,10 +55,10 @@ public class StateManager : MonoBehaviour
             GrafoDij = GameObject.FindWithTag("Managers").GetComponent<TDAGraph>();
             FindAvailableStates();
 
-            foreach(var surf in surfaces)
-            {
-                tileMaps.Add(surf.GetComponent<Tilemap>());
-            }
+            //foreach(var surf in surfaces)
+            //{
+            //    tileMaps.Add(surf.GetComponent<Tilemap>());
+            //}
             
         }
     }
@@ -72,6 +72,15 @@ public class StateManager : MonoBehaviour
             Debug.LogWarning("No se encontraron estados disponibles.");
         }
     }
+
+    public void UpdateGraph()
+    {
+        foreach (var surface in surfaces)
+        {
+            GrafoDij.UpdateGraphWeights(surface.GetComponent<Tilemap>());
+        }
+    }
+    
 
     private void AssignRandomStates()
     {
@@ -88,7 +97,7 @@ public class StateManager : MonoBehaviour
 
             stateColl.SetCurrentState(randomState);
 
-            GrafoDij.UpdateGraphWeights(surface.GetComponent<Tilemap>());
+            UpdateGraph();
         }
 
         // Iniciar cooldown
