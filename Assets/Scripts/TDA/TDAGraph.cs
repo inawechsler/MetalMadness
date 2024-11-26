@@ -12,6 +12,7 @@ using static UnityEngine.RuleTile.TilingRuleOutput;
 public class TDAGraph : MonoBehaviour
 {
     private Dictionary<Vector3Int, Dictionary<Vector3Int, int>> graph;
+    private Dictionary<(Vector3Int, Vector3Int), int> edgeWeightCache;
     public TileCollider tColl;
     private Tilemap tilemap;
     private Car car;
@@ -25,6 +26,7 @@ public class TDAGraph : MonoBehaviour
     public void InitGraph(Tilemap tilemap, List<Tilemap> stateTilemaps)
     {
         graph = new Dictionary<Vector3Int, Dictionary<Vector3Int, int>>();
+        edgeWeightCache = new Dictionary<(Vector3Int, Vector3Int), int>();
         this.tilemap = tilemap;
         foreach (Vector3Int pos in tilemap.cellBounds.allPositionsWithin)
         {
@@ -59,6 +61,7 @@ public class TDAGraph : MonoBehaviour
 
     Vector3Int spawnPoint(string sceneName, string pointToReturn)
     {
+        Debug.Log(sceneName);
         Vector3Int vecToGive = Vector3Int.zero;
         if(pointToReturn.ToLower() == "start")
         {
@@ -92,7 +95,6 @@ public class TDAGraph : MonoBehaviour
         int weight = 1;
         if (stateTiles.HasTile(nodePosition))
         {
-            Debug.Log(FindNodeOnCollider(nodePosition, stateTiles) + " " + stateTiles.gameObject.name);
             if (FindNodeOnCollider(nodePosition, stateTiles)) //Revisa si el nodo esta en un collider y si el collider está acti
             {
                     weight = 20; // Peso más alto si tiene un estado activo
@@ -148,7 +150,7 @@ public class TDAGraph : MonoBehaviour
     public void UpdateGraphWeights(Tilemap stateTiles) //Hago Lista de Keys y Valores del grafo, y le asigno el nuevo valor que le llega a las aristas que unen a estos respectivamente
     {
 
-        Dijkstra(new Vector3Int(-19, 27, 0), new Vector3Int(-12, 29, 0));
+        Dijkstra(spawnPoint(SceneManager.GetActiveScene().name, "Start"), spawnPoint(SceneManager.GetActiveScene().name, "End"));
         foreach (var node in graph.Keys.ToList())
         {
             foreach (var neighbour in graph[node].Keys.ToList())
