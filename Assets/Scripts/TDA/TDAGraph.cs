@@ -52,7 +52,10 @@ public class TDAGraph : MonoBehaviour
             }
         }
 
-        Dijkstra(spawnPoint(SceneManager.GetActiveScene().name, "Start"), spawnPoint(SceneManager.GetActiveScene().name, "End"));
+        var path = Dijkstra(spawnPoint(SceneManager.GetActiveScene().name, "Start"), spawnPoint(SceneManager.GetActiveScene().name, "End"));
+        //TempDij.Add(path);
+
+        DrawPath(path, spawnPoint(SceneManager.GetActiveScene().name, "Start"), (spawnPoint(SceneManager.GetActiveScene().name, "End")));
     }
 
     Vector3Int spawnPoint(string sceneName, string pointToReturn)
@@ -146,13 +149,15 @@ public class TDAGraph : MonoBehaviour
         Debug.Log(stateTiles.gameObject.name);
 
         var path = Dijkstra(spawnPoint(SceneManager.GetActiveScene().name, "Start"), spawnPoint(SceneManager.GetActiveScene().name, "End"));
-        TempDij.Add(path);
+        //TempDij.Add(path);
 
-        if(TempDij.Count > 1)
-        {
-            //DrawPath(TempDij[0], spawnPoint(SceneManager.GetActiveScene().name, "Start"), spawnPoint(SceneManager.GetActiveScene().name, "End"));
-            DrawPath(TempDij[1], spawnPoint(SceneManager.GetActiveScene().name, "Start"), spawnPoint(SceneManager.GetActiveScene().name, "End"));
-        }
+        DrawPath(path, spawnPoint(SceneManager.GetActiveScene().name, "Start"), (spawnPoint(SceneManager.GetActiveScene().name, "End")));
+
+        //if(TempDij.Count > 1)
+        //{
+        //    DrawPath(TempDij[0], spawnPoint(SceneManager.GetActiveScene().name, "Start"), spawnPoint(SceneManager.GetActiveScene().name, "End"));
+        //    //DrawPath(TempDij[1], spawnPoint(SceneManager.GetActiveScene().name, "Start"), spawnPoint(SceneManager.GetActiveScene().name, "End"));
+        //}
     }
 
     private void AddVertex(Vector3Int tileToAdd)
