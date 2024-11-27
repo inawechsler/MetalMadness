@@ -50,7 +50,6 @@ public class StateManager : MonoBehaviour
         if (SceneNameManager.Instance.IsRaceScene(SceneManager.GetActiveScene()))
         {
             topDownController = FindObjectsOfType<TopDownController>();
-            surfaces = GameObject.FindGameObjectsWithTag("TileState").ToList();
             GrafoDij = GameObject.FindWithTag("Managers").GetComponent<TDAGraph>();
             FindAvailableStates();
 

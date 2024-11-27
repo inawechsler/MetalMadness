@@ -8,10 +8,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Menu.unity
     guid: 32b297201b4cbea498f314923fe91c35
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Race3.unity
     guid: 07ddc6efa4fa69e4aa76fc1919f3ed57
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/Race.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
   - enabled: 1
