@@ -54,7 +54,7 @@ public class TDAGraph : MonoBehaviour
             }
         }
 
-        //Dijkstra(spawnPoint(SceneManager.GetActiveScene().name, "Start"), spawnPoint(SceneManager.GetActiveScene().name, "End"));
+        Dijkstra(spawnPoint(SceneManager.GetActiveScene().name, "Start"), spawnPoint(SceneManager.GetActiveScene().name, "End"));
     }
 
     Vector3Int spawnPoint(string sceneName, string pointToReturn)
@@ -97,11 +97,6 @@ public class TDAGraph : MonoBehaviour
             {
                 weight = 20; // Peso más alto si tiene un estado activo
 
-                if (!nodesInCollision.ContainsKey(nodePosition))
-                {
-                    nodesInCollision[nodePosition] = new Dictionary<Vector3Int, int>();
-                }
-
                 // Agrega vecinos con peso de colisión (ejemplo: peso 20)
                 foreach (var neighbour in GetNeighbours(nodePosition))
                 {
@@ -114,6 +109,8 @@ public class TDAGraph : MonoBehaviour
 
         return weight; // Peso normal si no tiene estado activo
     }
+
+
     private bool FindNodeOnCollider(Vector3Int position, Tilemap stateTiles)
     {
         Vector3 worldPosition = stateTiles.GetCellCenterWorld(position); // Centro exacto de la celda
@@ -156,13 +153,13 @@ public class TDAGraph : MonoBehaviour
     public void UpdateGraphWeights(Tilemap stateTiles) //Hago Lista de Keys y Valores del grafo, y le asigno el nuevo valor que le llega a las aristas que unen a estos respectivamente
     {
 
-        //Dijkstra(spawnPoint(SceneManager.GetActiveScene().name, "Start"), spawnPoint(SceneManager.GetActiveScene().name, "End"));
+        Dijkstra(spawnPoint(SceneManager.GetActiveScene().name, "Start"), spawnPoint(SceneManager.GetActiveScene().name, "End"));
         foreach (var node in nodesInCollision.Keys.ToList())
         {
             foreach (var neighbour in nodesInCollision[node].Keys.ToList())
             {
                 int newWeight = CheckNodeOnCollision(neighbour, stateTiles);
-                graph[node][neighbour] = newWeight;
+                nodesInCollision[node][neighbour] = newWeight;
             }
         }
     }
@@ -268,8 +265,8 @@ public class TDAGraph : MonoBehaviour
 
         path.Reverse();  // Revertir el camino para que vaya de inicio a destino
 
-        DrawPath(path, new Vector3Int(-19, 27, 0), new Vector3Int(-12, 29, 0));
-
+        DrawPath(path, start, target);
+        Debug.Log("jsda");
         return path;
     }
 
