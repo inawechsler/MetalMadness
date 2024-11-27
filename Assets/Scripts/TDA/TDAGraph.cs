@@ -53,7 +53,6 @@ public class TDAGraph : MonoBehaviour
         }
 
         var path = Dijkstra(spawnPoint(SceneManager.GetActiveScene().name, "Start"), spawnPoint(SceneManager.GetActiveScene().name, "End"));
-        //TempDij.Add(path);
 
         DrawPath(path, spawnPoint(SceneManager.GetActiveScene().name, "Start"), (spawnPoint(SceneManager.GetActiveScene().name, "End")));
     }
@@ -137,7 +136,6 @@ public class TDAGraph : MonoBehaviour
     {
         foreach (var node in graph.Keys.ToList().Where(node => nodesOnCollider.Contains(node)))
         {
-            Debug.Log("sd Update");
             foreach (var neighbour in graph[node].Keys.ToList())
             {
                 int newWeight = CheckNodeOnCollision(neighbour, stateTiles);
@@ -149,15 +147,8 @@ public class TDAGraph : MonoBehaviour
         Debug.Log(stateTiles.gameObject.name);
 
         var path = Dijkstra(spawnPoint(SceneManager.GetActiveScene().name, "Start"), spawnPoint(SceneManager.GetActiveScene().name, "End"));
-        //TempDij.Add(path);
 
         DrawPath(path, spawnPoint(SceneManager.GetActiveScene().name, "Start"), (spawnPoint(SceneManager.GetActiveScene().name, "End")));
-
-        //if(TempDij.Count > 1)
-        //{
-        //    DrawPath(TempDij[0], spawnPoint(SceneManager.GetActiveScene().name, "Start"), spawnPoint(SceneManager.GetActiveScene().name, "End"));
-        //    //DrawPath(TempDij[1], spawnPoint(SceneManager.GetActiveScene().name, "Start"), spawnPoint(SceneManager.GetActiveScene().name, "End"));
-        //}
     }
 
     private void AddVertex(Vector3Int tileToAdd)
