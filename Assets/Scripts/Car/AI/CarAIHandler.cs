@@ -30,8 +30,6 @@ public class CarAIHandler : MonoBehaviour
 
     CapsuleCollider2D capsuleCollider;
 
-    public  ABBWaypoints waypointTree;
-    private NodoWDP currentNode;
     private AICheckPoints currentWP;
 
     // Start is called before the first frame update
@@ -41,28 +39,6 @@ public class CarAIHandler : MonoBehaviour
         allAIWP = FindObjectsOfType<AICheckPoints>();
        
         capsuleCollider = GetComponent<CapsuleCollider2D>();
-
-        currentNode = waypointTree.raiz;
-
-        waypointTree = FindObjectOfType<ABBWaypoints>();
-
-     
-
-        foreach (var wp in allAIWP)
-        {
-            waypointTree.AgregarElem(wp);
-        }
-
-        currentNode = waypointTree.raiz;
-        if (currentNode != null && currentNode.info.Count > 0)
-        {
-            currentWP = currentNode.info[0];  // Comienza con el primer waypoint del nodo
-        }
-
-        // Empieza el enumerador para recorrer el ABB
-        StartCoroutine(WaypointEnumerator());
-
-        Debug.Log("Waypoints agregados: " + allAIWP.Length);
     }
 
     // Update is called once per frame
@@ -70,7 +46,7 @@ public class CarAIHandler : MonoBehaviour
     {
         
 
-        Debug.Log("CurrentWP :" + currentWP);
+
      
         Vector2 inputVector = Vector2.zero;
 
@@ -142,174 +118,32 @@ public class CarAIHandler : MonoBehaviour
     {
         if (currentWP == null)
         {
-            // Si no hay waypoint asignado, buscar el más cercano.
-            currentWP = waypointTree.FindClosestWP(transform.position);
-            if (currentWP == null)
-            {
-                Debug.LogError("No se encontró un waypoint cercano.");
-                return;
-            }
+            currentWP = FindClosestWP();
         }
 
-        // Calcular la distancia al waypoint actual
-        float distanceToWP = (transform.position - currentWP.transform.position).magnitude;
+        // Añade desplazamiento aleatorio dentro de un radio alrededor del waypoint
+        float radius = 6.0f; // Radio de tolerancia para no seguir un camino tan lineal
+        Vector2 randomOffset = Random.insideUnitCircle * radius;
+        targetPosition = currentWP.transform.position + new Vector3(randomOffset.x, randomOffset.y, 0f);
+
+        float distanceToWP = (targetPosition - transform.position).magnitude;
+
+        // Añade un margen de error a la distancia mínima para alcanzar el waypoint
         float adjustedMinDist = currentWP.minDistToReachWP + Random.Range(0.5f, 2.0f);
 
         if (distanceToWP <= adjustedMinDist)
         {
-            // Si la IA está cerca del waypoint actual, busca el siguiente waypoint.
-            MoveToNextWaypoint();
-        }
+            // Manejo de la velocidad en el siguiente waypoint
+            maxSpeed = ManageWPSpeed(FindClosestWP());
 
-        // Añadir desplazamiento aleatorio alrededor del waypoint para mayor naturalidad
-        float radius = 3.0f;
-        Vector2 randomOffset = Random.insideUnitCircle * radius;
-        targetPosition = currentWP.transform.position + new Vector3(randomOffset.x, randomOffset.y, 0f);
-
-
-        //if (currentWP == null)
-        //{
-        //    currentWP = FindClosestWP();
-        //}
-
-        //if (currentWP != null)
-        //{
-        //    // Añade desplazamiento aleatorio dentro de un radio alrededor del waypoint
-        //    float radius = 3.0f; // Radio de tolerancia para no seguir un camino tan lineal
-        //    Vector2 randomOffset = Random.insideUnitCircle * radius;
-        //    targetPosition = currentWP.transform.position + new Vector3(randomOffset.x, randomOffset.y, 0f);
-
-        //    float distanceToWP = (targetPosition - transform.position).magnitude;
-
-        //    // Añade un margen de error a la distancia mínima para alcanzar el waypoint
-        //    float adjustedMinDist = currentWP.minDistToReachWP + Random.Range(0.5f, 2.0f);
-
-        //    if (distanceToWP <= adjustedMinDist)
-        //    {
-        //        // Manejo de la velocidad en el siguiente waypoint
-        //        maxSpeed = ManageWPSpeed(FindClosestWP());
-
-        //        // Si el siguiente waypoint tiene más de un camino, elige aleatoriamente
-        //        currentWP = currentWP.nextWP[Random.Range(0, currentWP.nextWP.Length)];
-        //    }
-        //}
-
-        //AICheckPoints FindClosestWP()
-        //{
-        //    //Devuelve el waypont mas cercano a la IA
-        //    return allAIWP.OrderBy(index => Vector3.Distance(transform.position, index.transform.position)).FirstOrDefault();
-        //}
-    }
-
-    void MoveToNextWaypoint()
-    {
-        if (currentWP != null)
-        {
-            if (currentWP.nextWP.Length > 0)
-            {
-                currentWP = currentWP.nextWP[Random.Range(0, currentWP.nextWP.Length)];
-            }
-            else
-            {
-                // Si no hay waypoints siguientes en 'nextWP', busca el siguiente en el árbol
-                currentWP = waypointTree.FindClosestWP(transform.position);
-                if (currentWP == null)
-                {
-                    Debug.LogError("No se pudo encontrar un nuevo waypoint.");
-                }
-            }
-        }
-        else
-        {
-            Debug.LogError("El waypoint actual es nulo, no se puede mover al siguiente.");
-        }
-    }
-    private IEnumerator WaypointEnumerator()
-    {
-        while (currentNode != null && currentNode.info.Count > 0)
-        {
-            // Comienza con el primer waypoint del nodo
-            currentWP = currentNode.info[0];
-            while (Vector3.Distance(transform.position, currentWP.transform.position) > currentWP.minDistToReachWP)
-            {
-                // Mueve la IA hacia el waypoint
-                targetPosition = currentWP.transform.position;
-                float turnInput = TurnTowardsTarget();
-                float speedInput = ManageAISpeed(turnInput);
-                controller.SetInputVector(new Vector2(turnInput, speedInput));
-
-                yield return null; // Espera al siguiente frame
-            }
-
-            // Si se alcanzó el waypoint, avanzamos al siguiente
-            TraverseToNextWaypoint();
-            yield return null;
+            // Si el siguiente waypoint tiene más de un camino, elige aleatoriamente
+            currentWP = currentWP.nextWP[Random.Range(0, currentWP.nextWP.Length)];
         }
     }
 
-    // Método para recorrer el árbol en orden
-    private void TraverseToNextWaypoint()
-    {
-        if (currentNode == null)
+        AICheckPoints FindClosestWP()
         {
-            Debug.LogError("currentNode es null, no se puede avanzar.");
-            return; // Si el nodo es null, no hacemos nada
-        }
-
-        int currentIndex = currentNode.info.IndexOf(currentWP);
-        if (currentIndex < currentNode.info.Count - 1)
-        {
-            // Avanzamos al siguiente waypoint en la lista
-            currentWP = currentNode.info[currentIndex + 1];
-        }
-        else
-        {
-            // Si no hay más waypoints en este nodo, encontrar el siguiente nodo
-            currentNode = FindNextClosestNode(currentNode);
-            if (currentNode != null && currentNode.info.Count > 0)
-            {
-                currentWP = currentNode.info[0];  // Comienza con el primer waypoint del siguiente nodo
-            }
-            else
-            {
-                Debug.LogError("No se encontraron más waypoints o nodos.");
-                return; // Si no hay más waypoints ni nodos, termina la ejecución
-            }
+            //Devuelve el waypont mas cercano a la IA
+            return allAIWP.OrderBy(index => Vector3.Distance(transform.position, index.transform.position)).FirstOrDefault();
         }
     }
-
-    // Método para encontrar el siguiente nodo más cercano en el árbol
-    private NodoWDP FindNextClosestNode(NodoWDP node)
-    {
-        if (node == null)
-        {
-            Debug.LogError("El nodo es null.");
-            return null;
-        }
-        // Buscar el hijo más cercano (izquierda o derecha) dependiendo de la distancia
-        if (node.hijoIzq != null && node.hijoDer != null)
-        {
-            float leftDist = Vector3.Distance(transform.position, node.hijoIzq.info[1].transform.position);
-            float rightDist = Vector3.Distance(transform.position, node.hijoDer.info[1].transform.position);
-
-            if (leftDist < rightDist)
-            {
-                return node.hijoIzq;
-            }
-            else
-            {
-                return node.hijoDer;
-            }
-        }
-        else if (node.hijoIzq != null)
-        {
-            return node.hijoIzq;
-        }
-        else if (node.hijoDer != null)
-        {
-            return node.hijoDer;
-        }
-
-        return null;  // Si no hay hijos, terminamos
-    }
-}

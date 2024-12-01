@@ -14,6 +14,7 @@ public class StateManager : MonoBehaviour
 {
     public static StateManager Instance;
     public IState slipperyState;
+    public IState electricState;
     public IState slowState;
     [SerializeField] TopDownController[] topDownController;
     private TDAGraph GrafoDij;
@@ -50,14 +51,17 @@ public class StateManager : MonoBehaviour
         if (SceneNameManager.Instance.IsRaceScene(SceneManager.GetActiveScene()))
         {
             topDownController = FindObjectsOfType<TopDownController>();
+            electricState = GameObject.FindWithTag("TileState").GetComponent<ElectricState>();
             GrafoDij = GameObject.FindWithTag("Managers").GetComponent<TDAGraph>();
             FindAvailableStates();
 
-            //foreach(var surf in surfaces)
+            //foreach (var surf in surfaces)
             //{
-            //    tileMaps.Add(surf.GetComponent<Tilemap>());
+            //    var stateColl = surf.GetComponent<StateCollider>();
+
+            //    stateColl.SetCurrentState(electricState);
             //}
-            
+
         }
     }
 
@@ -95,10 +99,14 @@ public class StateManager : MonoBehaviour
 
             stateColl.SetCurrentState(randomState);
 
+            var particleSystem = GetComponentInChildren<ParticleSystem>();
 
+
+            Debug.Log(particleSystem.gameObject);
+            randomState.ClimateStateSet(particleSystem.gameObject);
         }
-        UpdateGraph();
-        // Iniciar cooldown
+        //UpdateGraph();
+        //// Iniciar cooldown
         StartCoroutine(ResetCooldown());
     }
 

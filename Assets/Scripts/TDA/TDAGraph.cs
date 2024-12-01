@@ -54,7 +54,7 @@ public class TDAGraph : MonoBehaviour
 
         var path = Dijkstra(spawnPoint(SceneManager.GetActiveScene().name, "Start"), spawnPoint(SceneManager.GetActiveScene().name, "End"));
 
-        DrawPath(path, spawnPoint(SceneManager.GetActiveScene().name, "Start"), (spawnPoint(SceneManager.GetActiveScene().name, "End")));
+        //DrawPath(path, spawnPoint(SceneManager.GetActiveScene().name, "Start"), (spawnPoint(SceneManager.GetActiveScene().name, "End")));
     }
 
     Vector3Int spawnPoint(string sceneName, string pointToReturn)
@@ -134,8 +134,10 @@ public class TDAGraph : MonoBehaviour
     public List<List<Vector3Int>> TempDij = new ();
     public void UpdateGraphWeights(Tilemap stateTiles) //Hago Lista de Keys y Valores del grafo, y le asigno el nuevo valor que le llega a las aristas que unen a estos respectivamente
     {
+        Debug.Log("oasodajksda");
         foreach (var node in graph.Keys.ToList().Where(node => nodesOnCollider.Contains(node)))
         {
+            Debug.Log("oasodajksda");
             foreach (var neighbour in graph[node].Keys.ToList())
             {
                 int newWeight = CheckNodeOnCollision(neighbour, stateTiles);
@@ -148,7 +150,7 @@ public class TDAGraph : MonoBehaviour
 
         var path = Dijkstra(spawnPoint(SceneManager.GetActiveScene().name, "Start"), spawnPoint(SceneManager.GetActiveScene().name, "End"));
 
-        DrawPath(path, spawnPoint(SceneManager.GetActiveScene().name, "Start"), (spawnPoint(SceneManager.GetActiveScene().name, "End")));
+        //DrawPath(path, spawnPoint(SceneManager.GetActiveScene().name, "Start"), (spawnPoint(SceneManager.GetActiveScene().name, "End")));
     }
 
     private void AddVertex(Vector3Int tileToAdd)
