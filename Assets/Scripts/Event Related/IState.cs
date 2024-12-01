@@ -9,6 +9,8 @@ public interface IState
 
     void EnterState(TopDownController controller);
     void ExitState(TopDownController controller);
+
+    void ClimateStateSet(GameObject particleSystem);
     
 
 }
