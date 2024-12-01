@@ -25,7 +25,7 @@ public class IdealPath : MonoBehaviour, IUpgrade
           .Where(tilemap => tilemap != null)
           .ToList();
 
-        //Dijkstra.InitGraph(tilemap, tilesWState);
+        Dijkstra.InitGraph(tilemap, tilesWState);
 
         checkPoints = FindObjectsOfType<CheckPoints>().ToList();
       
