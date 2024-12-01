@@ -6,10 +6,7 @@ public class SlippyState : MonoBehaviour, IState
     private bool isOnState = false;
 
     public Color color { get; set; } = new Color(113, 181, 236, 20);
-    public void ClimateStateSet(GameObject gameObject)
-    {
-        gameObject.SetActive(true);
-    }
+
     public void EnterState(TopDownController controller)
     {
 

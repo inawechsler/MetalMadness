@@ -34,7 +34,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 21.4, y: -16.3}
+  m_AnchoredPosition: {x: 6, y: -16.3}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7626053395356038437
@@ -186,6 +186,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   posText: {fileID: 7278138545842669638}
   driverText: {fileID: 6928613785406149556}
+  spriteRenderer: {fileID: 0}
 --- !u!1 &8893215502924545204
 GameObject:
   m_ObjectHideFlags: 0
@@ -220,7 +221,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 47.1, y: -16.3}
+  m_AnchoredPosition: {x: 30.9, y: -16.3}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8679928911296047933

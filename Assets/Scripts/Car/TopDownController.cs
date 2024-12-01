@@ -10,10 +10,8 @@ public class TopDownController : MonoBehaviour
     public float accelerationFactor = 35.0f;
     public float turnFactor = 3.5f;
 
-    public float driftFactor/* { get; private set; }*/ = .85f;
+    public float driftFactor { get; private set; } = .85f;
     public float currentDriftFactor { get; private set; }
-
-    private float lastDriftFactor;
 
     float accelerationInput = 0;
     float steeringInput = 0;
@@ -21,7 +19,7 @@ public class TopDownController : MonoBehaviour
 
     float velocity;
 
-    [SerializeField] public float currentMaxSpeedCap { get; private set; } = 15;
+    [SerializeField] public float currentMaxSpeedCap { get; private set; } = 20;
 
     public float lastSpeedBefChange { get; private set; }
 
@@ -65,15 +63,6 @@ public class TopDownController : MonoBehaviour
         ApplySteering();
 
 
-    }
-
-    public void ApplyLateralSlide(float multiplier)
-    {
-        // Obtén la velocidad lateral.
-        Vector2 rightVelocity = transform.right * Vector2.Dot(rb2D.velocity, transform.right);
-
-        // Aplica un multiplicador para incrementar el deslizamiento la
-        rb2D.AddForce(rightVelocity, ForceMode2D.Force);
     }
 
     void ApplyEngineForce()
@@ -160,7 +149,7 @@ public class TopDownController : MonoBehaviour
     public float SetMaxSpeedCap(float maxSpeedCap)
     {
 
-        Debug.Log(maxSpeedCap); 
+        currentMaxSpeedCap = maxSpeed;
         currentMaxSpeedCap = maxSpeedCap;
 
         return currentMaxSpeedCap;
@@ -175,24 +164,16 @@ public class TopDownController : MonoBehaviour
         }
         lastSpeedBefChange = maxSpeedCap;
     }
-    // Método para establecer el drift temporalmente
-    public void SetDriftFactorTemporarily(float newDrift)
+    public float SetDriftFactor(float newDrift)
     {
-        // Guardar el drift actual antes de cambiarlo
-        lastDriftFactor = driftFactor;
+        if(driftFactor <= .85f)
+        {
+            
+            currentDriftFactor = driftFactor;
+            if (currentDriftFactor == 0) currentDriftFactor = .85f;
+        }
 
-        // Cambiar al nuevo valor
-        driftFactor = newDrift;
-
-        Debug.Log($"DriftFactor temporalmente cambiado a {newDrift}. Anterior: {lastDriftFactor}");
-    }
-
-    // Método para restaurar el drift original
-    public void RestoreDriftFactor()
-    {
-        driftFactor = lastDriftFactor;
-
-        Debug.Log($"DriftFactor restaurado al valor anterior: {lastDriftFactor}");
+       return driftFactor = newDrift;
     }
     public float GetSpeed()
     {
