@@ -23,20 +23,41 @@ public class CarUpgrades : MonoBehaviour
 
     public void AddUpgrade(IUpgrade upgrade)
     {
-        if(upgrade.isEventCounter)
+        // Verificar si la mejora es Event Counter.
+        if (upgrade.isEventCounter)
         {
+            // Si ya existe una mejora Event Counter activa, rechazar la compra.
+            if (activeUpgradeList.Any(upgrade => upgrade.GetType() == upgrade.GetType()))
+            {
+                Debug.LogWarning("This Event Counter upgrade is already active.");
+                return;
+            }
+
+            // Si existe otra Event Counter activa, removerla antes de equipar la nueva.
             IUpgrade upgradeToRemove = GetActiveCounterUpgrade();
-
-            RemoveUpgrade(upgradeToRemove);
+            if (upgradeToRemove != null)
+            {
+                RemoveUpgrade(upgradeToRemove);
+            }
         }
-
-        if (!activeUpgradeList.Contains(upgrade))
+        else
         {
-            activeUpgradeList.Add(upgrade);
-            upgrade.ApplyUpgrade(controller);
+            // Verificar si ya se ha alcanzado el límite de acumulación para la mejora.
+            int upgradeCount = activeUpgradeList.Count(upgrade => upgrade.GetType() == upgrade.GetType());
+            Debug.Log(upgradeCount);
+            if (upgradeCount >= 3)
+            {
+                Debug.LogWarning($"You can't have more than 3 of this upgrade: {upgrade.GetType().Name}");
+                return;
+            }
         }
-    }
 
+        // Agregar la mejora a la lista y aplicarla.
+        activeUpgradeList.Add(upgrade);
+        upgrade.ApplyUpgrade(controller);
+
+        Debug.Log($"Upgrade added: {upgrade.GetType().Name}");
+    }
     public void RemoveUpgrade(IUpgrade upgrade)
     {
         if (upgrade != null)
