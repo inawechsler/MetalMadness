@@ -18,7 +18,10 @@ public class SlowState : MonoBehaviour, IState
             controller.SetMaxSpeedCap(slowedAcceleration);
         }
     }
-
+    public void ClimateStateSet(GameObject gameObject)
+    {
+        gameObject.SetActive(true);
+    }
     public void ExitState(TopDownController controller)
     {
 

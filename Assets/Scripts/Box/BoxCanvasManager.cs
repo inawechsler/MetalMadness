@@ -88,8 +88,6 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
         OnBoxExit(EntityType.Player, carUpgrades); //LLama a OnBoxExit
 
         selectedImage.gameObject.SetActive(false);
-
-        StateManager.Instance.UpdateGraph();
     }
 
     public void OnBoxExit(EntityType type, CarUpgrades carUpgrades)//Lógica de asignado de upgrade y Oculto el canvas
@@ -114,7 +112,6 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
             if(button != null)
             {
                 localButtonTemp = button;
-                Debug.Log(localButtonTemp.ToString());
 
                 RectTransform buttonRectTransform = button.GetComponent<RectTransform>();
 
@@ -156,8 +153,6 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
     {
         string upgradeToSave = upgrade;
         Button buttonToSave = button;
-
-        Debug.Log(upgrade + " " + button.gameObject.name);
 
         return new ShopMemento(upgradeToSave, buttonToSave);
     }
