@@ -91,15 +91,15 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
             }
             else
             {
-                // Verificar si puede usar más de esta mejora
-                if (!carUpgrades.CanUseUpgrade(item))
-                {
-                    item.Button.interactable = false; // Desactiva si alcanzó el límite
-                }
-                else
-                {
-                    item.Button.interactable = true; // Activa si cumple con los requisitos
-                }
+                //// Verificar si puede usar más de esta mejora
+                //if (!carUpgrades.CanUseUpgrade(item))
+                //{
+                //    item.Button.interactable = false; // Desactiva si alcanzó el límite
+                //}
+                //else
+                //{
+                //    item.Button.interactable = true; // Activa si cumple con los requisitos
+                //}
             }
         }
 
