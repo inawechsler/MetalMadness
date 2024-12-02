@@ -155,7 +155,7 @@ MonoBehaviour:
   sounds:
   - name: menu
     clip: {fileID: 8300000, guid: 8ea5e93ff763800429207ea20f3d4335, type: 3}
-    volume: 1
+    volume: 0
     pitch: 1
     loop: 1
     source: {fileID: 0}
@@ -166,16 +166,30 @@ MonoBehaviour:
     loop: 1
     source: {fileID: 0}
   - name: Race3
-    clip: {fileID: 8300000, guid: ecbf1e3c6c1e19b4d8c479c69a0837c2, type: 3}
-    volume: 1
+    clip: {fileID: 8300000, guid: 5ef015ed05733454c8ce60e3a01eaff1, type: 3}
+    volume: 0
+    pitch: 1
+    loop: 1
+    source: {fileID: 0}
+  - name: Countdown
+    clip: {fileID: 8300000, guid: e462ff10a4cdd724ba256e129200ae2c, type: 3}
+    volume: 0.5
+    pitch: 1
+    loop: 1
+    source: {fileID: 0}
+  - name: WindyState
+    clip: {fileID: 8300000, guid: 8f3c92fd11a80164d9d318dd182dc8c4, type: 3}
+    volume: 0.5
     pitch: 1
     loop: 1
     source: {fileID: 0}
   sceneMusics:
   - sceneName: Menu
     musicName: menu
+  - sceneName: Race3.1
+    musicName: Race3
   - sceneName: Race3
-    musicName: menu
+    musicName: Race3
 --- !u!4 &15862125
 Transform:
   m_ObjectHideFlags: 0

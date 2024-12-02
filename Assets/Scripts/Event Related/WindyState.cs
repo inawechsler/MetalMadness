@@ -12,12 +12,11 @@ public class WindyState : MonoBehaviour, IState
     private bool isWindBurstActive = false;
     private float currentBurstDirection = 0f;
 
-
     public bool isClimateAffected { get; set; } = true;
 
     public void ClimateStateSet(ParticleSystem stateParticle)
     {
-        if(stateParticle == null) { Debug.Log("SASAS"); }
+        if (stateParticle == null) { Debug.Log("SASAS"); }
         stateParticle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         stateParticle.Play();
     }
@@ -28,7 +27,7 @@ public class WindyState : MonoBehaviour, IState
         {
             controller.isOnState = true;
 
-           StartCoroutine(WindBurstRoutine(controller));
+            StartCoroutine(WindBurstRoutine(controller));
         }
     }
 
@@ -39,7 +38,9 @@ public class WindyState : MonoBehaviour, IState
             controller.isOnState = false;
 
             StopCoroutine(WindBurstRoutine(controller));
-            
+
+            // Detener el sonido del viento al salir del estado.
+            AudioManager.instance.StopSound("wind");
         }
     }
 
@@ -49,7 +50,6 @@ public class WindyState : MonoBehaviour, IState
         {
             if (isWindBurstActive)
             {
-
                 controller.ApplyLateralSlide(currentBurstDirection * windBurstForce);
             }
         }
@@ -59,22 +59,25 @@ public class WindyState : MonoBehaviour, IState
     {
         while (controller.isOnState)
         {
-            // Esperar un intervalo aleatorio antes de la próxima ráfaga.
-            yield return new WaitForSeconds(/*Random.Range(burstIntervalMin, burstIntervalMax)*/burstDuration);
-            Debug.Log("Rafagaq");
-            // Activar una ráfaga de viento con una dirección aleatoria.
+            
+            yield return new WaitForSeconds(Random.Range(burstIntervalMin, burstIntervalMax));
+
+            
             isWindBurstActive = true;
-            int random = Random.Range(-360, 360);
-            currentBurstDirection = random; // 1 para derecha, -1 para izquierda.
+            currentBurstDirection = Random.Range(-1, 1); 
 
-            // Mantener la ráfaga durante la duración especificada.
-            yield return new WaitForSeconds(3f);
+           
+            AudioManager.instance.PlaySound("wind");
 
-            // Desactivar la ráfaga de viento.
+            
+            yield return new WaitForSeconds(burstDuration);
+
+            AudioManager.instance.StopSound("wind");
+
+
+
             isWindBurstActive = false;
             currentBurstDirection = 0;
-            Debug.Log("afuera");
         }
-
     }
 }
