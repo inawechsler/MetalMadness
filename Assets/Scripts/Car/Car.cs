@@ -16,6 +16,7 @@ public class Car : MonoBehaviour
     public bool onTrack;
     public float raycastDistance = 1f;
     public CarUpgrades upgrades;
+    public CircleCollider2D sphereCollider;
     // Start is called before the first frame update
 
     private void Awake()
@@ -24,6 +25,10 @@ public class Car : MonoBehaviour
     void Start()
     {
         upgrades = GetComponent<CarUpgrades>();
+        if(gameObject.tag == "Player")
+        {
+            sphereCollider = GetComponentInChildren<CircleCollider2D>();
+        }
     }
 
     // Update is called once per frame

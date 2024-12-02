@@ -148,7 +148,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mode: 1
   isAvoidingCars: 1
-  maxSpeed: 0
+  maxSpeed: 20
+  waypointTree: {fileID: 0}
 --- !u!114 &-4459102191716897635
 MonoBehaviour:
   m_ObjectHideFlags: 0

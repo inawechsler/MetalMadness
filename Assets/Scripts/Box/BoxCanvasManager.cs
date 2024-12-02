@@ -4,12 +4,17 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using System.Linq;
+using TMPro;
 
 public class BoxCanvasManager : MonoBehaviour, IBoxObserver
 {
     private GameObject boxCanvas;
     [SerializeField] Button purchaseButton;
     [SerializeField] List<Button> upgradeButtons;
+    Button Exit;
+
+
+    private List<UpgradeItem> upgradeItemList = new List<UpgradeItem>();
 
     Button localButtonTemp;
 
@@ -28,21 +33,21 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
 
     LeadeBoardUIHandler boardUIHandler;
 
+    private TextMeshProUGUI engineText;
+
     private Stack<ShopMemento> shopMementoStack = new Stack<ShopMemento>(5);
 
-    private void Awake()
+    private void Start()
     {
-        purchaseButton.onClick.AddListener(BoxExitDispatcher);
+        Exit = GameObject.FindWithTag("ExitCanvas").GetComponent<Button>();
+
+        upgradeItemList = GameObject.FindWithTag("ShopCanvas").GetComponentsInChildren<UpgradeItem>().ToList();
 
         carUpgrades = GameObject.FindWithTag("Player").GetComponent<CarUpgrades>();
 
+        engineText = GameObject.FindWithTag("EngineText").GetComponent<TextMeshProUGUI>();
 
         selectedImage = GameObject.FindWithTag("SelectedImage").GetComponent<Image>();
-
-        foreach(var button in upgradeButtons)
-        {
-            button.onClick.AddListener(delegate { ManageButton((button.gameObject.name), button); }); //Por cada boton subscribe en el click a ManageButton pasando como parametros el nombre del boton y el Button como tal
-        }
 
         boxCanvas = GameObject.FindWithTag("ShopCanvas");
 
@@ -51,12 +56,45 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
         boardUIHandler = FindAnyObjectByType<LeadeBoardUIHandler>();
 
         selectedImage.gameObject.SetActive(false);
+
+
+
+        purchaseButton.onClick.AddListener(BoxExitDispatcher);
+
+        Exit.onClick.AddListener(BoxExitDispatcher);
+
+        foreach (var item in upgradeItemList)
+        {
+            if (item.Button == null) Debug.Log(item.gameObject.name);
+            item.Button.onClick.AddListener(delegate { ManageButton(item.upgrade, item.Button); }); //Por cada boton subscribe en el click a ManageButton pasando como parametros el nombre del boton y el Button como tal
+
+        }
+
     }
+
+
 
     public void OnBoxEntered(EntityType type, CarUpgrades carUpgrades)
     {
         if (type == EntityType.Ai) return; //Si recibe enum AI se va
+
+ 
         boxCanvas.SetActive(true);
+
+        engineText.text = LevelManager.Instance.enginePiecesCollected.ToString();
+
+        foreach(var item in upgradeItemList)
+        {
+            if(LevelManager.Instance.enginePiecesCollected < item.priceOnShop)
+            {
+                Debug.Log(item.priceOnShop + item.gameObject.name + " " + LevelManager.Instance.enginePiecesCollected);
+                item.Button.interactable = false;
+            } else
+            {
+                item.Button.interactable = true;
+
+            }
+        }
 
         hasExited = false;
 
@@ -80,7 +118,7 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
     void AssignUpgrade(IUpgrade upgrade) 
     {
         carUpgrades.AddUpgrade(upgrade);
-        boardUIHandler.UpdateImage(upgrade, carUpgrades);
+        //boardUIHandler.UpdateImage(upgrade, carUpgrades);
     }
 
     void BoxExitDispatcher()//En purchase llamo a este evento
@@ -88,46 +126,46 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
         OnBoxExit(EntityType.Player, carUpgrades); //LLama a OnBoxExit
 
         selectedImage.gameObject.SetActive(false);
-
-        StateManager.Instance.UpdateGraph();
     }
 
     public void OnBoxExit(EntityType type, CarUpgrades carUpgrades)//Lógica de asignado de upgrade y Oculto el canvas
     {
         if (type == EntityType.Ai) return;
         if(hasExited) return;
- 
-        AssignUpgrade(currentUpgrade);
-        boxCanvas.SetActive(false);
+
         onClickedPurchased?.Invoke(); //Invoco el evento llamado en BoxShop
+        boxCanvas.SetActive(false);
         hasExited = true;
+        if (currentUpgrade == null) return;
 
-        ShopMemento savedMemento = SaveState(currentUpgrade.GetType().Name, localButtonTemp);
+        AssignUpgrade(currentUpgrade);
+
+
+        ShopMemento savedMemento = SaveState(currentUpgrade, localButtonTemp);
         shopMementoStack.Push(savedMemento);
-    }
-    void ManageButton(string upgradeToApply, Button button) //Se encarga de mostrar el objeto seleccionado y guardar el upgrade seleccionado, no lo aplica, solo lo guarda
-    {
-        if (upgradeDictionary.TryGetValue(upgradeToApply, out IUpgrade upgrade))
+
+        var upgradeItem = upgradeItemList.First(item => item.upgrade == currentUpgrade);
+
+        if (upgradeItem != null)
         {
-            currentUpgrade = upgrade;
+            LevelManager.Instance.SpendEnginePieces(upgradeItem.priceOnShop);
+        }
+    }
+    void ManageButton(IUpgrade upgradeToApply, Button button) //Se encarga de mostrar el objeto seleccionado y guardar el upgrade seleccionado, no lo aplica, solo lo guarda
+    {
+        currentUpgrade = upgradeToApply;
 
-            if(button != null)
-            {
-                localButtonTemp = button;
-                Debug.Log(localButtonTemp.ToString());
+        if (button != null)
+        {
+            localButtonTemp = button;
 
-                RectTransform buttonRectTransform = button.GetComponent<RectTransform>();
+            RectTransform buttonRectTransform = button.GetComponent<RectTransform>();
 
-                Vector2 buttonWorldPosition = buttonRectTransform.position;
+            Vector2 buttonWorldPosition = buttonRectTransform.position;
 
-                selectedImage.rectTransform.position = new Vector3(buttonWorldPosition.x + 38.7f, buttonWorldPosition.y + 42f);
+            selectedImage.rectTransform.position = new Vector3(buttonWorldPosition.x + 38.7f, buttonWorldPosition.y + 42f);
 
-                selectedImage.gameObject.SetActive(true);
-            }
-            else
-            {
-                Debug.Log("skd");
-            }
+            selectedImage.gameObject.SetActive(true);
         }
     }
 
@@ -152,12 +190,10 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
         }
     }
 
-    private ShopMemento SaveState(string upgrade, Button button)
+    private ShopMemento SaveState(IUpgrade upgrade, Button button)
     {
-        string upgradeToSave = upgrade;
+        IUpgrade upgradeToSave = upgrade;
         Button buttonToSave = button;
-
-        Debug.Log(upgrade + " " + button.gameObject.name);
 
         return new ShopMemento(upgradeToSave, buttonToSave);
     }

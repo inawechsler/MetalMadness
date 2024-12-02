@@ -5,13 +5,13 @@ using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
+using static UnityEngine.RuleTile.TilingRuleOutput;
 
 
 public class TDAGraph : MonoBehaviour
 {
     private Dictionary<Vector3Int, Dictionary<Vector3Int, int>> graph;
-    private Dictionary<(Vector3Int, Vector3Int), int> edgeWeightCache;
-    public TileCollider tColl;
+    private List<Vector3Int> nodesOnCollider;
     private Tilemap tilemap;
     private Car car;
     //Vector3Int funciona como nodo ya que representa cada celda en el tilemap
@@ -24,7 +24,7 @@ public class TDAGraph : MonoBehaviour
     public void InitGraph(Tilemap tilemap, List<Tilemap> stateTilemaps)
     {
         graph = new Dictionary<Vector3Int, Dictionary<Vector3Int, int>>();
-        edgeWeightCache = new Dictionary<(Vector3Int, Vector3Int), int>();
+        nodesOnCollider = new List<Vector3Int>();
         this.tilemap = tilemap;
         foreach (Vector3Int pos in tilemap.cellBounds.allPositionsWithin)
         {
@@ -42,24 +42,23 @@ public class TDAGraph : MonoBehaviour
             foreach (var neighbour in neighbours)
             {
                 if (!tilemap.HasTile(neighbour)) continue;
-
                 int weight = 1;
                 foreach (var state in stateTilemaps)
                 {
                     weight = CheckNodeOnCollision(neighbour, state); // Calcular peso dinámico en base a si esta en un evento activo o no
+                    
                 }
-
-
                 AddEdge(pos, neighbour, weight);
             }
         }
 
-        //Dijkstra(spawnPoint(SceneManager.GetActiveScene().name, "Start"), spawnPoint(SceneManager.GetActiveScene().name, "End"));
+        var path = Dijkstra(spawnPoint(SceneManager.GetActiveScene().name, "Start"), spawnPoint(SceneManager.GetActiveScene().name, "End"));
+
+        //DrawPath(path, spawnPoint(SceneManager.GetActiveScene().name, "Start"), (spawnPoint(SceneManager.GetActiveScene().name, "End")));
     }
 
     Vector3Int spawnPoint(string sceneName, string pointToReturn)
     {
-        Debug.Log(sceneName);
         Vector3Int vecToGive = Vector3Int.zero;
         if(pointToReturn.ToLower() == "start")
         {
@@ -85,50 +84,38 @@ public class TDAGraph : MonoBehaviour
         return vecToGive;
 
     }
-   
+
 
     private int CheckNodeOnCollision(Vector3Int nodePosition, Tilemap stateTiles)
     {
-
         int weight = 1;
+
         if (stateTiles.HasTile(nodePosition))
         {
-            if (FindNodeOnCollider(nodePosition, stateTiles)) //Revisa si el nodo esta en un collider y si el collider está acti
+            if (FindNodeOnCollider(nodePosition, stateTiles)) // Revisa si el nodo está en colisión activa
             {
-                    weight = 20; // Peso más alto si tiene un estado activo
-
+                weight = 100; // Peso más alto si tiene un estado activo
             }
-            Debug.DrawLine(tilemap.CellToWorld(nodePosition), tilemap.CellToWorld(nodePosition) + Vector3.up * 0.5f, (weight == 1 ? Color.white : Color.black), 10);
+
+            nodesOnCollider.Add(nodePosition);
+            Debug.DrawLine(tilemap.CellToWorld(nodePosition), tilemap.CellToWorld(nodePosition) + Vector3.up * 0.5f, (weight == 1 ? Color.white : Color.black), Mathf.Infinity);
 
         }
-
-
         return weight; // Peso normal si no tiene estado activo
     }
+
 
     private bool FindNodeOnCollider(Vector3Int position, Tilemap stateTiles)
     {
         Vector3 worldPosition = stateTiles.GetCellCenterWorld(position); // Centro exacto de la celda
  
-
         var hit = Physics2D.Raycast(worldPosition, Vector2.zero, 1f, 1 << 6); // Raycast en la posición exacta
 
-        if (hit.collider == null)
-        {
-            Debug.LogWarning($"El Raycast no detectó ningún objeto en {worldPosition}. Verifica las capas o colisionadores.");
-            return false;
-        }
-        if (position == new Vector3Int(-36, 6, 0)) Debug.Log("js" + hit.collider.gameObject.name);
+        if (hit.collider == null) return false;
 
         var isTileOnCollider = hit.collider.GetComponent<StateCollider>();
 
-        if (isTileOnCollider == null)
-        {
-            Debug.LogWarning($"El objeto detectado ({hit.collider.gameObject.name}) no tiene el componente StateCollider.");
-            return false;
-        }
-
-        Debug.Log($"Estado encontrado: {isTileOnCollider.state}");
+        if (isTileOnCollider == null) return false;
 
         if (isTileOnCollider.state != null)
         {
@@ -144,19 +131,26 @@ public class TDAGraph : MonoBehaviour
     }
 
 
-
+    public List<List<Vector3Int>> TempDij = new ();
     public void UpdateGraphWeights(Tilemap stateTiles) //Hago Lista de Keys y Valores del grafo, y le asigno el nuevo valor que le llega a las aristas que unen a estos respectivamente
     {
-
-        //Dijkstra(spawnPoint(SceneManager.GetActiveScene().name, "Start"), spawnPoint(SceneManager.GetActiveScene().name, "End"));
-        foreach (var node in graph.Keys.ToList())
+        Debug.Log("oasodajksda");
+        foreach (var node in graph.Keys.ToList().Where(node => nodesOnCollider.Contains(node)))
         {
+            Debug.Log("oasodajksda");
             foreach (var neighbour in graph[node].Keys.ToList())
             {
                 int newWeight = CheckNodeOnCollision(neighbour, stateTiles);
                 graph[node][neighbour] = newWeight;
+
             }
+
         }
+        Debug.Log(stateTiles.gameObject.name);
+
+        var path = Dijkstra(spawnPoint(SceneManager.GetActiveScene().name, "Start"), spawnPoint(SceneManager.GetActiveScene().name, "End"));
+
+        //DrawPath(path, spawnPoint(SceneManager.GetActiveScene().name, "Start"), (spawnPoint(SceneManager.GetActiveScene().name, "End")));
     }
 
     private void AddVertex(Vector3Int tileToAdd)
@@ -260,8 +254,7 @@ public class TDAGraph : MonoBehaviour
 
         path.Reverse();  // Revertir el camino para que vaya de inicio a destino
 
-        DrawPath(path, new Vector3Int(-19, 27, 0), new Vector3Int(-12, 29, 0));
-
+        Debug.Log("jsda");
         return path;
     }
 

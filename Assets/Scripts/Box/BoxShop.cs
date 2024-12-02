@@ -23,10 +23,7 @@ public class BoxShopEnter : MonoBehaviour
 
         boxCanvasManager.onClickedPurchased.AddListener(() => NotifyExitBox(EntityType.Player, playerCarUpgrades));
 
-        foreach (var observer in boxObservers)
-        {
-            Debug.Log("Found observer: " + observer.GetType().Name);
-        }
+ 
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {

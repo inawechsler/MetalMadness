@@ -7,7 +7,7 @@ using UnityEngine.Rendering;
 
 public class CarAIHandler : MonoBehaviour
 {
-    public enum AIMode { followPJ, followWP};
+    public enum AIMode { followPJ, followWP };
 
     public AIMode mode;
     public bool isAvoidingCars = true;
@@ -20,25 +20,34 @@ public class CarAIHandler : MonoBehaviour
     Vector2 avoidanceVectorLerp = Vector2.zero;
 
 
+
+
     TopDownController controller;
 
 
-    AICheckPoints currentWP = null;
+   // AICheckPoints currentWP;
     AICheckPoints[] allAIWP;
 
     CapsuleCollider2D capsuleCollider;
+
+    private AICheckPoints currentWP;
 
     // Start is called before the first frame update
     void Start()
     {
         controller = GetComponent<TopDownController>();
         allAIWP = FindObjectsOfType<AICheckPoints>();
+       
         capsuleCollider = GetComponent<CapsuleCollider2D>();
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
+        
+
+
+     
         Vector2 inputVector = Vector2.zero;
 
         switch (mode)
@@ -101,44 +110,40 @@ public class CarAIHandler : MonoBehaviour
 
     float ManageWPSpeed(AICheckPoints nextWP)
     {
-       
-        return nextWP.maxSpeed = Random.Range(20, 25);
+        return nextWP.maxSpeed > 0 ? nextWP.maxSpeed : Random.Range(20, 25);
     }
+
 
     void FollowWP()
     {
         if (currentWP == null)
         {
             currentWP = FindClosestWP();
-
-            Debug.Log(currentWP.gameObject.name);
         }
 
-        if (currentWP != null)
+        // Añade desplazamiento aleatorio dentro de un radio alrededor del waypoint
+        float radius = 6.0f; // Radio de tolerancia para no seguir un camino tan lineal
+        Vector2 randomOffset = Random.insideUnitCircle * radius;
+        targetPosition = currentWP.transform.position + new Vector3(randomOffset.x, randomOffset.y, 0f);
+
+        float distanceToWP = (targetPosition - transform.position).magnitude;
+
+        // Añade un margen de error a la distancia mínima para alcanzar el waypoint
+        float adjustedMinDist = currentWP.minDistToReachWP + Random.Range(0.5f, 2.0f);
+
+        if (distanceToWP <= adjustedMinDist)
         {
-            // Añade desplazamiento aleatorio dentro de un radio alrededor del waypoint
-            float radius = 3.0f; // Radio de tolerancia para no seguir un camino tan lineal
-            Vector2 randomOffset = Random.insideUnitCircle * radius;
-            targetPosition = currentWP.transform.position + new Vector3(randomOffset.x, randomOffset.y, 0f);
+            // Manejo de la velocidad en el siguiente waypoint
+            maxSpeed = ManageWPSpeed(FindClosestWP());
 
-            float distanceToWP = (targetPosition - transform.position).magnitude;
-
-            // Añade un margen de error a la distancia mínima para alcanzar el waypoint
-            float adjustedMinDist = currentWP.minDistToReachWP + Random.Range(0.5f, 2.0f);
-
-            if (distanceToWP <= adjustedMinDist)
-            {
-                // Manejo de la velocidad en el siguiente waypoint
-                maxSpeed = ManageWPSpeed(FindClosestWP());
-
-                // Si el siguiente waypoint tiene más de un camino, elige aleatoriamente
-                currentWP = currentWP.nextWP[Random.Range(0, currentWP.nextWP.Length)];
-            }
+            // Si el siguiente waypoint tiene más de un camino, elige aleatoriamente
+            currentWP = currentWP.nextWP[Random.Range(0, currentWP.nextWP.Length)];
         }
     }
-    AICheckPoints FindClosestWP()
-    {
-        //Devuelve el waypont mas cercano a la IA
-        return allAIWP.OrderBy(index => Vector3.Distance(transform.position, index.transform.position)).FirstOrDefault();
+
+        AICheckPoints FindClosestWP()
+        {
+            //Devuelve el waypont mas cercano a la IA
+            return allAIWP.OrderBy(index => Vector3.Distance(transform.position, index.transform.position)).FirstOrDefault();
+        }
     }
-}

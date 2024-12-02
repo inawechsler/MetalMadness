@@ -10,8 +10,10 @@ public class TopDownController : MonoBehaviour
     public float accelerationFactor = 35.0f;
     public float turnFactor = 3.5f;
 
-    public float driftFactor { get; private set; } = .85f;
+    public float driftFactor/* { get; private set; }*/ = .85f;
     public float currentDriftFactor { get; private set; }
+
+    private float lastDriftFactor;
 
     float accelerationInput = 0;
     float steeringInput = 0;
@@ -19,7 +21,8 @@ public class TopDownController : MonoBehaviour
 
     float velocity;
 
-    [SerializeField] public float currentMaxSpeedCap { get; private set; } = 20;
+    [SerializeField] public float currentMaxSpeedCap { get; private set; } = 15;
+    [SerializeField] public float currentMinSpeedCap { get; private set; } = 10;
 
     public float lastSpeedBefChange { get; private set; }
 
@@ -33,7 +36,7 @@ public class TopDownController : MonoBehaviour
 
     public bool isOnState;
 
-    Car car;
+    public Car car;
 
     public CarUpgrades carUpgrades {  get; private set; }
 
@@ -63,6 +66,15 @@ public class TopDownController : MonoBehaviour
         ApplySteering();
 
 
+    }
+
+    public void ApplyLateralSlide(float multiplier)
+    {
+        // Obtén la velocidad lateral.
+        Vector2 rightVelocity = transform.right * Vector2.Dot(rb2D.velocity, transform.right);
+
+        // Aplica un multiplicador para incrementar el deslizamiento la
+        rb2D.AddForce(rightVelocity, ForceMode2D.Force);
     }
 
     void ApplyEngineForce()
@@ -105,7 +117,7 @@ public class TopDownController : MonoBehaviour
         //Calculo que tan para adelante estoy yendo en la direc de mi velocidad
         velocitVsUp = Vector2.Dot(transform.up, rb2D.velocity);
 
-        maxSpeed = car.onTrack ? currentMaxSpeedCap : 10;
+        maxSpeed = car.onTrack ? currentMaxSpeedCap : currentMinSpeedCap;
 
         //Limito para no ir más rapido que la max en la direccion "forward"
         if (car.onTrack)
@@ -145,11 +157,12 @@ public class TopDownController : MonoBehaviour
 
         rb2D.MoveRotation(rotationAngle);
     }
-
+    public float SetMinSpeedCap(float minSpeedCap)
+    {
+        return currentMinSpeedCap = minSpeedCap;
+    }
     public float SetMaxSpeedCap(float maxSpeedCap)
     {
-
-        currentMaxSpeedCap = maxSpeed;
         currentMaxSpeedCap = maxSpeedCap;
 
         return currentMaxSpeedCap;
@@ -164,16 +177,22 @@ public class TopDownController : MonoBehaviour
         }
         lastSpeedBefChange = maxSpeedCap;
     }
-    public float SetDriftFactor(float newDrift)
+    // Método para establecer el drift temporalmente
+    public void SetDriftFactorTemporarily(float newDrift)
     {
-        if(driftFactor <= .85f)
-        {
-            
-            currentDriftFactor = driftFactor;
-            if (currentDriftFactor == 0) currentDriftFactor = .85f;
-        }
+        // Guardar el drift actual antes de cambiarlo
+        lastDriftFactor = driftFactor;
 
-       return driftFactor = newDrift;
+        // Cambiar al nuevo valor
+        driftFactor = newDrift;
+
+        Debug.Log($"DriftFactor temporalmente cambiado a {newDrift}. Anterior: {lastDriftFactor}");
+    }
+
+    // Método para restaurar el drift original
+    public void RestoreDriftFactor()
+    {
+        driftFactor = lastDriftFactor;
     }
     public float GetSpeed()
     {

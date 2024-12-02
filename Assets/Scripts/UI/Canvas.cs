@@ -1,15 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Windows.Speech;
-
 public class Canvas : MonoBehaviour, IBoxObserver
 {
-    //  Start is called before the first frame update
-    [SerializeField] Image velocity;
-    TopDownController car;
-    Canvas canvas;
+    
+    [SerializeField] GameObject lightCanvas, canvas;
+    [SerializeField] Image[] raceLights;
+    [SerializeField] TextMeshProUGUI engineText;
 
 
 
@@ -29,14 +28,16 @@ public class Canvas : MonoBehaviour, IBoxObserver
 
     void Start()
     {
-        velocity.fillAmount = 0;
-        car = GameObject.FindGameObjectWithTag("Player").GetComponent<TopDownController>();
+        if(engineText == null)
+        {
+            //engineText = canvas.G
+        }
 
-        canvas = GetComponent<Canvas>();
+        LevelManager.Instance.LightSet(raceLights, lightCanvas);
     }
     //    Update is called once per frame
     void Update()
     {
-        velocity.fillAmount = car.GetSpeed() / 20;
+        engineText.text = LevelManager.Instance.enginePiecesCollected.ToString();
     }
 }

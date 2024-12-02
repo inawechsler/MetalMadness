@@ -492,6 +492,7 @@ GameObject:
   - component: {fileID: 7090736957872532923}
   - component: {fileID: 6464898149908464597}
   - component: {fileID: 4484923857866018869}
+  - component: {fileID: 3010013347742878746}
   m_Layer: 5
   m_Name: WheelsSpikes
   m_TagString: Untagged
@@ -613,6 +614,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 679de3c8ccc00f94aa95015975b48f5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &3010013347742878746
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3398408092529077444}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddeb90e39b7574f498eb1323738451f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  textMesh: {fileID: 0}
+  priceOnShop: 6
 --- !u!1 &4979697121761321497
 GameObject:
   m_ObjectHideFlags: 0

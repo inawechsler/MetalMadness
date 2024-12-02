@@ -11,6 +11,7 @@ public class StateCollider : MonoBehaviour
 
     [SerializeField] TextMeshProUGUI ZoneText;
     [SerializeField] TextMeshProUGUI StateText;
+    [SerializeField] public int ID;
     public List<TopDownController> carListInZone { get; private set; } = new List<TopDownController>(); //Autos en esta superficie
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -58,7 +59,10 @@ public class StateCollider : MonoBehaviour
             if (newState == null) Debug.Log("Estado inválido"); //Si está vacía ejecuta directamente el cambio de estados
             state = newState;
             ZoneText.text = state.GetType().Name;
+
             StateText.text = state.GetType().Name;
+            
+
         }
     }
 

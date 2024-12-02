@@ -20,6 +20,11 @@ TagManager:
   - SelectedImage
   - TileState
   - Canvas
+  - EngineText
+  - ExitCanvas
+  - Picker
+  - PiecesText
+  - Engine
   layers:
   - Default
   - TransparentFX
