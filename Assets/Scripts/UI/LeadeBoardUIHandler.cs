@@ -36,40 +36,40 @@ public class LeadeBoardUIHandler : MonoBehaviour
             setLeaderBoardInfos[i].SetPosText(i + 1);
         }
     }
-    public void UpdateImage(IUpgrade upgrade, CarUpgrades controller)
-    {
-        switch (upgrade)
-        {
-            case SpeedBoost:
-                Temp = Speed;
-                break;
-            case WheelsChains:
-                Temp = Mud;
-                break;
-            case WheelsSpikes:
-                Temp = Ice;
-                break;
+    //public void UpdateImage(IUpgrade upgrade, CarUpgrades controller)
+    //{
+    //    switch (upgrade)
+    //    {
+    //        case SpeedBoost:
+    //            Temp = Speed;
+    //            break;
+    //        case WheelsChains:
+    //            Temp = Mud;
+    //            break;
+    //        case WheelsSpikes:
+    //            Temp = Ice;
+    //            break;
 
-        }
+    //    }
         
 
-        if (controller.CompareTag("AI"))
-        {
-            carImage.sprite = controller.gameObject.GetComponent<SpriteRenderer>().sprite;
-            AIboostImage.sprite = Temp;
-        } else
-        {
-            if(Temp == Speed)
-            {
-                PJBoostImage.sprite = Temp;
-            }else
-            {
-                PJUpgradeImage.sprite = Temp;
-            }
+    //    if (controller.CompareTag("AI"))
+    //    {
+    //        carImage.sprite = controller.gameObject.GetComponent<SpriteRenderer>().sprite;
+    //        AIboostImage.sprite = Temp;
+    //    } else
+    //    {
+    //        if(Temp == Speed)
+    //        {
+    //            PJBoostImage.sprite = Temp;
+    //        }else
+    //        {
+    //            PJUpgradeImage.sprite = Temp;
+    //        }
 
-        }
+    //    }
 
-    }
+    //}
 
     public void UpdateList(List<KeyValuePair<int, string>> rankingList)
     {

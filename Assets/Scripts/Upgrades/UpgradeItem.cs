@@ -11,7 +11,7 @@ public class UpgradeItem : MonoBehaviour
     public IUpgrade upgrade { get; private set; }
     public int priceOnShop;
 
-    private void Start()
+    private void Awake()
     {
         upgrade = GetComponent<IUpgrade>();
         Button = GetComponent<Button>();

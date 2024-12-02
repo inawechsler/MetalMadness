@@ -85,7 +85,7 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
 
         foreach(var item in upgradeItemList)
         {
-            if(LevelManager.Instance.enginePiecesCollected <= item.priceOnShop)
+            if(LevelManager.Instance.enginePiecesCollected < item.priceOnShop)
             {
                 Debug.Log(item.priceOnShop + item.gameObject.name + " " + LevelManager.Instance.enginePiecesCollected);
                 item.Button.interactable = false;
@@ -118,7 +118,7 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
     void AssignUpgrade(IUpgrade upgrade) 
     {
         carUpgrades.AddUpgrade(upgrade);
-        boardUIHandler.UpdateImage(upgrade, carUpgrades);
+        //boardUIHandler.UpdateImage(upgrade, carUpgrades);
     }
 
     void BoxExitDispatcher()//En purchase llamo a este evento

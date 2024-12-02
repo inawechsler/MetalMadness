@@ -23,6 +23,8 @@ TagManager:
   - EngineText
   - ExitCanvas
   - Picker
+  - PiecesText
+  - Engine
   layers:
   - Default
   - TransparentFX

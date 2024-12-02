@@ -2,69 +2,108 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.Pool;
 
 public class PickeableManager : MonoBehaviour
 {
+    public static PickeableManager Instance;
     public Tilemap tilemap;
-    private EnginePieces[] engines;
-    // Start is called before the first frame update
+    public GameObject enginePrefab; // Asigna el prefab desde el inspector
+    public ObjectPool<EnginePieces> enginePool;
+    private List<EnginePieces> activeEngines = new List<EnginePieces>();
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else if (Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        DontDestroyOnLoad(gameObject);
+    }
+
     void Start()
     {
         tilemap = GameObject.FindWithTag("Track").GetComponent<Tilemap>();
+        enginePrefab = GameObject.FindWithTag("Engine");
+
+        // Configura el ObjectPool
+        enginePool = new ObjectPool<EnginePieces>(
+            createFunc: CreateEnginePiece,
+            actionOnGet: OnEnginePieceGet,
+            actionOnRelease: OnEnginePieceRelease,
+            actionOnDestroy: DestroyEnginePiece,
+            collectionCheck: false, // Opcional: evita un chequeo adicional
+            defaultCapacity: 10,
+            maxSize: 20
+        );
+
         SpawnCurrency();
     }
 
-    // Update is called once per frame
-    void Update()
+    private EnginePieces CreateEnginePiece()
     {
-        
+        GameObject obj = Instantiate(enginePrefab);
+        return obj.GetComponent<EnginePieces>();
+    }
+
+    private void OnEnginePieceGet(EnginePieces engine)
+    {
+        engine.gameObject.SetActive(true);
+    }
+
+    private void OnEnginePieceRelease(EnginePieces engine)
+    {
+        engine.gameObject.SetActive(false);
+    }
+
+    private void DestroyEnginePiece(EnginePieces engine)
+    {
+        Destroy(engine.gameObject);
     }
 
     public void SpawnCurrency()
     {
-        // Lista para almacenar las posiciones válidas dentro del Tilemap
         List<Vector3Int> validPositions = new List<Vector3Int>();
 
-        // Recorre todas las posiciones dentro de los límites del Tilemap
         foreach (var position in tilemap.cellBounds.allPositionsWithin)
         {
-            // Verifica si la celda tiene un tile
             if (tilemap.HasTile(position))
             {
                 validPositions.Add(position);
             }
         }
 
-        // Verifica si hay posiciones válidas
         if (validPositions.Count == 0)
         {
             Debug.LogWarning("No valid positions found in the Tilemap!");
             return;
         }
 
-        // Determina cuántos EnginePieces crear
         int engineCount = Random.Range(2, 5);
-        engines = new EnginePieces[engineCount];
 
         for (int i = 0; i < engineCount; i++)
         {
-            // Selecciona una posición aleatoria de las válidas
             Vector3Int randomCell = validPositions[Random.Range(0, validPositions.Count)];
-
-            // Convierte la posición de celda del Tilemap a una posición del mundo
             Vector3 worldPosition = tilemap.CellToWorld(randomCell) + tilemap.tileAnchor;
 
-            // Instancia la pieza en la posición del mundo
-            GameObject enginePrefab = Resources.Load<GameObject>("EnginePiece"); // Asegúrate de tener un prefab llamado "EnginePiece" en Resources
-            if (enginePrefab != null)
-            {
-                GameObject engineInstance = Instantiate(enginePrefab, worldPosition, Quaternion.identity);
-                engines[i] = engineInstance.GetComponent<EnginePieces>();
-            }
-            else
-            {
-                Debug.LogError("EnginePiece prefab not found in Resources folder!");
-            }
+            EnginePieces enginePiece = enginePool.Get();
+            enginePiece.transform.position = worldPosition;
+
+            activeEngines.Add(enginePiece);
         }
+    }
+
+    public void ReturnAllEngines()
+    {
+        foreach (EnginePieces engine in activeEngines)
+        {
+            enginePool.Release(engine);
+        }
+        activeEngines.Clear();
     }
 }

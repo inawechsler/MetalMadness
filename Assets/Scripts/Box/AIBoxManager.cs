@@ -23,7 +23,7 @@ public class AIBoxManager : MonoBehaviour, IBoxObserver
         upgradeToApply = ManageUpgradeToApply(carUpgrades); //Consigue el upgrade a aplicar
 
         carUpgrades.AddUpgrade(upgradeToApply);
-        boardUIHandler.UpdateImage(upgradeToApply, carUpgrades );
+        //boardUIHandler.UpdateImage(upgradeToApply, carUpgrades );
     }
 
     public void OnBoxExit(EntityType type, CarUpgrades carUpgrades)

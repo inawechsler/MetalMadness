@@ -36,7 +36,7 @@ public class TopDownController : MonoBehaviour
 
     public bool isOnState;
 
-    Car car;
+    public Car car;
 
     public CarUpgrades carUpgrades {  get; private set; }
 
