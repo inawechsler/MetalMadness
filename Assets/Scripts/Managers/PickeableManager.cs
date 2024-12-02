@@ -42,7 +42,7 @@ public class PickeableManager : MonoBehaviour
             maxSize: 20
         );
 
-        SpawnCurrency();
+        //SpawnCurrency();
     }
 
     private EnginePieces CreateEnginePiece()

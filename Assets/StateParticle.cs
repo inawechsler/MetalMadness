@@ -10,6 +10,7 @@ public class StateParticle : MonoBehaviour
     {
         partSystem = GetComponent<ParticleSystem>();
 
+        gameObject.SetActive(false);
 
 
 
@@ -17,6 +18,6 @@ public class StateParticle : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(partSystem == null ) { Debug.Log(partSystem.gameObject.name); }
+       
     }
 }

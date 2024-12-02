@@ -626,8 +626,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ddeb90e39b7574f498eb1323738451f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  textMesh: {fileID: 0}
+  Button: {fileID: 0}
   priceOnShop: 6
+  description: 
 --- !u!1 &4979697121761321497
 GameObject:
   m_ObjectHideFlags: 0
@@ -1525,6 +1526,7 @@ GameObject:
   - component: {fileID: 4055637024121573136}
   - component: {fileID: 8289915250964646383}
   - component: {fileID: 5458539647494438468}
+  - component: {fileID: 3427447231257689237}
   m_Layer: 5
   m_Name: ShopCanvas
   m_TagString: ShopCanvas
@@ -1622,3 +1624,23 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &3427447231257689237
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9082720958202344631}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f05dad887e14840478239531133b54c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  purchaseButton: {fileID: 8198898104895703044}
+  upgradeButtons:
+  - {fileID: 7789006708847044566}
+  - {fileID: 5868951960333675671}
+  - {fileID: 6464898149908464597}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}

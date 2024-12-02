@@ -4,8 +4,8 @@ using UnityEngine;
 public class WindyState : MonoBehaviour, IState
 {
     [SerializeField] private float lateralSlideMultiplier = 1.1f; // Multiplicador base del deslizamiento lateral.
-    [SerializeField] private float windBurstForce = 150f; // Fuerza adicional de las ráfagas de viento.
-    [SerializeField] private float burstDuration = 2f; // Duración de cada ráfaga de viento.
+    [SerializeField] private float windBurstForce = 300f; // Fuerza adicional de las ráfagas de viento.
+    [SerializeField] private float burstDuration = 3f; // Duración de cada ráfaga de viento.
     [SerializeField] private float burstIntervalMin = 2.0f; // Intervalo mínimo entre ráfagas.
     [SerializeField] private float burstIntervalMax = 5.0f; // Intervalo máximo entre ráfagas.
 
@@ -18,6 +18,8 @@ public class WindyState : MonoBehaviour, IState
     public void ClimateStateSet(ParticleSystem stateParticle)
     {
         if(stateParticle == null) { Debug.Log("SASAS"); }
+
+        gameObject.SetActive(true);
         stateParticle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         stateParticle.Play();
     }

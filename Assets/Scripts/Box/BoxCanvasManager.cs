@@ -31,7 +31,7 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
 
     CarUpgrades carUpgrades;
 
-    LeadeBoardUIHandler boardUIHandler;
+    ShopInfoText ShopInfoText;
 
     private TextMeshProUGUI engineText;
 
@@ -53,7 +53,7 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
 
         boxCanvas.SetActive(false);
 
-        boardUIHandler = FindAnyObjectByType<LeadeBoardUIHandler>();
+        ShopInfoText = GetComponentInChildren<ShopInfoText>();
 
         selectedImage.gameObject.SetActive(false);
 
@@ -66,7 +66,7 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
         foreach (var item in upgradeItemList)
         {
             if (item.Button == null) Debug.Log(item.gameObject.name);
-            item.Button.onClick.AddListener(delegate { ManageButton(item.upgrade, item.Button); }); //Por cada boton subscribe en el click a ManageButton pasando como parametros el nombre del boton y el Button como tal
+            item.Button.onClick.AddListener(delegate { ManageButton(item); }); //Por cada boton subscribe en el click a ManageButton pasando como parametros el nombre del boton y el Button como tal
 
         }
 
@@ -83,16 +83,23 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
 
         engineText.text = LevelManager.Instance.enginePiecesCollected.ToString();
 
-        foreach(var item in upgradeItemList)
+        foreach (var item in upgradeItemList)
         {
-            if(LevelManager.Instance.enginePiecesCollected < item.priceOnShop)
+            if (LevelManager.Instance.enginePiecesCollected < item.priceOnShop)
             {
-                Debug.Log(item.priceOnShop + item.gameObject.name + " " + LevelManager.Instance.enginePiecesCollected);
-                item.Button.interactable = false;
-            } else
+                item.Button.interactable = false; // Desactiva si no tiene suficientes piezas
+            }
+            else
             {
-                item.Button.interactable = true;
-
+                // Verificar si puede usar más de esta mejora
+                if (!carUpgrades.CanUseUpgrade(item))
+                {
+                    item.Button.interactable = false; // Desactiva si alcanzó el límite
+                }
+                else
+                {
+                    item.Button.interactable = true; // Activa si cumple con los requisitos
+                }
             }
         }
 
@@ -141,25 +148,30 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
         AssignUpgrade(currentUpgrade);
 
 
-        ShopMemento savedMemento = SaveState(currentUpgrade, localButtonTemp);
-        shopMementoStack.Push(savedMemento);
 
         var upgradeItem = upgradeItemList.First(item => item.upgrade == currentUpgrade);
+
+
+        ShopMemento savedMemento = SaveState(upgradeItem);
+        shopMementoStack.Push(savedMemento);
 
         if (upgradeItem != null)
         {
             LevelManager.Instance.SpendEnginePieces(upgradeItem.priceOnShop);
         }
     }
-    void ManageButton(IUpgrade upgradeToApply, Button button) //Se encarga de mostrar el objeto seleccionado y guardar el upgrade seleccionado, no lo aplica, solo lo guarda
+    void ManageButton(UpgradeItem item) //Se encarga de mostrar el objeto seleccionado y guardar el upgrade seleccionado, no lo aplica, solo lo guarda
     {
-        currentUpgrade = upgradeToApply;
+        currentUpgrade = item.upgrade;
 
-        if (button != null)
+        if (ShopInfoText == null) Debug.Log("sdad");
+        ShopInfoText.SetTextInfo(item);
+
+        if (item.Button != null)
         {
-            localButtonTemp = button;
+            localButtonTemp = item.Button;
 
-            RectTransform buttonRectTransform = button.GetComponent<RectTransform>();
+            RectTransform buttonRectTransform = item.Button.GetComponent<RectTransform>();
 
             Vector2 buttonWorldPosition = buttonRectTransform.position;
 
@@ -190,12 +202,11 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
         }
     }
 
-    private ShopMemento SaveState(IUpgrade upgrade, Button button)
+    private ShopMemento SaveState(UpgradeItem itemToUse)
     {
-        IUpgrade upgradeToSave = upgrade;
-        Button buttonToSave = button;
+       var item = itemToUse;
 
-        return new ShopMemento(upgradeToSave, buttonToSave);
+        return new ShopMemento(itemToUse);
     }
 
     private void RestoreState(ShopMemento upgradeToRestore)
@@ -205,10 +216,8 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
             Debug.LogError("El estado guardado es null. No se puede restaurar.");
             return;
         }
-        if (upgradeToRestore.upgrade is null) Debug.Log("pgrade");
-        if (upgradeToRestore.button is null) Debug.Log("button");
         //Debug.Log(upgradeToRestore.upgrade.GetType().Name + " " + upgradeToRestore.button.gameObject.name);
-        ManageButton(upgradeToRestore.upgrade, upgradeToRestore.button);
+        ManageButton(upgradeToRestore.upgradeItem);
 
     }
 }

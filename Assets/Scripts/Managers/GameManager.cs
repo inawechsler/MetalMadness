@@ -26,8 +26,6 @@ public class GameManager : MonoBehaviour
     {
         text = GameObject.FindWithTag("Text").GetComponent<TextMeshProUGUI>();
 
-        text.text = "Laps: 0";
-
         //Init();
     }
 

@@ -106,7 +106,7 @@ public class CarLapCounter : MonoBehaviour
                     if (gameObject.CompareTag("Player"))
                     {
                         CarRankingManager.Instance.SetLapsCompleted(1);
-                        GameManager.Instance.text.text = "Laps: " + CarRankingManager.Instance.LapsCompleted.ToString() + "/" + CarRankingManager.Instance.LapsToComplete.ToString();
+                        GameManager.Instance.text.text = "Laps: " + CarRankingManager.Instance.LapsCompleted.ToString() + " of " + CarRankingManager.Instance.LapsToComplete.ToString();
                     }
 
 

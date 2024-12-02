@@ -18,7 +18,7 @@ public class BoxShopEnter : MonoBehaviour
 
     private void Awake()
     {
-        boxCanvasManager = GameObject.FindWithTag("EventSystem").GetComponent<BoxCanvasManager>();
+        boxCanvasManager = GameObject.FindWithTag("ShopCanvas").GetComponent<BoxCanvasManager>();
         boxObservers = FindObjectsOfType<MonoBehaviour>().OfType<IBoxObserver>().ToList();
 
         boxCanvasManager.onClickedPurchased.AddListener(() => NotifyExitBox(EntityType.Player, playerCarUpgrades));

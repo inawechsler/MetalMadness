@@ -25,6 +25,7 @@ TagManager:
   - Picker
   - PiecesText
   - Engine
+  - InfoText
   layers:
   - Default
   - TransparentFX

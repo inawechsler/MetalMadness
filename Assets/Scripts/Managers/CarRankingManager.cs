@@ -168,7 +168,7 @@ public class CarRankingManager : MonoBehaviour
                 Debug.Log($"Carros terminados: {carsFinishedRace} / {carList.Count}");
 
                 // Si todos los autos terminaron, cambiar de escena
-                if (carsFinishedRace == carList.Count)
+                if (carList.First(car => car.gameObject.tag == "Player" && car.lapsCompleted == lapsToComplete))
                 {
                     SceneManager.LoadScene("LevelResume");
                 }

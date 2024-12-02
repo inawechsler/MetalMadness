@@ -61,14 +61,6 @@ public class StateManager : MonoBehaviour
             slowState = GameObject.FindWithTag("TileState").GetComponent<SlowState>();
             GrafoDij = GameObject.FindWithTag("Managers").GetComponent<TDAGraph>();
             FindAvailableStates();
-            foreach (var surface in surfaces)
-            {
-                var stateColl = surface.GetComponent<StateCollider>();
-
-                //stateColl.SetCurrentState(electricState);
-
-            }
-            AssignRandomStates();
         }
     }
 
@@ -140,6 +132,7 @@ public class StateManager : MonoBehaviour
     {
         currentLap++;
         AssignRandomStates();
+        PickeableManager.Instance.SpawnCurrency();
     }
 
 }
