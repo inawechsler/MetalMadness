@@ -18,7 +18,17 @@ public class StateImage : MonoBehaviour
     }
     public void SetState(IState newState)
     {
-        state = (newState.GetType().Name == "SlippyState") ? State.SlippyState : State.SlowState; 
+        if(newState.GetType().Name == "SlippyState")
+        {
+            state = State.SlippyState;
+        }
+        else if(newState.GetType().Name == "SlowState")
+        {
+            state = State.SlowState;
+        } else
+        {
+            return;
+        }
 
         Sprite newSprite = state switch
         {

@@ -5,7 +5,7 @@ public class WindyState : MonoBehaviour, IState
 {
     [SerializeField] private float lateralSlideMultiplier = 1.1f; // Multiplicador base del deslizamiento lateral.
     [SerializeField] private float windBurstForce = 150f; // Fuerza adicional de las ráfagas de viento.
-    [SerializeField] private float burstDuration = 10.0f; // Duración de cada ráfaga de viento.
+    [SerializeField] private float burstDuration = 2f; // Duración de cada ráfaga de viento.
     [SerializeField] private float burstIntervalMin = 2.0f; // Intervalo mínimo entre ráfagas.
     [SerializeField] private float burstIntervalMax = 5.0f; // Intervalo máximo entre ráfagas.
 
@@ -67,7 +67,7 @@ public class WindyState : MonoBehaviour, IState
             currentBurstDirection = random; // 1 para derecha, -1 para izquierda.
 
             // Mantener la ráfaga durante la duración especificada.
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(3f);
 
             // Desactivar la ráfaga de viento.
             isWindBurstActive = false;

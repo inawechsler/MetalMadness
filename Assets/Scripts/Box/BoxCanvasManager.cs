@@ -63,13 +63,13 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
 
         Exit.onClick.AddListener(BoxExitDispatcher);
 
-
         foreach (var item in upgradeItemList)
         {
             if (item.Button == null) Debug.Log(item.gameObject.name);
             item.Button.onClick.AddListener(delegate { ManageButton(item.upgrade, item.Button); }); //Por cada boton subscribe en el click a ManageButton pasando como parametros el nombre del boton y el Button como tal
 
         }
+
     }
 
 
@@ -77,7 +77,8 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
     public void OnBoxEntered(EntityType type, CarUpgrades carUpgrades)
     {
         if (type == EntityType.Ai) return; //Si recibe enum AI se va
-        
+
+ 
         boxCanvas.SetActive(true);
 
         engineText.text = LevelManager.Instance.enginePiecesCollected.ToString();

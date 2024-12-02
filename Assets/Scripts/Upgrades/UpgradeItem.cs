@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class UpgradeItem : MonoBehaviour 
 {
-    public Button Button { get;private set; }
+    public Button Button;
     [SerializeField] public TextMeshProUGUI textMesh;
     public IUpgrade upgrade { get; private set; }
     public int priceOnShop;
