@@ -7,6 +7,7 @@ public class UpgradeItem : MonoBehaviour
 {
     Button Button { get; set; }
     IUpgrade upgrade;
+    public int priceOnShop;
 
    
 }

@@ -22,6 +22,7 @@ public class TopDownController : MonoBehaviour
     float velocity;
 
     [SerializeField] public float currentMaxSpeedCap { get; private set; } = 15;
+    [SerializeField] public float currentMinSpeedCap { get; private set; } = 10;
 
     public float lastSpeedBefChange { get; private set; }
 
@@ -116,7 +117,7 @@ public class TopDownController : MonoBehaviour
         //Calculo que tan para adelante estoy yendo en la direc de mi velocidad
         velocitVsUp = Vector2.Dot(transform.up, rb2D.velocity);
 
-        maxSpeed = car.onTrack ? currentMaxSpeedCap : 10;
+        maxSpeed = car.onTrack ? currentMaxSpeedCap : currentMinSpeedCap;
 
         //Limito para no ir más rapido que la max en la direccion "forward"
         if (car.onTrack)
@@ -156,11 +157,12 @@ public class TopDownController : MonoBehaviour
 
         rb2D.MoveRotation(rotationAngle);
     }
-
+    public float SetMinSpeedCap(float minSpeedCap)
+    {
+        return currentMinSpeedCap = minSpeedCap;
+    }
     public float SetMaxSpeedCap(float maxSpeedCap)
     {
-
-        Debug.Log(maxSpeedCap); 
         currentMaxSpeedCap = maxSpeedCap;
 
         return currentMaxSpeedCap;
@@ -191,8 +193,6 @@ public class TopDownController : MonoBehaviour
     public void RestoreDriftFactor()
     {
         driftFactor = lastDriftFactor;
-
-        Debug.Log($"DriftFactor restaurado al valor anterior: {lastDriftFactor}");
     }
     public float GetSpeed()
     {

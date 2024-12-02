@@ -6,6 +6,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
 using UnityEngine.Timeline;
@@ -30,6 +31,8 @@ public class StateManager : MonoBehaviour
 
     [SerializeField] private int lapsToTriggerChange = 1;
     private int currentLap = 0;
+
+    public UnityEvent<IState> stateChanged = new UnityEvent<IState>();
     // Start is called before the first frame update
 
     private void Awake()
@@ -46,22 +49,26 @@ public class StateManager : MonoBehaviour
         }
         DontDestroyOnLoad(gameObject);
     }
+
+
     public void Init()
     {
         if (SceneNameManager.Instance.IsRaceScene(SceneManager.GetActiveScene()))
         {
             topDownController = FindObjectsOfType<TopDownController>();
-            electricState = GameObject.FindWithTag("TileState").GetComponent<ElectricState>();
+            electricState = GameObject.FindWithTag("TileState").GetComponent<WindyState>();
+            slipperyState = GameObject.FindWithTag("TileState").GetComponent<SlippyState>();
+            slowState = GameObject.FindWithTag("TileState").GetComponent<SlowState>();
             GrafoDij = GameObject.FindWithTag("Managers").GetComponent<TDAGraph>();
             FindAvailableStates();
+            foreach (var surface in surfaces)
+            {
+                var stateColl = surface.GetComponent<StateCollider>();
 
-            //foreach (var surf in surfaces)
-            //{
-            //    var stateColl = surf.GetComponent<StateCollider>();
+                //stateColl.SetCurrentState(electricState);
 
-            //    stateColl.SetCurrentState(electricState);
-            //}
-
+            }
+            AssignRandomStates();
         }
     }
 
@@ -73,6 +80,8 @@ public class StateManager : MonoBehaviour
         {
             Debug.LogWarning("No se encontraron estados disponibles.");
         }
+
+
     }
 
     public void UpdateGraph()
@@ -82,7 +91,13 @@ public class StateManager : MonoBehaviour
             GrafoDij.UpdateGraphWeights(surface.GetComponent<Tilemap>());
         }
     }
-    
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            AssignRandomStates();
+        }
+    }
 
     private void AssignRandomStates()
     {
@@ -99,17 +114,19 @@ public class StateManager : MonoBehaviour
 
             stateColl.SetCurrentState(randomState);
 
-            var particleSystem = GetComponentInChildren<ParticleSystem>();
+            var particleSystem = surface.GetComponentInChildren<StateParticle>();
+            StartCoroutine(SetState(randomState, stateColl));
 
-
-            Debug.Log(particleSystem.gameObject);
-            randomState.ClimateStateSet(particleSystem.gameObject);
         }
-        //UpdateGraph();
-        //// Iniciar cooldown
+
         StartCoroutine(ResetCooldown());
     }
+    private IEnumerator SetState(IState state, StateCollider surface)
+    {
+        yield return new WaitForSeconds(2f); // Esperar 9 segundos
 
+        TrackManager.Instance.SetStateImage(state, surface);
+    }
     private IEnumerator ResetCooldown()
     {
         yield return new WaitForSeconds(9f); // Esperar 9 segundos

@@ -7,6 +7,7 @@ public class LevelManager : MonoBehaviour, IBoxObserver
 {
     public static LevelManager Instance;
     public GameObject canvasTrafficLight;
+    public int enginePiecesCollected;
     private void Awake()
     {
 
@@ -62,6 +63,11 @@ public class LevelManager : MonoBehaviour, IBoxObserver
 
         canvasToDeactivate.SetActive(false);
 
+    }
+
+    public void AddEnginePieces()
+    {
+        enginePiecesCollected++;
     }
 
     // Update is called once per frame

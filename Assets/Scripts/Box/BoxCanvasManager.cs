@@ -4,12 +4,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using System.Linq;
+using TMPro;
 
 public class BoxCanvasManager : MonoBehaviour, IBoxObserver
 {
     private GameObject boxCanvas;
     [SerializeField] Button purchaseButton;
-    [SerializeField] List<Button> upgradeButtons;
+    [SerializeField] List<UpgradeItem> upgradeButtons;
 
     Button localButtonTemp;
 
@@ -28,14 +29,17 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
 
     LeadeBoardUIHandler boardUIHandler;
 
+    private TextMeshProUGUI engineText;
+
     private Stack<ShopMemento> shopMementoStack = new Stack<ShopMemento>(5);
 
-    private void Awake()
+    private void Start()
     {
         purchaseButton.onClick.AddListener(BoxExitDispatcher);
 
         carUpgrades = GameObject.FindWithTag("Player").GetComponent<CarUpgrades>();
 
+        engineText = GameObject.FindWithTag("EngineText").GetComponent<TextMeshProUGUI>();
 
         selectedImage = GameObject.FindWithTag("SelectedImage").GetComponent<Image>();
 
@@ -57,6 +61,8 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
     {
         if (type == EntityType.Ai) return; //Si recibe enum AI se va
         boxCanvas.SetActive(true);
+
+        engineText.text = LevelManager.Instance.enginePiecesCollected.ToString();
 
         hasExited = false;
 

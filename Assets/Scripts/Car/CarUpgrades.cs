@@ -8,7 +8,7 @@ public class CarUpgrades : MonoBehaviour
     private List<IUpgrade> activeUpgradeList = new List<IUpgrade>();
     private TopDownController controller;
     public EntityType type;
-
+    bool hasBought;
 
     private void Start()
     {
@@ -23,11 +23,18 @@ public class CarUpgrades : MonoBehaviour
 
     public void AddUpgrade(IUpgrade upgrade)
     {
+        // Verificar si la mejora está bloqueada temporalmente.
+        if (hasBought)
+        {
+            Debug.LogWarning("You can't buy another upgrade yet. Please wait.");
+            return;
+        }
+
         // Verificar si la mejora es Event Counter.
         if (upgrade.isEventCounter)
         {
             // Si ya existe una mejora Event Counter activa, rechazar la compra.
-            if (activeUpgradeList.Any(upgrade => upgrade.GetType() == upgrade.GetType()))
+            if (activeUpgradeList.Any(u => u.GetType() == upgrade.GetType()))
             {
                 Debug.LogWarning("This Event Counter upgrade is already active.");
                 return;
@@ -43,8 +50,7 @@ public class CarUpgrades : MonoBehaviour
         else
         {
             // Verificar si ya se ha alcanzado el límite de acumulación para la mejora.
-            int upgradeCount = activeUpgradeList.Count(upgrade => upgrade.GetType() == upgrade.GetType());
-            Debug.Log(upgradeCount);
+            int upgradeCount = activeUpgradeList.Count(u => u.GetType() == upgrade.GetType());
             if (upgradeCount >= 3)
             {
                 Debug.LogWarning($"You can't have more than 3 of this upgrade: {upgrade.GetType().Name}");
@@ -57,6 +63,9 @@ public class CarUpgrades : MonoBehaviour
         upgrade.ApplyUpgrade(controller);
 
         Debug.Log($"Upgrade added: {upgrade.GetType().Name}");
+
+        // Iniciar el temporizador para bloquear nuevas compras.
+        StartCoroutine(manageBoolEntered());
     }
     public void RemoveUpgrade(IUpgrade upgrade)
     {
@@ -64,6 +73,15 @@ public class CarUpgrades : MonoBehaviour
         {
             activeUpgradeList.Remove(upgrade);
         }
+    }
+
+    IEnumerator manageBoolEntered()
+    {
+        hasBought = true;
+
+        yield return new WaitForSeconds(3f);
+
+        hasBought = false;
     }
 
     public bool HasUpgradeToCounteract(IState state)

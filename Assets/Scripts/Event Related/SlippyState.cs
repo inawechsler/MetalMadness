@@ -4,11 +4,11 @@ public class SlippyState : MonoBehaviour, IState
 {
     public float slipperyDrift = 1f;
     private bool isOnState = false;
+    public bool isClimateAffected { get; set; } = false;
 
-    public Color color { get; set; } = new Color(113, 181, 236, 20);
-    public void ClimateStateSet(GameObject gameObject)
+    public void ClimateStateSet(ParticleSystem stateParticle)
     {
-        gameObject.SetActive(true);
+        stateParticle.Stop();
     }
     public void EnterState(TopDownController controller)
     {

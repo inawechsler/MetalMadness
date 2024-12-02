@@ -6,7 +6,8 @@ public class SlowState : MonoBehaviour, IState
 {
     private float slowedAcceleration = 11f;
 
-    public Color color { get; set; } = new Color(91, 70, 65, 20);
+    public bool isClimateAffected { get; set; } = false;
+
 
     public void EnterState(TopDownController controller)
     {
@@ -18,9 +19,9 @@ public class SlowState : MonoBehaviour, IState
             controller.SetMaxSpeedCap(slowedAcceleration);
         }
     }
-    public void ClimateStateSet(GameObject gameObject)
+    public void ClimateStateSet(ParticleSystem stateParticle)
     {
-        gameObject.SetActive(true);
+        stateParticle.Stop();
     }
     public void ExitState(TopDownController controller)
     {

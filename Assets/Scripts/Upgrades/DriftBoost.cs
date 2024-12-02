@@ -10,7 +10,7 @@ public class DriftBoost : MonoBehaviour, IUpgrade
     public void ApplyUpgrade(TopDownController controller)
     { 
 
-        controller.SetDriftFactorTemporarily(controller.driftFactor * (-1.10f));
+        controller.SetDriftFactorTemporarily(controller.driftFactor - .15f);
 
     }
 
