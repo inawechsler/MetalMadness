@@ -72,7 +72,7 @@ public class StateManager : MonoBehaviour
         {
             Debug.LogWarning("No se encontraron estados disponibles.");
         }
-        AssignRandomStates();
+
 
     }
 

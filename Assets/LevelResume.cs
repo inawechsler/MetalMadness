@@ -44,7 +44,7 @@ public class LevelResume : MonoBehaviour
 
     void LoadNextRace()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene("Race3.1.1");
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Race3.1");
         //Application.Quit();
     }
 }

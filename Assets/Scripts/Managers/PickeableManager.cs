@@ -86,8 +86,6 @@ public class PickeableManager : MonoBehaviour
 
         int engineCount = Random.Range(2, 5);
 
-        Debug.LogWarning(engineCount);
-
         for (int i = 0; i < engineCount; i++)
         {
             Vector3Int randomCell = validPositions[Random.Range(0, validPositions.Count)];

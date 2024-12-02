@@ -66,19 +66,19 @@ public class CarUpgrades : MonoBehaviour
         }
     }
 
-    //public bool CanUseUpgrade(UpgradeItem item)
-    //{
-    //    // Verificar si ya se ha alcanzado el límite de acumulación para la mejora.
-    //    int upgradeCount = activeUpgradeList.Count(u => u.GetType() == item.upgrade.GetType());
-    //    if (upgradeCount > item.maxCapacity)
-    //    {
-    //        Debug.LogWarning($"You can't have more than 3 of this upgrade: {item.upgrade.GetType().Name}");
-    //        return false;
-    //    } else
-    //    {
-    //        return true;
-    //    }
-    //}
+    public bool CanUseUpgrade(UpgradeItem item)
+    {
+        // Verificar si ya se ha alcanzado el límite de acumulación para la mejora.
+        int upgradeCount = activeUpgradeList.Where(u => !u.isEventCounter).Count(u => u.GetType() == item.upgrade.GetType());
+        if (upgradeCount > item.maxCapacity)
+        {
+            Debug.LogWarning($"You can't have more than 3 of this upgrade: {item.upgrade.GetType().Name}");
+            return false;
+        } else
+        {
+            return true;
+        }
+    }
 
     IEnumerator manageBoolEntered()
     {
