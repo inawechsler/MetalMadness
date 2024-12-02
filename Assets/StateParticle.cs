@@ -4,17 +4,19 @@ using UnityEngine;
 
 public class StateParticle : MonoBehaviour
 {
-    public ParticleSystem particleSystem { get; private set; }
+    public ParticleSystem partSystem { get; private set; }
     // Start is called before the first frame update
     void Start()
     {
-        particleSystem = GetComponent<ParticleSystem>();
+        partSystem = GetComponent<ParticleSystem>();
 
-        particleSystem.Stop();
+        partSystem.Stop();
+
+
     }
     // Update is called once per frame
     void Update()
     {
-        
+        if(partSystem == null ) { Debug.Log(partSystem.gameObject.name); }
     }
 }

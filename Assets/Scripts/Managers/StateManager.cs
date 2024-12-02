@@ -114,7 +114,10 @@ public class StateManager : MonoBehaviour
 
             stateColl.SetCurrentState(randomState);
 
-            var particleSystem = surface.GetComponentInChildren<StateParticle>();
+            var particleSystem = surface.GetComponent<ParticleSystem>();
+
+            randomState.ClimateStateSet(particleSystem);
+
             StartCoroutine(SetState(randomState, stateColl));
 
         }

@@ -8,6 +8,7 @@ public class LevelManager : MonoBehaviour, IBoxObserver
     public static LevelManager Instance;
     public GameObject canvasTrafficLight;
     public int enginePiecesCollected;
+    public bool hasSpent;
     private void Awake()
     {
 
@@ -64,9 +65,27 @@ public class LevelManager : MonoBehaviour, IBoxObserver
         canvasToDeactivate.SetActive(false);
 
     }
+    public void SpendEnginePieces(int amount)
+    {
+        if (!hasSpent)
+        {
+            enginePiecesCollected -= amount;
+            StartCoroutine(ManageSpentBool());
+        }
 
+    }
+
+    public IEnumerator ManageSpentBool()
+    {
+        hasSpent = true;
+
+        yield return new WaitForSeconds(1f);
+
+        hasSpent = false;
+    }
     public void AddEnginePieces()
     {
+
         enginePiecesCollected++;
     }
 

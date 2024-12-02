@@ -17,7 +17,8 @@ public class WindyState : MonoBehaviour, IState
 
     public void ClimateStateSet(ParticleSystem stateParticle)
     {
-        //stateParticle.Play();
+        if(stateParticle == null) { Debug.Log(stateParticle.gameObject.name); }
+        stateParticle.Play();
     }
 
     public void EnterState(TopDownController controller)

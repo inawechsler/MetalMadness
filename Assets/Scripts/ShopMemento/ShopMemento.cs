@@ -5,9 +5,9 @@ using UnityEngine.UI;
 
 public class ShopMemento
 {
-    public string upgrade;
+    public IUpgrade upgrade;
     public Button button;
-    public ShopMemento(string upgrade, Button button)
+    public ShopMemento(IUpgrade upgrade, Button button)
     {
         this.upgrade = upgrade;
         this.button = button;
