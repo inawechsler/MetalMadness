@@ -4,22 +4,24 @@ using UnityEngine;
 public class WindyState : MonoBehaviour, IState
 {
     [SerializeField] private float lateralSlideMultiplier = 1.1f; // Multiplicador base del deslizamiento lateral.
-    [SerializeField] private float windBurstForce = 400f; // Fuerza adicional de las ráfagas de viento.
-    [SerializeField] private float burstDuration = 4f; // Duración de cada ráfaga de viento.
-    [SerializeField] private float burstIntervalMin = 2.0f; // Intervalo mínimo entre ráfagas.
-    [SerializeField] private float burstIntervalMax = 5.0f; // Intervalo máximo entre ráfagas.
+    [SerializeField] private float windBurstForce = 400f; // Fuerza adicional de las rï¿½fagas de viento.
+    [SerializeField] private float burstDuration = 4f; // Duraciï¿½n de cada rï¿½faga de viento.
+    [SerializeField] private float burstIntervalMin = 2.0f; // Intervalo mï¿½nimo entre rï¿½fagas.
+    [SerializeField] private float burstIntervalMax = 5.0f; // Intervalo mï¿½ximo entre rï¿½fagas.
 
     private bool isWindBurstActive = false;
     private float currentBurstDirection = 0f;
-
 
     public bool isClimateAffected { get; set; } = true;
 
     public void ClimateStateSet(ParticleSystem stateParticle)
     {
+
         if(stateParticle == null) { Debug.Log("SASAS"); }
 
         gameObject.SetActive(true);
+
+        if (stateParticle == null) { Debug.Log("SASAS"); }
         stateParticle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         stateParticle.Play();
     }
@@ -33,6 +35,7 @@ public class WindyState : MonoBehaviour, IState
             controller.SetDriftFactorTemporarily(1f);
             StartCoroutine(WindBurstRoutine(controller));
 
+
         }
     }
 
@@ -43,7 +46,9 @@ public class WindyState : MonoBehaviour, IState
             controller.isOnState = false;
             controller.RestoreDriftFactor();
             StopCoroutine(WindBurstRoutine(controller));
-            
+
+            // Detener el sonido del viento al salir del estado.
+            AudioManager.instance.StopSound("wind");
         }
     }
 
@@ -53,7 +58,6 @@ public class WindyState : MonoBehaviour, IState
         {
             if (isWindBurstActive)
             {
-
                 controller.ApplyLateralSlide(currentBurstDirection * windBurstForce);
             }
         }
@@ -63,22 +67,25 @@ public class WindyState : MonoBehaviour, IState
     {
         while (controller.isOnState)
         {
-            // Esperar un intervalo aleatorio antes de la próxima ráfaga.
-            yield return new WaitForSeconds(/*Random.Range(burstIntervalMin, burstIntervalMax)*/burstDuration);
-            Debug.Log("Rafagaq");
-            // Activar una ráfaga de viento con una dirección aleatoria.
+            
+            yield return new WaitForSeconds(Random.Range(burstIntervalMin, burstIntervalMax));
+
+            
             isWindBurstActive = true;
-            int random = Random.Range(-360, 360);
-            currentBurstDirection = random; // 1 para derecha, -1 para izquierda.
+            currentBurstDirection = Random.Range(-1, 1); 
 
-            // Mantener la ráfaga durante la duración especificada.
-            yield return new WaitForSeconds(3f);
+           
+            AudioManager.instance.PlaySound("wind");
 
-            // Desactivar la ráfaga de viento.
+            
+            yield return new WaitForSeconds(burstDuration);
+
+            AudioManager.instance.StopSound("wind");
+
+
+
             isWindBurstActive = false;
             currentBurstDirection = 0;
-            Debug.Log("afuera");
         }
-
     }
 }
