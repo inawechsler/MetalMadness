@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.Pool;
+using UnityEngine.SceneManagement;
 
 public class PickeableManager : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class PickeableManager : MonoBehaviour
     public GameObject enginePrefab; // Asigna el prefab desde el inspector
     public ObjectPool<EnginePieces> enginePool;
     private List<EnginePieces> activeEngines = new List<EnginePieces>();
+    private bool hasSpawned;
 
     private void Awake()
     {
@@ -26,22 +28,37 @@ public class PickeableManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    void Start()
+    public void Init()
     {
-        tilemap = GameObject.FindWithTag("Track").GetComponent<Tilemap>();
-        enginePrefab = GameObject.FindWithTag("Engine");
+        if (SceneNameManager.Instance.IsRaceScene(SceneManager.GetActiveScene()))
+        {
+            tilemap = GameObject.FindWithTag("Track").GetComponent<Tilemap>();
 
-        // Configura el ObjectPool
-        enginePool = new ObjectPool<EnginePieces>(
-            createFunc: CreateEnginePiece,
-            actionOnGet: OnEnginePieceGet,
-            actionOnRelease: OnEnginePieceRelease,
-            actionOnDestroy: DestroyEnginePiece,
-            collectionCheck: false, // Opcional: evita un chequeo adicional
-            defaultCapacity: 10,
-            maxSize: 20
-        );
+            if (tilemap == null)
+            {
+                tilemap = GameObject.FindWithTag("Grid").GetComponentInChildren<Tilemap>(tilemap.gameObject.name == "Track");
+            }
 
+
+            if (enginePrefab == null)
+            {
+                enginePrefab = GameObject.FindWithTag("Engine");
+                if (enginePrefab == null)
+                    Resources.Load("EnginePieces");
+            }
+
+
+            // Configura el ObjectPool
+            enginePool = new ObjectPool<EnginePieces>(
+                createFunc: CreateEnginePiece,
+                actionOnGet: OnEnginePieceGet,
+                actionOnRelease: OnEnginePieceRelease,
+                actionOnDestroy: DestroyEnginePiece,
+                collectionCheck: false, // Opcional: evita un chequeo adicional
+                defaultCapacity: 10,
+                maxSize: 20
+            );
+        }
         //SpawnCurrency();
     }
 
@@ -68,36 +85,52 @@ public class PickeableManager : MonoBehaviour
 
     public void SpawnCurrency()
     {
-        List<Vector3Int> validPositions = new List<Vector3Int>();
-
-        foreach (var position in tilemap.cellBounds.allPositionsWithin)
+        if (!hasSpawned)
         {
-            if (tilemap.HasTile(position))
+            List<Vector3Int> validPositions = new List<Vector3Int>();
+
+            foreach (var position in tilemap.cellBounds.allPositionsWithin)
             {
-                validPositions.Add(position);
+                if (tilemap.HasTile(position))
+                {
+                    validPositions.Add(position);
+                }
             }
+
+            if (validPositions.Count == 0)
+            {
+                Debug.LogWarning("No valid positions found in the Tilemap!");
+                return;
+            }
+
+            int engineCount = Random.Range(2, 5);
+     
+
+            for (int i = 0; i < engineCount; i++)
+            {
+                Vector3Int randomCell = validPositions[Random.Range(0, validPositions.Count)];
+                Vector3 worldPosition = tilemap.CellToWorld(randomCell) + tilemap.tileAnchor;
+
+                EnginePieces enginePiece = enginePool.Get();
+                enginePiece.transform.position = worldPosition;
+
+                activeEngines.Add(enginePiece);
+            }
+
+            StartCoroutine(ManageBool());
         }
-
-        if (validPositions.Count == 0)
-        {
-            Debug.LogWarning("No valid positions found in the Tilemap!");
-            return;
-        }
-
-        int engineCount = Random.Range(2, 5);
-
-        for (int i = 0; i < engineCount; i++)
-        {
-            Vector3Int randomCell = validPositions[Random.Range(0, validPositions.Count)];
-            Vector3 worldPosition = tilemap.CellToWorld(randomCell) + tilemap.tileAnchor;
-
-            EnginePieces enginePiece = enginePool.Get();
-            enginePiece.transform.position = worldPosition;
-
-            activeEngines.Add(enginePiece);
-        }
+       
     }
 
+    IEnumerator ManageBool()
+    {
+
+        hasSpawned = true;
+
+        yield return new WaitForSeconds(1);
+
+        hasSpawned = false;
+    }
     public void ReturnAllEngines()
     {
         foreach (EnginePieces engine in activeEngines)

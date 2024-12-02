@@ -26,6 +26,7 @@ TagManager:
   - PiecesText
   - Engine
   - InfoText
+  - Grid
   layers:
   - Default
   - TransparentFX

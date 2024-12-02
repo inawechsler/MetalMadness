@@ -27,7 +27,6 @@ public class TrackManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        DontDestroyOnLoad(gameObject);
     }
     void Start()
     {

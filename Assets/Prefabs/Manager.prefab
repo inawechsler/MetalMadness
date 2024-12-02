@@ -17,7 +17,6 @@ GameObject:
   - component: {fileID: 6101552424306852203}
   - component: {fileID: 2443582868010883075}
   - component: {fileID: 5123169173199558185}
-  - component: {fileID: 5694158626480761401}
   - component: {fileID: 2031809138173528532}
   m_Layer: 0
   m_Name: Manager
@@ -79,11 +78,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   topDownController: []
-  tileMaps: []
   surfaces:
   - {fileID: 0}
   - {fileID: 0}
   lapsToTriggerChange: 1
+  stateChanged:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &6766913212225236289
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -123,6 +124,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0b0655f90a6c9d48823e0abab0ff295, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canvasTrafficLight: {fileID: 0}
+  enginePiecesCollected: 0
+  hasSpent: 0
 --- !u!114 &2443582868010883075
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -147,25 +151,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a2b6c5b7346f39469c8337b51b82cbf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tColl: {fileID: 5132669575162720207, guid: 5365bd3f30e021946aa6bf29832bead1, type: 3}
---- !u!114 &5694158626480761401
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8785995005116401476}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ac17554de852e2a42bee941cd56170d3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Dijkstra: {fileID: 0}
-  checkPoints: []
-  tilemap: {fileID: 0}
-  tilesWState:
-  - {fileID: 0}
-  - {fileID: 0}
 --- !u!120 &2031809138173528532
 LineRenderer:
   serializedVersion: 2

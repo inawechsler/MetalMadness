@@ -9,7 +9,6 @@ public class StateCollider : MonoBehaviour
     int counter;
     public IState state { get; private set; }
 
-    [SerializeField] TextMeshProUGUI ZoneText;
     [SerializeField] TextMeshProUGUI StateText;
     [SerializeField] public int ID;
     public List<TopDownController> carListInZone { get; private set; } = new List<TopDownController>(); //Autos en esta superficie
@@ -39,11 +38,15 @@ public class StateCollider : MonoBehaviour
     {
         if (collision.gameObject.GetComponent<TopDownController>() != null)
         {
+            Debug.Log("lñdjsoidfiosds");
             if (state == null) return;
             var controller = collision.gameObject.GetComponent<TopDownController>();
             carListInZone.Remove(controller);
             state.ExitState(controller);
 
+        } else
+        {
+            Debug.Log("sasaasdas");
         }
     }
 
@@ -58,10 +61,10 @@ public class StateCollider : MonoBehaviour
         {
             if (newState == null) Debug.Log("Estado inválido"); //Si está vacía ejecuta directamente el cambio de estados
             state = newState;
-            ZoneText.text = state.GetType().Name;
+
 
             StateText.text = state.GetType().Name;
-            
+
 
         }
     }
@@ -76,11 +79,6 @@ public class StateCollider : MonoBehaviour
 
         // Cuando no haya autos en la zona, cambia el estado
         state = newState;
-
-        ZoneText.text = state.GetType().Name;
         StateText.text = state.GetType().Name;
     }
 }
-
-
-

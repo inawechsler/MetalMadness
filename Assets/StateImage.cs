@@ -10,6 +10,7 @@ public class StateImage : MonoBehaviour
     [SerializeField] public int StateColliderID;
     [SerializeField] public Sprite slipperyState;
     [SerializeField] public Sprite SlowState;
+    private Sprite normalSprite;
 
 
     void ChangeSprite(Sprite sprite)
@@ -18,6 +19,7 @@ public class StateImage : MonoBehaviour
     }
     public void SetState(IState newState)
     {
+
         if(newState.GetType().Name == "SlippyState")
         {
             state = State.SlippyState;
@@ -27,14 +29,15 @@ public class StateImage : MonoBehaviour
             state = State.SlowState;
         } else
         {
-            return;
+            state = State.NoCurrent;
         }
 
         Sprite newSprite = state switch
         {
             State.SlowState => SlowState,
             State.SlippyState => slipperyState,
-            _ => null
+            State.NoCurrent => normalSprite,
+            _ => null,
         };
 
         if (newSprite != null)
@@ -47,7 +50,10 @@ public class StateImage : MonoBehaviour
         }
     }
 
-
+    private void Start()
+    {
+        normalSprite = GetComponent<SpriteRenderer>().sprite;
+    }
     // Update is called once per frame
 
 }

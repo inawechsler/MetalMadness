@@ -10,7 +10,7 @@ public class StateParticle : MonoBehaviour
     {
         partSystem = GetComponent<ParticleSystem>();
 
-        gameObject.SetActive(false);
+       partSystem.Stop();
 
 
 

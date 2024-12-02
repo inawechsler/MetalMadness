@@ -25,8 +25,9 @@ public class FacadeManager : MonoBehaviour
     {
         CarRankingManager.Instance.Init();
         StateManager.Instance.Init();
+        LevelManager.Instance.Init();
+        PickeableManager.Instance.Init();
     }
-
 
     // Update is called once per frame
     void Update()

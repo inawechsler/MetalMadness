@@ -12,7 +12,7 @@ public class SlippyState : MonoBehaviour, IState
     }
     public void EnterState(TopDownController controller)
     {
-
+        Debug.Log("sldad");
         if (!controller.carUpgrades.HasUpgradeToCounteract(this))
         {
             controller.isOnState = true;

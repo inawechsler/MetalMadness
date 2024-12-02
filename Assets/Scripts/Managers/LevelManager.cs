@@ -23,6 +23,11 @@ public class LevelManager : MonoBehaviour, IBoxObserver
         }
         DontDestroyOnLoad(gameObject);
     }
+
+    public void Init()
+    {
+        enginePiecesCollected = 0;
+    }
     public void OnBoxEntered(EntityType type, CarUpgrades carUpgrades)
     {
         if(type == EntityType.Ai) return;

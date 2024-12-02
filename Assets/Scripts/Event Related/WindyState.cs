@@ -4,8 +4,8 @@ using UnityEngine;
 public class WindyState : MonoBehaviour, IState
 {
     [SerializeField] private float lateralSlideMultiplier = 1.1f; // Multiplicador base del deslizamiento lateral.
-    [SerializeField] private float windBurstForce = 300f; // Fuerza adicional de las ráfagas de viento.
-    [SerializeField] private float burstDuration = 3f; // Duración de cada ráfaga de viento.
+    [SerializeField] private float windBurstForce = 400f; // Fuerza adicional de las ráfagas de viento.
+    [SerializeField] private float burstDuration = 4f; // Duración de cada ráfaga de viento.
     [SerializeField] private float burstIntervalMin = 2.0f; // Intervalo mínimo entre ráfagas.
     [SerializeField] private float burstIntervalMax = 5.0f; // Intervalo máximo entre ráfagas.
 
@@ -30,7 +30,9 @@ public class WindyState : MonoBehaviour, IState
         {
             controller.isOnState = true;
 
-           StartCoroutine(WindBurstRoutine(controller));
+            controller.SetDriftFactorTemporarily(1f);
+            StartCoroutine(WindBurstRoutine(controller));
+
         }
     }
 
@@ -39,7 +41,7 @@ public class WindyState : MonoBehaviour, IState
         if (!controller.carUpgrades.HasUpgradeToCounteract(this))
         {
             controller.isOnState = false;
-
+            controller.RestoreDriftFactor();
             StopCoroutine(WindBurstRoutine(controller));
             
         }

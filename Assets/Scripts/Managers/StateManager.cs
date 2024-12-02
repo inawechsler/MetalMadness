@@ -61,6 +61,7 @@ public class StateManager : MonoBehaviour
             slowState = GameObject.FindWithTag("TileState").GetComponent<SlowState>();
             GrafoDij = GameObject.FindWithTag("Managers").GetComponent<TDAGraph>();
             FindAvailableStates();
+            AssignRandomStates();
         }
     }
 
@@ -132,7 +133,6 @@ public class StateManager : MonoBehaviour
     {
         currentLap++;
         AssignRandomStates();
-        PickeableManager.Instance.SpawnCurrency();
     }
 
 }

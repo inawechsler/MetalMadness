@@ -107,6 +107,7 @@ public class CarLapCounter : MonoBehaviour
                     {
                         CarRankingManager.Instance.SetLapsCompleted(1);
                         GameManager.Instance.text.text = "Laps: " + CarRankingManager.Instance.LapsCompleted.ToString() + " of " + CarRankingManager.Instance.LapsToComplete.ToString();
+                        PickeableManager.Instance.SpawnCurrency();
                     }
 
 

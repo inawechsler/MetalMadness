@@ -1190,6 +1190,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Button: {fileID: 0}
   priceOnShop: 5
+  maxCapacity: 0
   description: Counters Windy State
 --- !u!114 &5699977657027169973
 MonoBehaviour:
@@ -1469,6 +1470,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Button: {fileID: 0}
   priceOnShop: 2
+  maxCapacity: 0
   description: Improves car control, does not apply to Snow State
 --- !u!1 &6849385037881230908
 GameObject:
@@ -1884,7 +1886,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: ab8fd83b8dbfb2746924bbd20bed8ce6, type: 3}
+  m_Sprite: {fileID: 21300000, guid: dd086b59b650c784f8c46f2785a263bc, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2221,6 +2223,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Button: {fileID: 0}
   priceOnShop: 3
+  maxCapacity: 0
   description: Lowers the distance where you collect an engine
 --- !u!114 &6053021937082538540
 MonoBehaviour:
@@ -2396,6 +2399,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Button: {fileID: 0}
   priceOnShop: 3
+  maxCapacity: 0
   description: Improves car control outside the track limits
 --- !u!1001 &7130240386259840378
 PrefabInstance:
@@ -2829,6 +2833,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Button: {fileID: 0}
   priceOnShop: 5
+  maxCapacity: 0
   description: Counters Mud State
 --- !u!224 &4817273350849735659 stripped
 RectTransform:
@@ -2854,6 +2859,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Button: {fileID: 0}
   priceOnShop: 4
+  maxCapacity: 0
   description: Leads to an increase in the Car Speed
 --- !u!224 &6588344317271963368 stripped
 RectTransform:
