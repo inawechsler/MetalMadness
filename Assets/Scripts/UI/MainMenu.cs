@@ -22,7 +22,7 @@ public class MainMenu : MonoBehaviour
     // Update is called once per frame
     void onRace()
     {
-        SceneManager.LoadScene("Race");
+        SceneManager.LoadScene("Race3");
     }
 
     void OnExit()
