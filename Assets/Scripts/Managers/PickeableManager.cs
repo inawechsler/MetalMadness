@@ -103,7 +103,7 @@ public class PickeableManager : MonoBehaviour
                 return;
             }
 
-            int engineCount = Random.Range(2, 5);
+            int engineCount = Random.Range(4, 7);
      
 
             for (int i = 0; i < engineCount; i++)

@@ -61,7 +61,7 @@ public class StateManager : MonoBehaviour
             slowState = GameObject.FindWithTag("TileState").GetComponent<SlowState>();
             GrafoDij = GameObject.FindWithTag("Managers").GetComponent<TDAGraph>();
             FindAvailableStates();
-            AssignRandomStates();
+
         }
     }
 
@@ -86,10 +86,7 @@ public class StateManager : MonoBehaviour
     }
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            AssignRandomStates();
-        }
+
     }
 
     private void AssignRandomStates()

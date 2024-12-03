@@ -74,6 +74,10 @@ public class LevelManager : MonoBehaviour, IBoxObserver
     {
         if (!hasSpent)
         {
+            if(enginePiecesCollected <= 0)
+            {
+                enginePiecesCollected = 0;
+            }
             enginePiecesCollected -= amount;
             StartCoroutine(ManageSpentBool());
         }

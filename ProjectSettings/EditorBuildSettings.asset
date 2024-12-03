@@ -23,7 +23,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/Race3.1.unity
     guid: 64b17fee8c404bd4ab4100718c324a42
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Race3.1.1.unity
     guid: 7f95752d93b73fa4e99f7ef1d05885e3
   m_configObjects: {}
