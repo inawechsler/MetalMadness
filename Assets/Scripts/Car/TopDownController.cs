@@ -230,12 +230,14 @@ public class TopDownController : MonoBehaviour
         if (accelerationInput < 0 && velocitVsUp > 0)//Si no está acelerando con input verdadero
         {
             isBraking = true;
+           
             return true;
         }
 
         if(Mathf.Abs(GetLateralVelocity()) > 4f) //Si sobrepasa el 4 devuelve verdader
         {
             return true;
+            
         }
 
         return false;

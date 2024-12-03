@@ -26,7 +26,7 @@ public class LevelManager : MonoBehaviour, IBoxObserver
 
     public void Init()
     {
-        enginePiecesCollected = 0;
+        enginePiecesCollected = 12;
     }
     public void OnBoxEntered(EntityType type, CarUpgrades carUpgrades)
     {

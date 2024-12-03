@@ -13,6 +13,7 @@ public class MainMenu : MonoBehaviour
     private void Awake()
     {
         Race.onClick.AddListener(onRace);
+        Exit.onClick.AddListener(OnExit);
     }
     void Start()
     {

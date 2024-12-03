@@ -24,8 +24,8 @@ public class StateManager : MonoBehaviour
 
     [SerializeField] public List<Tilemap> tileMaps { get; set; }
 
-    [SerializeField] private List<GameObject> surfaces; // Las superficies
-    [SerializeField] private List<IState> availableStates; // La lista de estados disponibles
+     private List<GameObject> surfaces; // Las superficies
+     private List<IState> availableStates; // La lista de estados disponibles
 
     private bool lapChangeCooldown = false;
 
@@ -60,6 +60,7 @@ public class StateManager : MonoBehaviour
             slipperyState = GameObject.FindWithTag("TileState").GetComponent<SlippyState>();
             slowState = GameObject.FindWithTag("TileState").GetComponent<SlowState>();
             GrafoDij = GameObject.FindWithTag("Managers").GetComponent<TDAGraph>();
+            surfaces = GameObject.FindGameObjectsWithTag("TileState").ToList();
             FindAvailableStates();
 
         }

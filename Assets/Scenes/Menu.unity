@@ -155,7 +155,7 @@ MonoBehaviour:
   sounds:
   - name: menu
     clip: {fileID: 8300000, guid: 8ea5e93ff763800429207ea20f3d4335, type: 3}
-    volume: 1
+    volume: 0.2
     pitch: 1
     loop: 1
     source: {fileID: 0}
@@ -167,7 +167,7 @@ MonoBehaviour:
     source: {fileID: 0}
   - name: Race3
     clip: {fileID: 8300000, guid: 5ef015ed05733454c8ce60e3a01eaff1, type: 3}
-    volume: 1
+    volume: 0.2
     pitch: 1
     loop: 1
     source: {fileID: 0}
@@ -179,7 +179,7 @@ MonoBehaviour:
     source: {fileID: 0}
   - name: WindyState
     clip: {fileID: 8300000, guid: 8f3c92fd11a80164d9d318dd182dc8c4, type: 3}
-    volume: 0.5
+    volume: 0.2
     pitch: 1
     loop: 1
     source: {fileID: 0}
@@ -1061,7 +1061,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Race: {fileID: 682449355}
-  Exit: {fileID: 0}
+  Exit: {fileID: 302404916}
 --- !u!114 &1401815598
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -10,6 +10,7 @@ using UnityEngine.Events;
 public class CarLapCounter : MonoBehaviour
 {
     private StateManager stateManager;
+     public TextMeshProUGUI Laptext { get; private set; }
 
     [SerializeField] TextMeshProUGUI text;
     
@@ -33,9 +34,15 @@ public class CarLapCounter : MonoBehaviour
     float hideUITime = 0;
 
     int carPosition = 0;
+
+    private void Start()
+    {
+        Laptext = GameObject.FindWithTag("Text").GetComponent<TextMeshProUGUI>();
+    }
     public int SetCarPosition(int carPosition)
     {
         return this.carPosition = carPosition;
+
     }
 
     public UnityEvent<CarLapCounter> OnCheckPointPassed;
@@ -106,7 +113,7 @@ public class CarLapCounter : MonoBehaviour
                     if (gameObject.CompareTag("Player"))
                     {
                         CarRankingManager.Instance.SetLapsCompleted(1);
-                        GameManager.Instance.text.text = "" + CarRankingManager.Instance.LapsCompleted.ToString() + " of " + CarRankingManager.Instance.LapsToComplete.ToString();
+                        Laptext.text = "" + CarRankingManager.Instance.LapsCompleted.ToString() + " of " + CarRankingManager.Instance.LapsToComplete.ToString();
                         PickeableManager.Instance.SpawnCurrency();
                     }
 
