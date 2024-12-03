@@ -38,7 +38,7 @@ public class StateCollider : MonoBehaviour
     {
         if (collision.gameObject.GetComponent<TopDownController>() != null)
         {
-            Debug.Log("lñdjsoidfiosds");
+            
             if (state == null) return;
             var controller = collision.gameObject.GetComponent<TopDownController>();
             carListInZone.Remove(controller);
@@ -46,7 +46,7 @@ public class StateCollider : MonoBehaviour
 
         } else
         {
-            Debug.Log("sasaasdas");
+            
         }
     }
 
@@ -59,7 +59,7 @@ public class StateCollider : MonoBehaviour
         }
         else
         {
-            if (newState == null) Debug.Log("Estado inválido"); //Si está vacía ejecuta directamente el cambio de estados
+            if (newState == null); //Si está vacía ejecuta directamente el cambio de estados
             state = newState;
 
 

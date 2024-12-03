@@ -19,7 +19,7 @@ public class CarRankingManager : MonoBehaviour
     string text;
     public int LapsCompleted => lapsCompleted;
 
-    private int lapsToComplete = 6;
+    private int lapsToComplete = 2;
 
     private int carsFinishedRace = 0;
 

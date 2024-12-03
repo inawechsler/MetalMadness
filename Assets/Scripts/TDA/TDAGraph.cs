@@ -134,10 +134,8 @@ public class TDAGraph : MonoBehaviour
     public List<List<Vector3Int>> TempDij = new ();
     public void UpdateGraphWeights(Tilemap stateTiles) //Hago Lista de Keys y Valores del grafo, y le asigno el nuevo valor que le llega a las aristas que unen a estos respectivamente
     {
-        Debug.Log("oasodajksda");
         foreach (var node in graph.Keys.ToList().Where(node => nodesOnCollider.Contains(node)))
         {
-            Debug.Log("oasodajksda");
             foreach (var neighbour in graph[node].Keys.ToList())
             {
                 int newWeight = CheckNodeOnCollision(neighbour, stateTiles);
@@ -146,7 +144,6 @@ public class TDAGraph : MonoBehaviour
             }
 
         }
-        Debug.Log(stateTiles.gameObject.name);
 
         var path = Dijkstra(spawnPoint(SceneManager.GetActiveScene().name, "Start"), spawnPoint(SceneManager.GetActiveScene().name, "End"));
 
@@ -254,7 +251,6 @@ public class TDAGraph : MonoBehaviour
 
         path.Reverse();  // Revertir el camino para que vaya de inicio a destino
 
-        Debug.Log("jsda");
         return path;
     }
 
@@ -274,7 +270,6 @@ public class TDAGraph : MonoBehaviour
         }
         else
         {
-            Debug.LogError("No se encontró un camino entre los puntos seleccionados.");
         }
     }
 

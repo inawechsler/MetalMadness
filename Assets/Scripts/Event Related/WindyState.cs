@@ -17,11 +17,9 @@ public class WindyState : MonoBehaviour, IState
     public void ClimateStateSet(ParticleSystem stateParticle)
     {
 
-        if(stateParticle == null) { Debug.Log("SASAS"); }
 
         gameObject.SetActive(true);
 
-        if (stateParticle == null) { Debug.Log("SASAS"); }
         stateParticle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         stateParticle.Play();
     }
