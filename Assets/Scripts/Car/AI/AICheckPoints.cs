@@ -7,6 +7,8 @@ public class AICheckPoints : MonoBehaviour
     // Lista de waypoints a los que este waypoint puede ir
     public AICheckPoints[] nextWP;
 
+    public bool isFinishLine;
+
     // Distancia mínima para considerar que el waypoint ha sido alcanzado
     public float minDistToReachWP = 5;
 

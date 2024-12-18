@@ -159,6 +159,8 @@ public class BoxCanvasManager : MonoBehaviour, IBoxObserver
         {
             LevelManager.Instance.SpendEnginePieces(upgradeItem.priceOnShop);
         }
+
+        StateManager.Instance.UpdateGraph();
     }
     void ManageButton(UpgradeItem item) //Se encarga de mostrar el objeto seleccionado y guardar el upgrade seleccionado, no lo aplica, solo lo guarda
     {

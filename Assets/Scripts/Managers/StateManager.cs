@@ -23,7 +23,7 @@ public class StateManager : MonoBehaviour
     private bool canAssignStates = true; // Bandera para controlar el cooldown
 
     [SerializeField] public List<Tilemap> tileMaps { get; set; }
-
+    private Tilemap tilemap;
      private List<GameObject> surfaces; // Las superficies
      private List<IState> availableStates; // La lista de estados disponibles
 
@@ -55,14 +55,19 @@ public class StateManager : MonoBehaviour
     {
         if (SceneNameManager.Instance.IsRaceScene(SceneManager.GetActiveScene()))
         {
+            tilemap = GameObject.FindWithTag("Track").GetComponent<Tilemap>();
             topDownController = FindObjectsOfType<TopDownController>();
+            var tileMaps = GameObject.FindGameObjectsWithTag("TileState")
+                .Select(go => go.GetComponent<Tilemap>())
+                .Where(tm => tm != null)
+                .ToList();
             electricState = GameObject.FindWithTag("TileState").GetComponent<WindyState>();
             slipperyState = GameObject.FindWithTag("TileState").GetComponent<SlippyState>();
             slowState = GameObject.FindWithTag("TileState").GetComponent<SlowState>();
             GrafoDij = GameObject.FindWithTag("Managers").GetComponent<TDAGraph>();
             surfaces = GameObject.FindGameObjectsWithTag("TileState").ToList();
             FindAvailableStates();
-
+            GrafoDij.InitGraph(tilemap, tileMaps);
         }
     }
 
@@ -110,6 +115,8 @@ public class StateManager : MonoBehaviour
             randomState.ClimateStateSet(particleSystem);
 
             StartCoroutine(SetState(randomState, stateColl));
+
+            UpdateGraph();
 
         }
 
